@@ -1,0 +1,583 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\{CustomerPets,
+	Shipment,
+	Customer,
+};
+use App\Http\Resources\CustomerResource;
+use App\Http\Controllers\Api\BaseController as BaseController;
+Use Exception;
+use App\Rules\MatchOldPassword;
+use Illuminate\Http\Response;
+use Auth;
+use Illuminate\Support\Arr;
+use GuzzleHttp\Client;
+use Str;
+use Storage;
+use Asset;
+use Validator;
+use DB;
+use Hash;
+use Config;
+use Carbon\Carbon;
+use Image;
+use File;
+class CustomerApiController extends BaseController
+{
+	public function __construct()
+	{
+
+		date_default_timezone_set("Asia/Karachi");
+
+	}
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
+    	$validator = Validator::make($request->all(), [
+    		'email' => 'required|email|max:255|unique:customers',
+    		'password' => 'required|string',
+    	]);
+
+    	if($validator->fails())
+    	{
+    		return $this->sendError( $validator->errors()->first());
+
+    	}
+    	$customerData = [ 
+    		"name" => $request->name,
+    		"password" =>  Hash::make($request->password) ,
+    		"contact_no" => $request->contact_no,
+    		"email" => $request->email,
+    		"dob" => $request->dob,
+    		"pet_category" => $request->pet_category,
+    		"pet_name" => $request->pet_name,
+    		"pet_age" => $request->pet_age,
+    		"pet_breed" => $request->pet_breed,
+    		"country" => $request->country,
+
+    	];
+    	$customer     = Customer::create($customerData );
+    	return $this->sendResponse([], 'Customer created successfully.');
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+    public function login(Request $request)
+    {
+    	$validator = Validator::make($request->all(), [
+    		'email' => 'required|string',
+    		'password' => 'required|string',
+    	]);
+
+    	if($validator->fails())
+    	{
+    		return $this->sendError($validator->errors()->first());
+
+    	}
+    	$fields = $request->all();
+        $customer = Customer::where('email',$request->email)->first(); //check Customer Exist or not
+
+        // Check password
+        if(!$customer ||  !Hash::check($fields['password'], $customer->password))  {
+        	return $this->sendError('Invalid Login Credentials');
+        }
+
+        $customer->otp             = random_int(100000, 999999);
+        $customer->otp_created_at  = Carbon::now();
+        $customer->save();
+
+        return $this->sendResponse(new CustomerResource($customer), 'Customer retrieved successfully.');
+    }
+    public function sendOtp(Request $request)
+    {
+        // try{
+            // $otpVia  = $request->input('otpVia');
+    	$otpCode = random_int(1000, 9999);
+    	if (isset($request->email) && $request->email != null) {
+    		$customer = Customer::where('email',$request->email)->first();
+    		$customer->otp = $otpCode;
+    		$customer->otp_created_at = Carbon::now();
+    		$customer->update();
+    	}else{
+    		$customer   = Auth::guard('sanctum')->user();
+    		Customer::where('id',$customer->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
+    	}
+
+            // if($otpVia == 1)
+            // {
+                // $message = "Your OTP is : " . $otpCode . "." ;
+              // return  smsNewApi($customer->phone, $message);
+            // }
+            // elseif($otpVia == 2)
+            // {
+    	$message = "Your OTP is : " . $otpCode . "." ;
+
+
+            //     $details = [
+            //         'title' => Config::get('constants._PROJECT_NAME'),
+            //         'body' => $otpCode
+            //     ];
+            //     \Mail::to($customer->email)->send(new \App\Mail\SupervisorSendOtpMail($details));
+
+            // }
+
+            // $customer = Auth::guard('sanctum')->user();
+            // if($customer->otpVerified == 0)
+            // {
+            //     $data = [
+            //         'otpVerification' => true,
+            //     ];
+            // }
+            // else{
+
+    	$data = null;
+            // }
+    // return $this->sendResponse( $message,$data);
+
+    // return $this->sendResponse($data "OTP has been sent", );
+    	return $this->sendResponse($data ,$message );
+
+        // }catch(\Exception $e){
+        //     DB::rollback();
+        //     return $this->sendError("Process Failed", null);
+
+        // }
+
+    }
+    public function verifyOtp(Request $request)
+    {
+
+    	$user = Auth::guard('sanctum')->user();
+    	$customer = Customer::find($user->id);
+
+    	$tokenStartTime = Carbon::now();
+    	$tokenEndTime   = Carbon::parse($customer->otp_created_at);
+
+        // Calculate the difference in minutes
+    	$differenceInMinutes = $tokenStartTime->diffInMinutes($tokenEndTime);
+
+        if($differenceInMinutes > 5){ // check implement for to  check token expire time
+
+        	return $this->sendError("OTP expired, try again", null);
+        }
+
+        if($request->input('otp') == $customer->otp)
+        {
+        	$customer = Customer::where('id', $customer->id)->update(['is_otp_verified' => 1]);
+
+
+        	$message = 'Dear Customer, your account has been verified VIA OTP.';
+
+
+        	return $this->sendResponse(null,"Profile Verified" );
+        }
+        else
+        {
+        	return $this->sendError("Process Failed/OTP Mismatch", null);
+
+        }
+
+        exit();
+
+    }
+    public function forgotPassword(Request $request)
+    {
+
+    	$validator = Validator::make($request->all(), [
+    		'email' => 'required',
+    		'newPassword' => ['required'],
+    		'newPasswordConfirm' => ['same:newPassword'],
+    	]);
+
+    	$fields = $request->all();
+
+    	if($validator->fails())
+    	{
+    		return $this->sendError($validator->errors()->first());
+    	}
+
+    	$customer = Customer::where(['email' => $fields['email'] ])->first();
+    	if(!$customer) {
+    		return $this->sendError('No Customer found');
+    	}
+    	$customer->tokens()->delete();
+
+
+    	$customer->password = Hash::make($request->input('newPassword'));
+    	$customer->update();
+    	$data = null;
+
+    	return $this->sendResponse($data ,'Password Reset successfully' , 704);
+
+    }
+    public function changePassword(Request $request)
+    {
+
+    	$validator =  Validator::make($request->all(),[
+    		'currentPassword' => ['required', new MatchOldPassword],
+    		'newPassword' => ['required'
+    	],
+    	'newPasswordConfirm' => ['same:newPassword'],
+    ]);
+
+    	if($validator->fails())
+    	{
+           return $this->sendError($validator->errors()->first());
+
+
+       }
+
+       $newPassword = $request->input('newPassword');
+       $newPasswordConfirm = $request->input('newPasswordConfirm');
+
+
+        // if($newPassword !== $newPasswordConfirm)
+        // {
+        //     return $this->sendError('Passwords do not match');
+
+
+        // }
+
+       $user = Auth::guard('sanctum')->user();
+       $customer = Customer::where(['email' => $user->email, 'is_deleted' => 0], )->first();
+
+       if($customer == null)
+       {
+          return $this->sendError('No Data found with this email');
+
+      }
+      $customer->tokens()->delete();
+        // else{
+
+      Customer::find(auth()->user()->id)->update(['password'=> Hash::make($request->input('newPassword'))]);
+
+      $data = null;
+
+
+      return $this->sendResponse($data ,'Password Changed' , 703);
+
+        // }
+
+  }
+
+  public function addPet(Request $request)
+  {
+   $validator =  Validator::make($request->all(),[
+      'name'      => ['required'],
+      'breed'     => ['required'],
+      'age'       => ['required'],
+      'category'  => ['required']
+
+  ]);
+
+   if($validator->fails())
+   {
+      return $this->sendError($validator->errors()->first());
+
+  }
+  $user                = Auth::guard('customer')->user();
+  $obj                 =  new CustomerPets;
+  $obj->customer_id    = $user->id;
+  $obj->name           = $request->name;
+  $obj->breed          = $request->breed;
+  $obj->age            = $request->age;
+  $obj->category       = $request->category;
+  $obj->save();
+  $data = null;
+
+
+  return $this->sendResponse($data,'Pet Info saved' , 703);
+}
+
+public function shipmentBooking(Request $request)
+{
+   $validator =  Validator::make($request->all(),[
+      'origin'      => ['required'],
+      'destination' => ['required'],
+      'pet'         => ['required'],
+      'have_cage'   => ['required']
+
+  ]);
+
+   if($validator->fails())
+   {
+      return $this->sendError($validator->errors()->first());
+
+  }
+  $user               = Auth::guard('customer')->user();
+  $obj                =  new Shipment;
+  $obj->time_id 		= time(); 
+  $obj->customer_id 	= $user->id; 
+  $obj->query_status  = "Pending"; 
+  $obj->category 		= $request->category; 
+  $obj->origin 		= $request->origin; 
+  $obj->destination 	= $request->destination; 
+  $obj->pet_ids 		= $request->pet_ids; 
+  $obj->gross_weight 	= $request->gross_weight; 
+  $obj->pet_dimensions= $request->pet_dimensions; 
+  $obj->have_cage 	= $request->have_cage; 
+  $obj->cage_dimensions = $request->cage_dimensions; 
+  $obj->want_booking 	= $request->want_booking; 
+  $obj->save();
+  $data = null;
+  return $this->sendResponse($data,'shipment Info saved', 703);
+}
+
+
+public function unaccompaniedBooking(Request $request)
+{
+
+
+    $validator =  Validator::make($request->all(),[
+      "shipper_name" => ["required"],
+      "shipper_address" => ["required"],
+      "shipper_cnic" => ["required"],
+      "shipper_contact" => ["required"],
+      "shipper_email" => ["required"],
+      "consignee_name" => ["required"],
+      "consignee_address" => ["required"],
+      "consignee_contact" => ["required"],
+      "consignee_email" => ["required"],
+      "pet_photo1" => ["required"],
+      "pet_photo2" => ["required"],
+      "pet_passport" => ["required"],
+      "microchip" => ["required"],
+      "microchip_no" => ["required"],
+      "health_certificate" => ["required"],
+      "import_permit" => ["required"],
+      "titer_report" => ["required"],
+      "passport_copy" => ["required"],
+      "cnic_copy" => ["required"],
+      "ticket_copy" => ["required"],
+
+  ]);
+
+    if($validator->fails())
+    {
+      return $this->sendError($validator->errors()->first());
+
+  }
+  $user               	    = Auth::guard('customer')->user();
+  $obj                	    = Shipment::find($request->application_id);
+  $obj->shipper_name 		= $request->shipper_name;
+  $obj->shipper_address 	= $request->shipper_address;
+  $obj->shipper_cnic 		= $request->shipper_cnic;
+  $obj->shipper_contact 	= $request->shipper_contact;
+  $obj->shipper_email 	    = $request->shipper_email;
+  $obj->consignee_name 	    = $request->consignee_name;
+  $obj->consignee_address   = $request->consignee_address;
+  $obj->consignee_contact   = $request->consignee_contact;
+  $obj->consignee_email 	= $request->consignee_email;
+
+  if($request['pet_photo1'] != null)
+  {
+
+    $image = $request['pet_photo1'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $pet_photo1 = 'pet_photo1_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$pet_photo1, base64_decode($image));
+}
+
+else{
+    $pet_photo1 = 'null';
+}
+$obj->pet_photo1 		= $pet_photo1;
+
+if($request['pet_photo2'] != null)
+{
+
+    $image = $request['pet_photo2'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $pet_photo2 = 'pet_photo2_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$pet_photo2, base64_decode($image));
+}
+
+else{
+    $pet_photo2 = 'null';
+}
+
+$obj->pet_photo2 		= $pet_photo2;
+
+if($request['pet_passport'] != null)
+{
+
+    $image = $request['pet_passport'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $pet_passport = 'pet_passport_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$pet_passport, base64_decode($image));
+}
+
+else{
+    $pet_passport = 'null';
+}
+
+$obj->pet_passport 		=  $pet_passport;
+
+$obj->microchip 		= $request->microchip;
+$obj->microchip_no 		= $request->microchip_no;
+if($request['health_certificate'] != null)
+{
+
+    $image = $request['health_certificate'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $health_certificate = 'health_certificate_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$health_certificate, base64_decode($image));
+}
+
+else{
+    $health_certificate = 'null';
+}
+
+$obj->health_certificate= $health_certificate;
+
+if($request['import_permit'] != null)
+{
+
+    $image = $request['import_permit'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $import_permit = 'import_permit_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$import_permit, base64_decode($image));
+}
+
+else{
+    $import_permit = 'null';
+}
+
+$obj->import_permit 	= $import_permit;
+
+if($request['titer_report'] != null)
+{
+
+    $image = $request['titer_report'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $titer_report = 'titer_report_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$titer_report, base64_decode($image));
+}
+
+else{
+    $titer_report = 'null';
+}
+
+$obj->titer_report 		= $titer_report;
+
+if($request['passport_copy'] != null)
+{
+
+    $image = $request['passport_copy'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $passport_copy = 'passport_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$passport_copy, base64_decode($image));
+}
+
+else{
+    $passport_copy = 'null';
+}
+
+$obj->passport_copy 	= $passport_copy;
+
+if($request['cnic_copy'] != null)
+{
+
+    $image = $request['cnic_copy'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $cnic_copy = 'cnic_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$cnic_copy, base64_decode($image));
+}
+
+else{
+    $cnic_copy = 'null';
+}
+
+$obj->cnic_copy 		= $cnic_copy;
+
+if($request['ticket_copy'] != null)
+{
+
+    $image = $request['ticket_copy'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $ticket_copy = 'ticket_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$ticket_copy, base64_decode($image));
+}
+
+else{
+    $ticket_copy = 'null';
+}
+
+$obj->ticket_copy 		= $ticket_copy;
+$obj->save();
+$data = null;
+return $this->sendResponse( $data,'shipment Info saved', 703);
+}
+
+public function logout()
+{
+    Auth::guard('customer')->user()->tokens()->delete();
+
+    $data = null;
+
+    return $this->sendResponse('Logged Out', $data, 702);
+
+}
+}
