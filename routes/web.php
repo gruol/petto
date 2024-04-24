@@ -61,6 +61,7 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function() {
     Route::get('/shipment/status_update', [ShipmentController::class, 'shipmentStatusUpdate'])->name('shipment.status.update');
     Route::get('/shipment/payment/status_update', [ShipmentController::class, 'shipmentPaymentStatusUpdate'])->name('shipment.payment.status.update');
     Route::get('/shipment/view/{id}', [ShipmentController::class, 'shipmentView'])->name('shipment.view');
+    Route::get('/shipment/edit/{id}', [ShipmentController::class, 'shipmentEdit'])->name('shipment.edit');
     
 
 

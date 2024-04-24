@@ -72,27 +72,20 @@ class CustomerApiController extends BaseController
     		"contact_no" => $request->contact_no,
     		"email" => $request->email,
     		"dob" => $request->dob,
-    		// "pet_category" => $request->pet_category,
-    		// "pet_name" => $request->pet_name,
-    		// "pet_age" => $request->pet_age,
-    		// "pet_breed" => $request->pet_breed,
     		"country" => $request->country,
 
     	];
-        $request->request->add([
-            'category'  => $request->pet_category ,
-            'name'  => $request->pet_name ,
-            'age'  => $request->pet_age ,
-            'breed'  => $request->pet_breed ,
-        ]);
-        unset($request['pet_category']);
-        unset($request['pet_name']);
-        unset($request['pet_age']);
-        unset($request['pet_breed']);
-
+        
         $customer     = Customer::create($customerData );
 
-        $this->addPet($request);
+        $obj                 =  new CustomerPets;
+        $obj->customer_id    = $customer->id;
+        $obj->name           = $request->pet_name;
+        $obj->breed          = $request->pet_breed;
+        $obj->age            = $request->pet_age;
+        $obj->category       = $request->pet_category;
+        $obj->save();
+
         return $this->sendResponse([], 'Customer created successfully.');
 
     }
@@ -588,8 +581,23 @@ if($request['ticket_copy'] != null)
 else{
     $ticket_copy = 'null';
 }
+$obj->ticket_copy       = $ticket_copy;
 
-$obj->ticket_copy 		= $ticket_copy;
+if($request['visa_copy'] != null)
+{
+
+    $image = $request['visa_copy'];  
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $visa_copy = 'visa_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$visa_copy, base64_decode($image));
+}
+
+else{
+    $visa_copy = 'null';
+}
+
+$obj->visa_copy 		= $visa_copy;
 $obj->save();
 $data = null;
 return $this->sendResponse( $data,'shipment Info saved', 703);
@@ -613,7 +621,7 @@ public function postRemarks(Request $request)
   $shipment                 = Shipment::find($request->shipment_id);
   
   $remarks = $shipment->remarks ;
-  $remarks .= "<br><b> Remarks posted by</b> : ".$user->name.", <b> Posted At </b>:".date('Y-m-d h:i ')." <br><b> Remarks:</b>".$request->remarks ;
+  $remarks .= "<br><b>Posted by (Customer)</b>:".$user->name.", <b> Posted At </b>:".date('Y-m-d h:i ')." <br><b> Remarks:</b>".$request->remarks ;
   $shipment->remarks = $remarks;
 
   $shipment->update();
