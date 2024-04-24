@@ -50,7 +50,7 @@ h6>a {
 }
 
 a {
-    color: #edbfac;
+    color: #79433bed;
     text-decoration: none
 }
 
@@ -791,7 +791,7 @@ table code {
     padding: 0 20px;
     margin: -32px -32px 32px;
     margin: -2rem -2rem 2rem;
-    box-shadow: 0 0 35px 0 rgba(154, 161, 171, .15)
+    box-shadow: 0 0 10px 1px rgb(102 47 36);
 }
 
 .header-body {
@@ -877,7 +877,7 @@ table code {
 .dropdown-item:active,
 .dropdown-item:focus,
 .dropdown-item:hover {
-    color: #edbfac;
+    color: #79433bed;
     text-decoration: none;
     background-color: transparent
 }
@@ -985,7 +985,8 @@ table code {
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     border: 0;
-    box-shadow: 0 0 35px 0 rgba(154, 161, 171, .15);
+    box-shadow: 0 0 10px 1px rgb(102 47 36)
+   ; 
     -webkit-animation: m-dropdown-fade-in .3s ease 1, m-dropdown-move-up .3s ease-out 1;
     animation: m-dropdown-fade-in .3s ease 1, m-dropdown-move-up .3s ease-out 1
 }
@@ -1777,15 +1778,15 @@ table code {
 .sidebar-nav ul li.mm-active a {
     color: #fff;
     background-color: #edbfac !important;
-    box-shadow: 0 0 10px 1px rgba(55, 160, 0, .7)
+    box-shadow: 0 0 10px 1px rgb(102 47 36);
 }
 
 .sidebar-nav ul li .nav-second-level li {
     padding: 0
 }
 .btn-success{
-    background-color: #edbfac !important;
-    border-color: #edbfac !important;
+    background-color:#79433bed !important;
+    border-color:#79433bed !important;
 }
 }
 .sidebar-nav ul li .nav-second-level li a {
@@ -2067,7 +2068,7 @@ table code {
 .iconbar a.active,
 .iconbar a:focus,
 .iconbar a:hover {
-    color: #edbfac
+    color: #79433bed
 }
 
 .iconbar a+a {
@@ -2193,20 +2194,20 @@ table code {
 
 .iconbar-body .nav-link:focus,
 .iconbar-body .nav-link:hover {
-    color: #edbfac
+    color: #79433bed
 }
 
 .iconbar-body .nav-link:focus i,
 .iconbar-body .nav-link:hover i {
-    color: #edbfac
+    color: #79433bed
 }
 
 .iconbar-body .nav-link.active {
-    color: #edbfac
+    color: #79433bed
 }
 
 .iconbar-body .nav-link.active i {
-    color: #edbfac
+    color: #79433bed
 }
 
 .iconbar-pane {
@@ -2302,7 +2303,7 @@ table code {
 }
 
 .breadcrumb-item.active {
-    color: #edbfac
+    color: #79433bed
 }
 
 .breadcrumb .breadcrumb-item+.breadcrumb-item:before {
@@ -2329,7 +2330,7 @@ table code {
     background-color: #fff;
     -ms-flex-negative: 0;
     flex-shrink: 0;
-    box-shadow: 0 0 35px 0 rgba(154, 161, 171, .15)
+    box-shadow: 0 0 10px 1px rgb(102 47 36);
 }
 
 .footer-text .copy,
@@ -2361,13 +2362,13 @@ table code {
     border-radius: 4px;
     text-align: center;
     line-height: 36px;
-    color: #edbfac;
-    border: 2px solid #edbfac
+    color: #79433bed;
+    border: 2px solid #79433bed
 }
 
 .btn-top:hover {
     color: #fff;
-    background-color: #edbfac
+    background-color: #79433bed
 }
 
 .page-header {
@@ -2617,7 +2618,7 @@ table code {
 }
 
 .chart-legend-color.kelly-green {
-    background-color: #edbfac
+    background-color: #79433bed
 }
 
 .chart-legend-color.kelly-green2 {
@@ -2707,7 +2708,7 @@ table code {
 }
 
 .inbox-item .profile-status.available {
-    background-color: #edbfac
+    background-color: #79433bed
 }
 
 .inbox-item .profile-status.away {
@@ -2810,7 +2811,7 @@ table code {
 }
 
 .chat_list .odd .ctext-wrap {
-    background: #edbfac!important
+    background: #79433bed!important
 }
 
 .chat_list .odd .ctext-wrap i {
@@ -2823,7 +2824,7 @@ table code {
 
 .chat_list .odd .ctext-wrap:after {
     border-color: rgba(238, 238, 242, 0)!important;
-    border-left-color: #edbfac!important;
+    border-left-color: #79433bed!important;
     left: 100%!important;
     top: 20%!important
 }
@@ -2882,7 +2883,7 @@ table code {
 .icon_box i {
     font-size: 35px;
     display: block;
-    color: #edbfac
+    color: #79433bed
 }
 
 .icon_box:hover i {
@@ -3036,7 +3037,7 @@ table code {
 }
 
 .icon_list li:hover {
-    color: #edbfac;
+    color: #79433bed;
     background-color: rgba(55, 160, 0, .2)
 }
 
@@ -3048,7 +3049,7 @@ table code {
 }
 
 .icon_list li:hover i {
-    color: #edbfac
+    color: #79433bed
 }
 
 .icon_name {
@@ -3466,7 +3467,7 @@ table code {
 }
 
 .dataTables_wrapper .pagination .page-item.active>.page-link {
-    background: #edbfac;
+    background: #79433bed;
     color: #fff
 }
 
@@ -4110,7 +4111,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr[role=row]>th:first-child:before {
 .daterangepicker {
     font-family: 'Nunito Sans', sans-serif;
     border: 1px solid #eff2f7;
-    box-shadow: 0 0 35px 0 rgba(154, 161, 171, .15)
+    box-shadow: 0 0 10px 1px rgb(102 47 36);
 }
 
 .daterangepicker:before {
@@ -4898,7 +4899,7 @@ pre .arg {
 }
 
 .btn-success-soft {
-    color: #28a745;
+    color: #edbfac !important;
     background-color: rgba(40, 167, 69, .1);
     border-color: rgba(40, 167, 69, .3)
 }
@@ -4907,7 +4908,7 @@ pre .arg {
 .btn-success-soft:not(:disabled):not(.disabled).active,
 .btn-success-soft:not(:disabled):not(.disabled):active,
 .show>.btn-success-soft.dropdown-toggle {
-    color: #28a745;
+    color: #edbfac !important;
     background-color: rgba(40, 167, 69, .2);
     border-color: rgba(40, 167, 69, .4)
 }
@@ -5412,7 +5413,7 @@ pre .arg {
 }
 
 .badge-success-soft {
-    color: #28a745;
+    color: #edbfac !important;
     background-color: rgba(40, 167, 69, .1)
 }
 
@@ -7013,7 +7014,7 @@ pre .arg {
     text-align: center;
     background-color: #fff;
     margin-bottom: 20px;
-    box-shadow: 0 0 35px 0 rgba(154, 161, 171, .15)
+    box-shadow: 0 0 10px 1px rgb(102 47 36);
 }
 
 .city-name {

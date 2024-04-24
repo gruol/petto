@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\{CustomerPets,
 	Shipment,
 	Customer,
+    Country,
+    ShipmentPet
 };
 use App\Http\Resources\CustomerResource;
 use App\Http\Controllers\Api\BaseController as BaseController;
@@ -70,15 +72,28 @@ class CustomerApiController extends BaseController
     		"contact_no" => $request->contact_no,
     		"email" => $request->email,
     		"dob" => $request->dob,
-    		"pet_category" => $request->pet_category,
-    		"pet_name" => $request->pet_name,
-    		"pet_age" => $request->pet_age,
-    		"pet_breed" => $request->pet_breed,
+    		// "pet_category" => $request->pet_category,
+    		// "pet_name" => $request->pet_name,
+    		// "pet_age" => $request->pet_age,
+    		// "pet_breed" => $request->pet_breed,
     		"country" => $request->country,
 
     	];
-    	$customer     = Customer::create($customerData );
-    	return $this->sendResponse([], 'Customer created successfully.');
+        $request->request->add([
+            'category'  => $request->pet_category ,
+            'name'  => $request->pet_name ,
+            'age'  => $request->pet_age ,
+            'breed'  => $request->pet_breed ,
+        ]);
+        unset($request['pet_category']);
+        unset($request['pet_name']);
+        unset($request['pet_age']);
+        unset($request['pet_breed']);
+
+        $customer     = Customer::create($customerData );
+
+        $this->addPet($request);
+        return $this->sendResponse([], 'Customer created successfully.');
 
     }
 
@@ -128,7 +143,7 @@ class CustomerApiController extends BaseController
 
     	}
     	$fields = $request->all();
-        $customer = Customer::where('email',$request->email)->first(); //check Customer Exist or not
+        $customer = Customer::with('Pets')->where('email',$request->email)->first(); //check Customer Exist or not
 
         // Check password
         if(!$customer ||  !Hash::check($fields['password'], $customer->password))  {
@@ -275,13 +290,13 @@ class CustomerApiController extends BaseController
 
     	if($validator->fails())
     	{
-           return $this->sendError($validator->errors()->first());
+         return $this->sendError($validator->errors()->first());
 
 
-       }
+     }
 
-       $newPassword = $request->input('newPassword');
-       $newPasswordConfirm = $request->input('newPasswordConfirm');
+     $newPassword = $request->input('newPassword');
+     $newPasswordConfirm = $request->input('newPasswordConfirm');
 
 
         // if($newPassword !== $newPasswordConfirm)
@@ -291,89 +306,98 @@ class CustomerApiController extends BaseController
 
         // }
 
-       $user = Auth::guard('sanctum')->user();
-       $customer = Customer::where(['email' => $user->email, 'is_deleted' => 0], )->first();
+     $user = Auth::guard('sanctum')->user();
+     $customer = Customer::where(['email' => $user->email, 'is_deleted' => 0], )->first();
 
-       if($customer == null)
-       {
-          return $this->sendError('No Data found with this email');
+     if($customer == null)
+     {
+      return $this->sendError('No Data found with this email');
 
-      }
-      $customer->tokens()->delete();
+  }
+  $customer->tokens()->delete();
         // else{
 
-      Customer::find(auth()->user()->id)->update(['password'=> Hash::make($request->input('newPassword'))]);
+  Customer::find(auth()->user()->id)->update(['password'=> Hash::make($request->input('newPassword'))]);
 
-      $data = null;
-
-
-      return $this->sendResponse($data ,'Password Changed' , 703);
-
-        // }
-
-  }
-
-  public function addPet(Request $request)
-  {
-   $validator =  Validator::make($request->all(),[
-      'name'      => ['required'],
-      'breed'     => ['required'],
-      'age'       => ['required'],
-      'category'  => ['required']
-
-  ]);
-
-   if($validator->fails())
-   {
-      return $this->sendError($validator->errors()->first());
-
-  }
-  $user                = Auth::guard('customer')->user();
-  $obj                 =  new CustomerPets;
-  $obj->customer_id    = $user->id;
-  $obj->name           = $request->name;
-  $obj->breed          = $request->breed;
-  $obj->age            = $request->age;
-  $obj->category       = $request->category;
-  $obj->save();
   $data = null;
 
 
-  return $this->sendResponse($data,'Pet Info saved' , 703);
+  return $this->sendResponse($data ,'Password Changed' , 703);
+
+        // }
+
+}
+
+public function addPet(Request $request)
+{
+ $validator =  Validator::make($request->all(),[
+  'name'      => ['required'],
+  'breed'     => ['required'],
+  'age'       => ['required'],
+  'category'  => ['required']
+
+]);
+
+ if($validator->fails())
+ {
+  return $this->sendError($validator->errors()->first());
+
+}
+$user                = Auth::guard('customer')->user();
+$obj                 =  new CustomerPets;
+$obj->customer_id    = $user->id;
+$obj->name           = $request->name;
+$obj->breed          = $request->breed;
+$obj->age            = $request->age;
+$obj->category       = $request->category;
+$obj->save();
+$data = null;
+
+
+return $this->sendResponse($data,'Pet Info saved' , 703);
 }
 
 public function shipmentBooking(Request $request)
 {
-   $validator =  Validator::make($request->all(),[
-      'origin'      => ['required'],
-      'destination' => ['required'],
-      'pet'         => ['required'],
-      'have_cage'   => ['required']
+ $validator =  Validator::make($request->all(),[
+  'origin'      => ['required'],
+  'destination' => ['required'],
+  'pet'         => ['required'],
+  'have_cage'   => ['required']
 
-  ]);
+]);
 
-   if($validator->fails())
-   {
-      return $this->sendError($validator->errors()->first());
+ if($validator->fails())
+ {
+  return $this->sendError($validator->errors()->first());
 
-  }
-  $user               = Auth::guard('customer')->user();
-  $obj                =  new Shipment;
-  $obj->time_id 		= time(); 
-  $obj->customer_id 	= $user->id; 
-  $obj->query_status  = "Pending"; 
-  $obj->category 		= $request->category; 
-  $obj->origin 		= $request->origin; 
-  $obj->destination 	= $request->destination; 
-  $obj->pet_ids 		= $request->pet_ids; 
-  $obj->gross_weight 	= $request->gross_weight; 
-  $obj->pet_dimensions= $request->pet_dimensions; 
-  $obj->have_cage 	= $request->have_cage; 
-  $obj->cage_dimensions = $request->cage_dimensions; 
-  $obj->want_booking 	= $request->want_booking; 
-  $obj->save();
-  $data = null;
-  return $this->sendResponse($data,'shipment Info saved', 703);
+}
+$user               = Auth::guard('customer')->user();
+$obj                =  new Shipment;
+$obj->time_id 		= time(); 
+$obj->customer_id 	= $user->id; 
+$obj->query_status  = "Pending"; 
+$obj->category 		= $request->category; 
+$obj->origin 		= $request->origin; 
+$obj->destination 	= $request->destination; 
+// $obj->pet_ids 		= $request->pet; 
+$obj->gross_weight 	= $request->gross_weight; 
+$obj->pet_dimensions= $request->pet_dimensions; 
+$obj->have_cage 	= $request->have_cage; 
+$obj->cage_dimensions = $request->cage_dimensions; 
+$obj->want_booking 	= $request->want_booking; 
+$obj->save();
+
+foreach ($request->pet as $key => $pet_id) {
+    if (isset($pet_id ) && $pet_id > 0 ) {
+        $obj2 =   New ShipmentPet;
+        $obj2->pet_id = $pet_id;
+        $obj2->shipment_id = $obj->id;
+        $obj2->save();
+    }
+}
+$data = null;
+return $this->sendResponse($data,'shipment Info saved', 703);
 }
 
 
@@ -429,7 +453,7 @@ public function unaccompaniedBooking(Request $request)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $pet_photo1 = 'pet_photo1_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$pet_photo1, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$pet_photo1, base64_decode($image));
 }
 
 else{
@@ -444,7 +468,7 @@ if($request['pet_photo2'] != null)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $pet_photo2 = 'pet_photo2_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$pet_photo2, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$pet_photo2, base64_decode($image));
 }
 
 else{
@@ -460,7 +484,7 @@ if($request['pet_passport'] != null)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $pet_passport = 'pet_passport_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$pet_passport, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$pet_passport, base64_decode($image));
 }
 
 else{
@@ -478,7 +502,7 @@ if($request['health_certificate'] != null)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $health_certificate = 'health_certificate_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$health_certificate, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$health_certificate, base64_decode($image));
 }
 
 else{
@@ -494,7 +518,7 @@ if($request['import_permit'] != null)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $import_permit = 'import_permit_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$import_permit, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$import_permit, base64_decode($image));
 }
 
 else{
@@ -510,7 +534,7 @@ if($request['titer_report'] != null)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $titer_report = 'titer_report_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$titer_report, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$titer_report, base64_decode($image));
 }
 
 else{
@@ -526,7 +550,7 @@ if($request['passport_copy'] != null)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $passport_copy = 'passport_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$passport_copy, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$passport_copy, base64_decode($image));
 }
 
 else{
@@ -542,7 +566,7 @@ if($request['cnic_copy'] != null)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $cnic_copy = 'cnic_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$cnic_copy, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$cnic_copy, base64_decode($image));
 }
 
 else{
@@ -558,7 +582,7 @@ if($request['ticket_copy'] != null)
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $ticket_copy = 'ticket_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("uploads/pet/".$request->applicarion_id.'/'.$ticket_copy, base64_decode($image));
+    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$ticket_copy, base64_decode($image));
 }
 
 else{
@@ -571,6 +595,34 @@ $data = null;
 return $this->sendResponse( $data,'shipment Info saved', 703);
 }
 
+
+public function sync($value='')
+{
+    $data['countries'] = Country::where('is_active',1)->get()->toArray();   
+    $data['shipments'] = Shipment::with('ShipmentPet.Pets')->where('customer_id',Auth::user()->id)->get()->toArray();
+
+    return $this->sendResponse('Data Found', $data, 702);
+
+}
+public function postRemarks(Request $request)
+{
+
+  $obj                      = Shipment::find($request->shipment_id);
+  $user                     = Auth::guard('customer')->user();
+
+  $shipment                 = Shipment::find($request->shipment_id);
+  
+  $remarks = $shipment->remarks ;
+  $remarks .= "<br><b> Remarks posted by</b> : ".$user->name.", <b> Posted At </b>:".date('Y-m-d h:i ')." <br><b> Remarks:</b>".$request->remarks ;
+  $shipment->remarks = $remarks;
+
+  $shipment->update();
+  $data =null;
+  return $this->sendResponse('Ramarks Saved', $data, 702);
+
+
+}
+
 public function logout()
 {
     Auth::guard('customer')->user()->tokens()->delete();
@@ -580,4 +632,5 @@ public function logout()
     return $this->sendResponse('Logged Out', $data, 702);
 
 }
+
 }

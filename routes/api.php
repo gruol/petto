@@ -38,8 +38,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/customer-add-pet', [CustomerApiController::class, 'addPet']);
 	Route::post('/customer-shipment-booking', [CustomerApiController::class, 'shipmentBooking']);
 	Route::post('/customer-unaccompanied-booking', [CustomerApiController::class, 'unaccompaniedBooking']);
-    Route::post('/customer-logout', [CustomerApiController::class, 'logout']);
 
+    Route::get('/customer/sync', [CustomerApiController::class, 'sync'])->name('sync');
+    Route::post('/customer/post/remarks', [CustomerApiController::class, 'postRemarks']);
+
+
+
+    Route::post('/customer-logout', [CustomerApiController::class, 'logout']);
 // Clinics Routes
 
 	Route::post('/clinic-verify-otp', [ClinicApiController::class, 'verifyOtp']);

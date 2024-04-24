@@ -21,11 +21,11 @@ class CreateShipmentsTable extends Migration
             $table->string('shipment_status')->nullable();
             $table->string('payment_status')->nullable();
             $table->string('quotation')->nullable();
-            $table->string('remarks')->nullable();
+            $table->string('book_shipment')->nullable();
             $table->string('category')->nullable();
             $table->string('origin')->nullable();
             $table->string('destination')->nullable();
-            $table->string('pet_ids')->nullable();
+            // $table->string('pet_ids')->nullable();
             $table->string('gross_weight')->nullable();
             $table->string('pet_dimensions')->nullable();
             $table->string('have_cage')->nullable();
@@ -56,6 +56,7 @@ class CreateShipmentsTable extends Migration
             $table->string('cnic_copy')->nullable();
             $table->string('ticket_copy')->nullable();
             $table->string('visa_copy')->nullable();
+            $table->longText('remarks')->nullable();
 
             $table->timestamps();
         });

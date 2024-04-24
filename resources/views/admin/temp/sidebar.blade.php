@@ -41,65 +41,16 @@
 					</a>
 				</li>
 				@endcan
-				@if(auth()->user()->can('product-list') || auth()->user()->can('brand-list'))
-				<li>
-					<a class="has-arrow material-ripple" href="#" aria-expanded="false">
-                         <i class="typcn typcn-chart-pie-outline mr-2"></i> Products
-                    </a>
-                    <ul class="nav-second-level mm-collapse">
-                    	@can('brand-list')
-						<li class="@if(Request::segment(2) == "brand")) {{ "mm-active" }}  @endif">
-							<a class="" href="{{ route('admin.brand.index') }}">
-								<i class="typcn typcn-ticket mr-2"></i>
-								Brands
-							</a>
-						</li>
-						<li class="@if(Request::segment(2) == "product")) {{ "mm-active" }}  @endif">
-							<a class="" href="{{ route('admin.product.index') }}">
-								<i class="typcn typcn-waves-outline mr-2"></i>
-								Products
-							</a>
-						</li>
-						@endcan
-                    </ul>
-				</li>
-				@endif
-
-				@can('clients-list')
-				<li class="@if( Request::segment(2) == "clients") {{ "mm-active" }}  @endif">
-					<a class="" href="{{ route('admin.clients.index') }}">
-						<i class="typcn typcn-user-outline mr-2"></i>
-						Clients
+				{{-- @can('orders-list') --}}
+				<li class="@if( Request::segment(2) == "shipment") {{ "mm-active" }}  @endif">
+					<a class="" href="{{ route('admin.shipment.index') }}">
+						<i class="typcn typcn-plane  mr-2"></i>
+						Shipment
 					</a>
 				</li>
-				@endcan
-				@if(auth()->user()->can('prices-list'))
-				<li>
-					<a class="has-arrow material-ripple" href="#" aria-expanded="false">
-                         <i class="typcn typcn-cog-outline mr-2"></i> Settings
-                    </a>
-                    <ul class="nav-second-level mm-collapse">
-                    	@can('brand-list')
-						<li class="@if(Request::segment(2) == "settings" && Request::segment(3) == "decoration-prices" ) {{ "mm-active" }}  @endif">
-							<a class="" href="{{ route('admin.price.index') }}">
-								<i class="typcn typcn-book mr-2"></i>
-								Decoration Prices
-							</a>
-						</li>
-						@endcan
-                    </ul>
-				</li>
-				@endif
-				@can('orders-list')
-				<li class="@if( Request::segment(2) == "orders") {{ "mm-active" }}  @endif">
-					<a class="" href="{{ route('admin.orders.index') }}">
-						<i class="typcn typcn-shopping-cart  mr-2"></i>
-						Orders
-					</a>
-				</li>
-				@endcan
+				{{-- @endcan --}}
 
-				<li>
+				<li  class="@if( Request::segment(2) == "change-password") {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('admin.changePassword') }}">
 						<i class="typcn typcn-user mr-2"></i>
 						Change Password

@@ -20,10 +20,10 @@ class CreateCustomersTable extends Migration
             $table->string('contact_no');
             $table->string('email')->unique();
             $table->string('dob');
-            $table->string('pet_category');
-            $table->string('pet_name');
-            $table->string('pet_age');
-            $table->string('pet_breed');
+            // $table->string('pet_category');
+            // $table->string('pet_name');
+            // $table->string('pet_age');
+            // $table->string('pet_breed');
             $table->string('country');
             $table->integer('otp')->default(0);
             $table->tinyInteger('is_otp_verified')->default(0);

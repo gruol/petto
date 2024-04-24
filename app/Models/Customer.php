@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\CustomerPets;
 
 class Customer extends Model
 {
@@ -26,4 +27,9 @@ class Customer extends Model
 		"token",
 		"is_deleted",
 	];
+	public function Pets()
+    {
+        return $this->hasMany(CustomerPets::class);
+    }
+
 }

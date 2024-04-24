@@ -36,11 +36,11 @@
                         {{ session('error') }}
                     </div>
                     @endif
-                    <form class="login" action="{{ route('login.post') }}" method="POST">
+                    <form class="login" action="{{ route('login') }}" method="POST">
                        
                      @csrf
                      <div class="form-group">
-                        <input type="text" class="form-control" name="email" id="email" placeholder="Enter email">
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Enter email">
                         
                     </div>
                     <div class="form-group">

@@ -16,14 +16,11 @@ class CustomerResource extends JsonResource
     {
         return [
             "name"              => $this->name,
-            // "password"          => $this->password,
+            // "password"       => $this->password,
             "contact_no"        => $this->contact_no,
             "email"             => $this->email,
             "dob"               => $this->dob,
-            "pet_category"      => $this->pet_category,
-            "pet_name"          => $this->pet_name,
-            "pet_age"           => $this->pet_age,
-            "pet_breed"         => $this->pet_breed,
+            "pets"              => $this->Pets,
             "country"           => $this->country,
             "otp"               => $this->otp,
             "is_otp_verified"   => $this->is_otp_verified,
