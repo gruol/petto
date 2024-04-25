@@ -21,4 +21,8 @@ class Shipment extends Model
     {
         return $this->hasMany(ShipmentPet::class);
     }
+     public function CustomerPets()
+    {
+        return $this->hasMany(CustomerPets::class,'customer_id','id');
+    }
 }

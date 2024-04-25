@@ -607,7 +607,7 @@ return $this->sendResponse( $data,'shipment Info saved', 703);
 public function sync($value='')
 {
     $data['countries'] = Country::where('is_active',1)->get()->toArray();   
-    $data['shipments'] = Shipment::with('ShipmentPet.Pets')->where('customer_id',Auth::user()->id)->get()->toArray();
+    $data['shipments'] = Shipment::with('ShipmentPet.Pets','CustomerPets','ShipmentBy')->where('customer_id',Auth::user()->id)->get()->toArray();
 
     return $this->sendResponse('Data Found', $data, 702);
 
