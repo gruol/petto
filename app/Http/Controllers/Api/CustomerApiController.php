@@ -156,9 +156,11 @@ class CustomerApiController extends BaseController
     	$otpCode = random_int(1000, 9999);
     	if (isset($request->email) && $request->email != null) {
     		$customer = Customer::where('email',$request->email)->first();
-    		$customer->otp = $otpCode;
-    		$customer->otp_created_at = Carbon::now();
-    		$customer->update();
+            if ($customer) {
+                $customer->otp = $otpCode;
+        		$customer->otp_created_at = Carbon::now();
+        		$customer->update();
+            }
     	}else{
     		$customer   = Auth::guard('sanctum')->user();
     		Customer::where('id',$customer->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
@@ -230,7 +232,7 @@ class CustomerApiController extends BaseController
         	$message = 'Dear Customer, your account has been verified VIA OTP.';
 
 
-        	return $this->sendResponse(null,"Profile Verified" );
+        	return $this->sendResponse(null,"OTP Verified" );
         }
         else
         {
@@ -336,7 +338,7 @@ public function addPet(Request $request)
   return $this->sendError($validator->errors()->first());
 
 }
-$user                = Auth::guard('customer')->user();
+$user                = Auth::guard('sanctum')->user();
 $obj                 =  new CustomerPets;
 $obj->customer_id    = $user->id;
 $obj->name           = $request->name;
@@ -365,7 +367,7 @@ public function shipmentBooking(Request $request)
   return $this->sendError($validator->errors()->first());
 
 }
-$user               = Auth::guard('customer')->user();
+$user               = Auth::guard('sanctum')->user();
 $obj                =  new Shipment;
 $obj->time_id 		= time(); 
 $obj->customer_id 	= $user->id; 
@@ -427,7 +429,7 @@ public function unaccompaniedBooking(Request $request)
       return $this->sendError($validator->errors()->first());
 
   }
-  $user               	    = Auth::guard('customer')->user();
+  $user               	    = Auth::guard('sanctum')->user();
   $obj                	    = Shipment::find($request->application_id);
   $obj->shipper_name 		= $request->shipper_name;
   $obj->shipper_address 	= $request->shipper_address;
@@ -616,7 +618,7 @@ public function postRemarks(Request $request)
 {
 
   $obj                      = Shipment::find($request->shipment_id);
-  $user                     = Auth::guard('customer')->user();
+  $user                     = Auth::guard('sanctum')->user();
 
   $shipment                 = Shipment::find($request->shipment_id);
   
@@ -633,7 +635,7 @@ public function postRemarks(Request $request)
 
 public function logout()
 {
-    Auth::guard('customer')->user()->tokens()->delete();
+    Auth::guard('sanctum')->user()->tokens()->delete();
 
     $data = null;
 

@@ -27,7 +27,7 @@ class CreateClinicsTable extends Migration
             $table->timestamp('otp_created_at')->nullable();
             $table->string('token')->nullable();
             $table->integer('is_deleted')->default(0);
-            $table->string('is_approved')->nullable();
+            $table->tinyInteger('is_approved')->default(0);
             $table->integer('approved_at')->nullable();
             $table->timestamps();
         });

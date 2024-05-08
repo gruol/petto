@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\{CustomerPets,
     Shipment,
     Customer,
-    Clinic
+    Clinic,
+    Doctor
 };
 use App\Http\Resources\CustomerResource;
 use App\Http\Resources\ClinicResource;
@@ -130,34 +131,59 @@ class ClinicApiController extends BaseController
 
         }
         $fields = $request->all();
-        $clinic = Clinic::where('email',$request->email)->first(); //check Customer Exist or not
+        $clinic = Clinic::where('email',$request->email)->first(); 
+        if (isset($clinic)) {
+            if( $clinic->is_otp_verified == 0){
+                return $this->sendError("Your profile is not OTP verified", null);
 
-        // Check password
-        if(!$clinic ||  !Hash::check($fields['password'], $clinic->password))  {
-            return $this->sendError('Invalid Login Credentials');
+            }
+            if($clinic->is_approved == 0){
+                return $this->sendError("Your profile is not appoved yet", null);
+
+            }
+                // Check password
+                if(!$clinic ||  !Hash::check($fields['password'], $clinic->password))  {
+                    return $this->sendError('Invalid Login Credentials');
+                }
+
+                $clinic->otp             = random_int(100000, 999999);
+                $clinic->otp_created_at  = Carbon::now();
+                $clinic->save();
+
+                return $this->sendResponse(new ClinicResource($clinic), 'Clinic retrieved successfully.');
+        }else{
+                    return $this->sendError("User Not Found, try again", null);
+
         }
-
-        $clinic->otp             = random_int(100000, 999999);
-        $clinic->otp_created_at  = Carbon::now();
-        $clinic->save();
-
-        return $this->sendResponse(new ClinicResource($clinic), 'Clinic retrieved successfully.');
     }
-    public function sendOtp(Request $request)
+       public function sendOtp(Request $request)
     {
         // try{
             // $otpVia  = $request->input('otpVia');
+        $data = null;
+
         $otpCode = random_int(1000, 9999);
         if (isset($request->email) && $request->email != null) {
             $clinic = Clinic::where('email',$request->email)->first();
-            $clinic->otp = $otpCode;
-            $clinic->otp_created_at = Carbon::now();
-            $clinic->update();
+            
+            if ($clinic) {
+                $clinic->otp = $otpCode;
+                $clinic->otp_created_at = Carbon::now();
+                $clinic->update();
+            }
         }else{
             $clinic   = Auth::guard('sanctum')->user();
             Clinic::where('id',$clinic->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
         }
+if (empty($clinic)) {
+        $message = "User Not Found" ;
+            return $this->sendError($data,$message );
 
+        
+}else{
+
+        $message = "Your OTP is : " . $otpCode . "." ;
+}
             // if($otpVia == 1)
             // {
                 // $message = "Your OTP is : " . $otpCode . "." ;
@@ -165,19 +191,18 @@ class ClinicApiController extends BaseController
             // }
             // elseif($otpVia == 2)
             // {
-        $message = "Your OTP is : " . $otpCode . "." ;
 
 
             //     $details = [
             //         'title' => Config::get('constants._PROJECT_NAME'),
             //         'body' => $otpCode
             //     ];
-            //     \Mail::to($clinic->email)->send(new \App\Mail\SupervisorSendOtpMail($details));
+            //     \Mail::to($customer->email)->send(new \App\Mail\SupervisorSendOtpMail($details));
 
             // }
 
-            // $clinic = Auth::guard('sanctum')->user();
-            // if($clinic->otpVerified == 0)
+            // $customer = Auth::guard('sanctum')->user();
+            // if($customer->otpVerified == 0)
             // {
             //     $data = [
             //         'otpVerification' => true,
@@ -185,7 +210,6 @@ class ClinicApiController extends BaseController
             // }
             // else{
 
-        $data = null;
             // }
     // return $this->sendResponse( $message,$data);
 
@@ -221,7 +245,7 @@ class ClinicApiController extends BaseController
             $clinic = Clinic::where('id', $clinic->id)->update(['is_otp_verified' => 1]);
 
 
-            $message = 'Dear Customer, your account has been verified VIA OTP.';
+            $message = 'Dear User, your account has been verified VIA OTP.';
 
 
             return $this->sendResponse(null,"OTP Verified" );
@@ -253,7 +277,7 @@ class ClinicApiController extends BaseController
 
         $clinic = Clinic::where(['email' => $fields['email'] ])->first();
         if(!$clinic) {
-            return $this->sendError('No Customer found');
+            return $this->sendError('No User found');
         }
         $clinic->tokens()->delete();
 
@@ -314,12 +338,58 @@ class ClinicApiController extends BaseController
 
     }
 
-    
+    public function addDoctor(Request $request)
+    {
+        $user = Auth::guard('sanctum')->user();
+        // dd($user->id);
+         $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'contact' => 'required',
+        ]);
+
+        if($validator->fails())
+        {
+            return $this->sendError( $validator->errors()->first());
+
+        }
+
+
+          if($request['picture'] != null)
+          {
+
+            $image = $request['picture'];  
+            $image = str_replace('data:image/jpeg;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+            $picture = 'picture_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
+            Storage::put("public/uploads/pet/".$user->id.'/'.$picture, base64_decode($image));
+        }
+
+        else{
+            $picture = 'null';
+        }
+
+        $data = [ 
+            "name" => $request->name,
+            "clinic_id" => $user->id,
+            "picture" => $picture,
+            "contact" => $request->contact,
+            "email" => $request->email,
+            "education" => $request->education,
+            "experience" => $request->experience,
+            "expertise" => $request->expertise,
+            "availability" => $request->availability,
+            "charges" => $request->charges,
+
+        ];
+        $doctor     = Doctor::create($data );
+        return $this->sendResponse([], 'Doctor creation request has been forwarded to Petto team for review and approval');
+
+    }
+
 
     public function logout()
     {
-        Auth::guard('customer')->user()->tokens()->delete();
-
+        $data =     Auth::guard('sanctum')->user()->tokens()->delete();
         $data = null;
 
         return $this->sendResponse('Logged Out', $data, 702);

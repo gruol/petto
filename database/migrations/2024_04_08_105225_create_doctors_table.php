@@ -17,7 +17,7 @@ class CreateDoctorsTable extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('picture')->nullable();
-            $table->string('clinic_name')->nullable();
+            $table->integer('clinic_id')->nullable();
             $table->string('contact')->nullable();
             $table->string('email')->nullable();
             $table->string('education')->nullable();
@@ -25,7 +25,7 @@ class CreateDoctorsTable extends Migration
             $table->string('expertise')->nullable();
             $table->text('availability')->nullable();
             $table->string('charges')->nullable();
-            $table->string('is_approved')->nullable();
+            $table->tinyInteger('is_approved')->default(0);
             $table->integer('approved_at')->nullable();
             $table->timestamps();
         });

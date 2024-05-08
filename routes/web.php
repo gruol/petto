@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ShipmentController;
+use App\Http\Controllers\ClinicController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +26,6 @@ Auth::routes([
   'reset' => false, // Password Reset Routes...
   'verify' => false, // Email Verification Routes...
 ]);
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -37,14 +37,16 @@ Route::get('/', function () {
 Route::get('/password/reset', [AuthController::class, 'forgetPassword'])->name('password.reset'); 
 Route::post('/user/password-reset', [AuthController::class, 'passwordReset'])->name('user.passwordReset'); 
 
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Route::get('admin', [AuthController::class, 'index'])->name('login');
 
 
 /* Start Admin Routes */
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function() {
+    
     /* Start Dashboard Routes */
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
     /* End Dashboard Routes */
     Route::get('/change-password',  [AuthController::class, 'changePassword'])->name('changePassword'); 
     Route::post('/change-password-save',  [AuthController::class, 'changePasswordSave'])->name('changePasswordSave');
@@ -61,7 +63,15 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function() {
     Route::get('/shipment/status_update', [ShipmentController::class, 'shipmentStatusUpdate'])->name('shipment.status.update');
     Route::get('/shipment/payment/status_update', [ShipmentController::class, 'shipmentPaymentStatusUpdate'])->name('shipment.payment.status.update');
     Route::get('/shipment/view/{id}', [ShipmentController::class, 'shipmentView'])->name('shipment.view');
-    Route::get('/shipment/edit/{id}', [ShipmentController::class, 'shipmentEdit'])->name('shipment.edit');
+    // Route::get('/shipment/edit/{id}', [ShipmentController::class, 'shipmentEdit'])->name('shipment.edit');
+
+    Route::get('/clinic', [ClinicController::class, 'index'])->name('clinic.index');
+    Route::get('/clinic/ajaxData', [ClinicController::class, 'ajaxtData'])->name('clinic.ajax_data');
+    Route::get('/clinic/query/status_update', [ClinicController::class, 'clinicQueryStatusUpdate'])->name('clinic.query.status.update');
+    Route::get('/clinic/status_update', [ClinicController::class, 'clinicStatusUpdate'])->name('clinic.status.update');
+    Route::get('/clinic/payment/status_update', [ClinicController::class, 'clinicPaymentStatusUpdate'])->name('clinic.payment.status.update');
+    Route::get('/clinic/view/{id}', [ClinicController::class, 'clinicView'])->name('clinic.view');
+   
     
 
 

@@ -34,7 +34,7 @@ return [
     | Supported: "session"
     |
     */
-
+// https://stackoverflow.com/questions/61170647/laravel-sanctum-can-be-use-multiauth-guard
     'guards' => [
         'web' => [
             'driver' => 'session',
@@ -48,6 +48,10 @@ return [
     'customer' => [
         'driver' => 'sanctum',
         'provider' => 'customer',
+    ],
+    'clinic' => [
+        'driver' => 'sanctum',
+        'provider' => 'clinic',
     ],
     ],
 
@@ -78,9 +82,13 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
-         'customer' => [
+        'customer' => [
         'driver' => 'eloquent',
         'model' => App\Models\Customer::class,
+    ],
+      'clinic' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Clinic::class,
     ],
     ],
 

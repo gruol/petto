@@ -17,14 +17,14 @@
 		<nav class="sidebar-nav">
 			<ul class="metismenu">
 				{{-- <li class="nav-label">Main Menu</li> --}}
-				@can('dashboard-view')
-				<li class="@if(Request::segment(2) == "dashboard")) {{ "mm-active" }}  @endif">
+				{{-- @can('dashboard-view') --}}
+				<li class="@if(Request::segment(2) == "dashboard" || Request::segment(2) == "home")) {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('admin.dashboard') }}">
 						<i class="typcn typcn-home-outline mr-2"></i>
 						Dashboard
 					</a>
 				</li>
-				@endcan
+				{{-- @endcan --}}
 				@can('roles-list')
 				<li class="@if(Request::segment(2) == "roles")) {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('admin.roles.index') }}">
@@ -57,10 +57,17 @@
 					</a>
 				</li>
 				<li>
-					<a class="" href="{{ route('logout') }}">
-						<i class="typcn typcn-user-delete mr-2"></i>
-						Logout
-					</a>
+					
+
+					     <a class="dropdown-item" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                                              document.getElementById('logout-form').submit();"><i class="typcn typcn-user-delete mr-2"></i> Logout</a>
+                                              <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                                 @csrf
+                                             </form> 
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
 				</li>
 			</ul>
 		</nav>
