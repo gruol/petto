@@ -190,14 +190,15 @@
        <div class="row">
         <br/>
         <div class="col text-center">
-          <h2> Shipment Count</h2><br>
+          <h2> Pet Shipment</h2><br>
           {{-- <p>counter to count up to a target number</p> --}}
         </div>
       </div>
       <div class="row text-center">
         <div class="col">
           <div class="counter">
-            <i class="fa fa-paw fa-2x"></i>
+            {{-- <i class="fa fa-paw fa-2x"></i> --}}
+            <img width="10%" height="10%" src="{{asset('assets/images/question_1_-removebg-preview.png')}}">
             <h2 class="timer count-title count-number" data-to="100" data-speed="1500"></h2>
             <p class="count-text ">Inquiry Pending</p>
             <h1>{{$registeredPets['totaRegisteredPets']}}</h1>
@@ -206,7 +207,9 @@
         </div>
         <div class="col">
          <div class="counter">
-          <i class="fas fa-dog fa-2x"></i>
+          {{-- <i class="fas fa-dog fa-2x"></i> --}}
+            <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}">
+
           <h2 class="timer count-title count-number" data-to="1700" data-speed="1500"></h2>
           <p class="count-text ">Inquiry Responded</p>
           <h1>{{$registeredPets['DogCount']}}</h1>
@@ -214,14 +217,17 @@
       </div>
       <div class="col">
         <div class="counter">
-          <i class="fas fa-cat fa-2x"></i>
+          {{-- <i class="fas fa-cat fa-2x"></i> --}}
+
+            <img width="10%" height="10%" src="{{asset('assets/images/plane-removebg-preview.png')}}">
           <h2 class="timer count-title count-number" data-to="11900" data-speed="1500"></h2>
           <p class="count-text ">Shipment Confirmed</p>
           <h1>{{$registeredPets['CatCount']}}</h1>
         </div></div>
         <div class="col">
           <div class="counter">
-            <i class="fas fa-feather-alt fa-2x"></i>
+            {{-- <i class="fas fa-feather-alt fa-2x"></i> --}}
+            <img width="10%" height="10%" src="{{asset('assets/images/delivered-removebg-preview.png')}}">
             <h2 class="timer count-title count-number" data-to="157" data-speed="1500"></h2>
             <p class="count-text ">Shipment Delivered</p>
             <h1>{{$registeredPets['BirdCount']}}</h1>

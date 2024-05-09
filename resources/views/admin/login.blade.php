@@ -13,6 +13,16 @@
     <link href="{{asset('b/plugins/bootstrap/css/typicons.min.css')}}" rel="stylesheet">
     <link href="{{asset('b/plugins/bootstrap/css/themify-icons.min.css')}}" rel="stylesheet">
     <link href="{{asset('b/dist/css/style.css')}}" rel="stylesheet">
+    <style type="text/css">
+        body{
+            background-image: url({{asset('assets/images/loginBack.jpg')}});
+             height: 100%; 
+              /* Center and scale the image nicely */
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: cover;
+        }
+    </style>
 </head>
 <body class="bg-white">
     <div class="d-flex align-items-center justify-content-center text-center h-100vh">

@@ -32,8 +32,8 @@ Route::post('/clinic-forgot-password', [ClinicApiController::class, 'forgotPassw
 
 
 
-// Route::group(['middleware' => ['auth:customer']], function () {
-Route::middleware(['auth:sanctum', 'customer'])->group(function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
+// Route::middleware(['auth:sanctum', 'customer'])->group(function () {
 	// Route::post('/send-otp', [AgentApiController::class, 'sendOtp']);
 	Route::post('/customer-change-password', [CustomerApiController::class, 'changePassword']);
 	Route::post('/customer-send-otp', [CustomerApiController::class, 'sendOtp']);
@@ -50,7 +50,7 @@ Route::middleware(['auth:sanctum', 'customer'])->group(function () {
 });
 
 // Clinics Routes
-Route::group(['middleware' => ['auth:clinic']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
 // Route::middleware(['auth:sanctum', 'clinic'])->group(function () {
 
 	Route::post('/clinic-verify-otp', [ClinicApiController::class, 'verifyOtp']);

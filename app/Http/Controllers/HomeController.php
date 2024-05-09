@@ -34,6 +34,13 @@ class HomeController extends Controller
                     count( CASE WHEN category = 'Cat' THEN 1 ELSE NULL END ) AS CatCount,
                     count( CASE WHEN category = 'Bird' THEN 1 ELSE NULL END ) AS BirdCount,count(*) as totaRegisteredPets")->first();
         // dd($registeredPets);
+
+//         SELECT
+//     count( CASE WHEN query_status = 'Pending' THEN 1 ELSE NULL END ) AS queryPendingCount,
+//     count( CASE WHEN query_status = 'Responded' THEN 1 ELSE NULL END ) AS queryRespondedCount,
+    
+// FROM
+//     `shipments` 
         return view('admin.dashboard.dashboard',compact('registeredPets'))->with('pageTitle');
     }
 }
