@@ -63,7 +63,8 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function() {
     Route::get('/shipment/status_update', [ShipmentController::class, 'shipmentStatusUpdate'])->name('shipment.status.update');
     Route::get('/shipment/payment/status_update', [ShipmentController::class, 'shipmentPaymentStatusUpdate'])->name('shipment.payment.status.update');
     Route::get('/shipment/view/{id}', [ShipmentController::class, 'shipmentView'])->name('shipment.view');
-    // Route::get('/shipment/edit/{id}', [ShipmentController::class, 'shipmentEdit'])->name('shipment.edit');
+    Route::get('/shipment/edit/{id}', [ShipmentController::class, 'shipmentEdit'])->name('shipment.edit');
+    Route::post('/shipment/update', [ShipmentController::class, 'shipmentUpdate'])->name('shipment.update');
 
     Route::get('/clinic', [ClinicController::class, 'index'])->name('clinic.index');
     Route::get('/clinic/ajaxData', [ClinicController::class, 'ajaxtData'])->name('clinic.ajax_data');

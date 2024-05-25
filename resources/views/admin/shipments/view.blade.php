@@ -66,41 +66,42 @@
 
 </style>
 <div class="body-content">
-    <div class="row mb-4 ">
-        @if(isset($shipment->pet_photo1))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->pet_photo1)}}" title="Pet’s 1st Photo  inside the cage & outside the cage " style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>  
-        @endif
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->pet_photo2)}}" title="Pet’s 2nd Photo  inside the cage & outside the cage " style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/> 
-        @endif
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->pet_passport)}}" title="Pet’s Passport" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif            
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->health_certificate)}}" title="Pet Health Certificate (Disclaimer - must be approved by Private Vet)" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif            
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->import_permit)}}" title="Pet Import Permit (Subject to Destination e.g. UAE issued from
-        moccae.gov.ae)" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->titer_report)}}" title="Rabies titer Report (Disclaimer - for UAE, CA, issued from UVAS
-        LAHORE & for U.K Europe EU Approved Laborites Destination
-        authorities)" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->passport_copy)}}" title="Passport Copy Disclaimer - (Bio Page) " style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->cnic_copy)}}" title="CNIC Copy" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->ticket_copy)}}" title="Ticket Copy" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->visa_copy)}}" title="Visa Copy" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
+    
+    <div class="row  mb-4">
+        {{-- @if(isset($shipment->pet_photo1)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->pet_photo1)}}" title="Pet’s 1st Photo  inside the cage & outside the cage is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>  
+      
+        {{-- @endif --}}
+
+        {{-- @if(isset($shipment->pet_photo2)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->pet_photo2)}}" title="Pet’s 2nd Photo  inside the cage & outside the cage is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/> 
+        {{-- @endif --}}
+        {{-- @if(isset($shipment->pet_passport)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->pet_passport)}}" title="Pet’s Passport is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif             --}}
+        {{-- @if(isset($shipment->health_certificate)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->health_certificate)}}" title="Pet Health Certificate (Disclaimer - must be approved by Private Vet)  is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif             --}}
+        {{-- @if(isset($shipment->import_permit)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->import_permit)}}" title="Pet Import Permit (Subject to Destination e.g. UAE issued from moccae.gov.ae) is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->titer_report)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->titer_report)}}" title="Rabies titer Report (Disclaimer - for UAE, CA, issued from UVAS LAHORE & for U.K Europe EU Approved Laborites Destination authorities) is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->passport_copy)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->passport_copy)}}" title="Passport Copy Disclaimer - (Bio Page)  is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->cnic_copy)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->cnic_copy)}}" title="CNIC Copy is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->ticket_copy)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->ticket_copy)}}" title="Ticket Copy is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->visa_copy)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->visa_copy)}}" title="Visa Copy is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
     </div>
+    
 
     <div class="row">
         <div class="col-lg-4">

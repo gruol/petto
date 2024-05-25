@@ -63,44 +63,286 @@
         width: 100%;
     }
 }
-
+.upload__box {
+    padding: 20px 0px;
+}
+.upload__btn-box {
+    margin-bottom: 10px;
+}
+.upload__btn {
+    display: inline-block;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    min-width: 116px;
+    /* padding: 5px; */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid;
+    background-color: #4045ba;
+    border-color: #4045ba;
+    border-radius: 10px;
+    line-height: 26px;
+    font-size: 14px;
+}
+.upload__inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.upload__img-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+.upload__img-box {
+    width: 200px;
+    padding: 0 10px;
+    margin-bottom: 12px;
+}
+element.style {
+}
+.upload__btn:hover {
+    background-color: unset;
+    color: #4045ba;
+    transition: all 0.3s ease;
+}
+.upload__img-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-align: center;
+    line-height: 24px;
+    z-index: 1;
+    cursor: pointer;
+}
+.upload__img-close:after {
+    content: '\2716';
+    font-size: 14px;
+    color: white;
+}
+.img-bg {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+    padding-bottom: 100%;
+}
 </style>
 <div class="body-content">
-    <div class="row mb-4 ">
-        @if(isset($shipment->pet_photo1))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->pet_photo1)}}" title="Pet’s 1st Photo  inside the cage & outside the cage " style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>  
-        @endif
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->pet_photo2)}}" title="Pet’s 2nd Photo  inside the cage & outside the cage " style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/> 
-        @endif
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->pet_passport)}}" title="Pet’s Passport" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif            
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->health_certificate)}}" title="Pet Health Certificate (Disclaimer - must be approved by Private Vet)" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif            
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->import_permit)}}" title="Pet Import Permit (Subject to Destination e.g. UAE issued from
-        moccae.gov.ae)" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->titer_report)}}" title="Rabies titer Report (Disclaimer - for UAE, CA, issued from UVAS
-        LAHORE & for U.K Europe EU Approved Laborites Destination
-        authorities)" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->passport_copy)}}" title="Passport Copy Disclaimer - (Bio Page) " style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->cnic_copy)}}" title="CNIC Copy" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->ticket_copy)}}" title="Ticket Copy" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
-        @if(isset($shipment->pet_photo2))
-        <img  src="{{asset('storage/uploads/pet/'.$shipment->visa_copy)}}" title="Visa Copy" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
-        @endif 
+
+    <div class="row  mb-4">
+        {{-- @if(isset($shipment->pet_photo1)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->pet_photo1)}}" title="Pet’s 1st Photo  inside the cage & outside the cage is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>  
+      
+        {{-- @endif --}}
+
+        {{-- @if(isset($shipment->pet_photo2)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->pet_photo2)}}" title="Pet’s 2nd Photo  inside the cage & outside the cage is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/> 
+        {{-- @endif --}}
+        {{-- @if(isset($shipment->pet_passport)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->pet_passport)}}" title="Pet’s Passport is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif             --}}
+        {{-- @if(isset($shipment->health_certificate)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->health_certificate)}}" title="Pet Health Certificate (Disclaimer - must be approved by Private Vet)  is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif             --}}
+        {{-- @if(isset($shipment->import_permit)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->import_permit)}}" title="Pet Import Permit (Subject to Destination e.g. UAE issued from moccae.gov.ae) is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->titer_report)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->titer_report)}}" title="Rabies titer Report (Disclaimer - for UAE, CA, issued from UVAS LAHORE & for U.K Europe EU Approved Laborites Destination authorities) is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->passport_copy)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->passport_copy)}}" title="Passport Copy Disclaimer - (Bio Page)  is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->cnic_copy)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->cnic_copy)}}" title="CNIC Copy is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->ticket_copy)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->ticket_copy)}}" title="Ticket Copy is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
+        {{-- @if(isset($shipment->visa_copy)) --}}
+        <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->visa_copy)}}" title="Visa Copy is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>
+        {{-- @endif  --}}
     </div>
+    
+   
+    <div class="row mb-4 text-center">
+    <form  method="POST"  action="{{route('admin.shipment.update')}}"  enctype="multipart/form-data" novalidate>
+    @csrf
+    <input type="hidden" name="shipment_id" value="{{$shipment->id}}">
+        <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label> Pet’s 2nd Photo  inside the cage & outside the cage</label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="pet_photo1"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+            <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label> Pet’s 2nd Photo  inside the cage & outside the cage</label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="pet_photo2"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+               <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label>Pet’s Passport </label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="pet_passport"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+              <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label>Pet Health Certificate (Disclaimer - must be approved by Private Vet) </label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="health_certificate"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+            <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label>Pet Import Permit (Subject to Destination e.g. UAE issued from moccae.gov.ae) </label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="import_permit"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+                <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label>Rabies titer Report (Disclaimer - for UAE, CA, issued from UVAS LAHORE & for U.K Europe EU Approved Laborites Destination authorities) </label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="titer_report"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+             <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label>Passport Copy Disclaimer - (Bio Page) </label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="passport_copy"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+                  <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label>CNIC Copy</label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="cnic_copy"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+            <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label>Ticket Copy</label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="ticket_copy"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+               <div class="row ">
+            <div class="col-md-6 mt-4">  
+                <label>Visa Copy</label>
+            </div>
+            <div class="col-md-6">  
+                <div class="upload__box">
+                  <div class="upload__btn-box">
+                    <label class="upload__btn">
+                      <p>Click to Update </p>
+                      <input type="file" name="visa_copy"  data-max_length="20" class="upload__inputfile">
+                    </label>
+                  </div>
+                  <div class="upload__img-wrap"></div>
+                </div>
+            </div>
+            </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+         
+    </form>
+    </div>
+   
 
     <div class="row">
         <div class="col-lg-4">
@@ -323,31 +565,7 @@
                             </div>
                         </div>
                     </div>
-                    <hr class="mt-2 mb-3"/>
-                    <form method="POST" action="{{ route('admin.add-shipment-remarks') }}" >
-                        @csrf
-                        <div class="row">
-                            <input type="hidden" name="shipment_id" value="{{$shipment->id}}">
-                            <div class="col-md-8 pr-md-1">
-                                <div class="form-group">
-                                    <label class="font-weight-600">Quotation</label>
-                                    <input type="text" class="form-control" name="quotation"  value="">
-                                </div>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label text-dark-gray" for="">Remarks</label>
-                                <div>
-                                    <textarea  name="remarks" class="form-control"></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-8 pr-md-1">
-                                <div class="form-group">
-                                 <button  type="submit"  class="btn btn-success">Save</button>
-                             </div>
-                         </div>
-                     </div>
-                 </form>
-
+                 
              </div>
          </div>
      </div>
@@ -382,7 +600,64 @@
     $("#image-viewer .close").click(function(){
       $('#image-viewer').hide();
   });
+  function ImgUpload() {
+          var imgWrap = "";
+          var imgArray = [];
 
+          $('.upload__inputfile').each(function () {
+            $(this).on('change', function (e) {
+              imgWrap = $(this).closest('.upload__box').find('.upload__img-wrap');
+              var maxLength = $(this).attr('data-max_length');
+
+              var files = e.target.files;
+              var filesArr = Array.prototype.slice.call(files);
+              var iterator = 0;
+              filesArr.forEach(function (f, index) {
+
+                if (!f.type.match('image.*')) {
+                  return;
+                }
+
+                if (imgArray.length > maxLength) {
+                  return false
+                } else {
+                  var len = 0;
+                  for (var i = 0; i < imgArray.length; i++) {
+                    if (imgArray[i] !== undefined) {
+                      len++;
+                    }
+                  }
+                  if (len > maxLength) {
+                    return false;
+                  } else {
+                    imgArray.push(f);
+
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                      var html = "<div class='upload__img-box'><div style='background-image: url(" + e.target.result + ")' data-number='" + $(".upload__img-close").length + "' data-file='" + f.name + "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+                      imgWrap.append(html);
+                      iterator++;
+                    }
+                    reader.readAsDataURL(f);
+                  }
+                }
+              });
+            });
+          });
+
+          $('body').on('click', ".upload__img-close", function (e) {
+            var file = $(this).parent().data("file");
+            for (var i = 0; i < imgArray.length; i++) {
+              if (imgArray[i].name === file) {
+                imgArray.splice(i, 1);
+                break;
+              }
+            }
+            $(this).parent().parent().remove();
+          });
+      }  
+
+      ImgUpload();
   // $(".img-zoom-m").ezPlus();
 </script>
 @endsection

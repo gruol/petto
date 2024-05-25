@@ -447,8 +447,8 @@ public function unaccompaniedBooking(Request $request)
     $image = $request['pet_photo1'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $pet_photo1 = 'pet_photo1_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$pet_photo1, base64_decode($image));
+    $pet_photo1 = 'pet_photo1_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$pet_photo1, base64_decode($image));
 }
 
 else{
@@ -462,8 +462,8 @@ if($request['pet_photo2'] != null)
     $image = $request['pet_photo2'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $pet_photo2 = 'pet_photo2_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$pet_photo2, base64_decode($image));
+    $pet_photo2 = 'pet_photo2_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$pet_photo2, base64_decode($image));
 }
 
 else{
@@ -478,8 +478,8 @@ if($request['pet_passport'] != null)
     $image = $request['pet_passport'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $pet_passport = 'pet_passport_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$pet_passport, base64_decode($image));
+    $pet_passport = 'pet_passport_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$pet_passport, base64_decode($image));
 }
 
 else{
@@ -496,8 +496,8 @@ if($request['health_certificate'] != null)
     $image = $request['health_certificate'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $health_certificate = 'health_certificate_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$health_certificate, base64_decode($image));
+    $health_certificate = 'health_certificate_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$health_certificate, base64_decode($image));
 }
 
 else{
@@ -512,8 +512,8 @@ if($request['import_permit'] != null)
     $image = $request['import_permit'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $import_permit = 'import_permit_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$import_permit, base64_decode($image));
+    $import_permit = 'import_permit_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$import_permit, base64_decode($image));
 }
 
 else{
@@ -528,8 +528,8 @@ if($request['titer_report'] != null)
     $image = $request['titer_report'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $titer_report = 'titer_report_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$titer_report, base64_decode($image));
+    $titer_report = 'titer_report_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$titer_report, base64_decode($image));
 }
 
 else{
@@ -544,8 +544,8 @@ if($request['passport_copy'] != null)
     $image = $request['passport_copy'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $passport_copy = 'passport_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$passport_copy, base64_decode($image));
+    $passport_copy = 'passport_copy_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$passport_copy, base64_decode($image));
 }
 
 else{
@@ -560,8 +560,8 @@ if($request['cnic_copy'] != null)
     $image = $request['cnic_copy'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $cnic_copy = 'cnic_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$cnic_copy, base64_decode($image));
+    $cnic_copy = 'cnic_copy_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$cnic_copy, base64_decode($image));
 }
 
 else{
@@ -576,8 +576,8 @@ if($request['ticket_copy'] != null)
     $image = $request['ticket_copy'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $ticket_copy = 'ticket_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$ticket_copy, base64_decode($image));
+    $ticket_copy = 'ticket_copy_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$ticket_copy, base64_decode($image));
 }
 
 else{
@@ -591,8 +591,8 @@ if($request['visa_copy'] != null)
     $image = $request['visa_copy'];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $visa_copy = 'visa_copy_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->applicarion_id.'/'.$visa_copy, base64_decode($image));
+    $visa_copy = 'visa_copy_'.$request->application_id.'_time_'.time().'.'.'jpeg';
+    Storage::put("public/uploads/pet/".$request->application_id.'/'.$visa_copy, base64_decode($image));
 }
 
 else{
@@ -607,9 +607,11 @@ return $this->sendResponse( $data,'shipment Info saved', 703);
 
 
 public function sync($value='')
-{
-    $data['countries'] = Country::where('is_active',1)->get()->toArray();   
-    $data['shipments'] = Shipment::with('ShipmentPet.Pets','CustomerPets','ShipmentBy')->where('customer_id',Auth::user()->id)->get()->toArray();
+{   
+    $data['customer']   = Customer::where('id',Auth::user()->id)->get()->toArray();   
+    $data['countries']  = Country::where('is_active',1)->get()->toArray();   
+    $data['shipments']  = Shipment::with('ShipmentPet.Pets','ShipmentBy')->where('customer_id',Auth::user()->id)->get()->toArray();
+    $data['pets']       = CustomerPets::where('customer_id',Auth::user()->id)->get()->toArray();
 
     return $this->sendResponse('Data Found', $data, 702);
 

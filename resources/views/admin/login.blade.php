@@ -15,7 +15,7 @@
     <link href="{{asset('b/dist/css/style.css')}}" rel="stylesheet">
     <style type="text/css">
         body{
-            background-image: url({{asset('assets/images/loginBack.jpg')}});
+            background-image: url({{asset('assets/images/loginBack.png')}});
              height: 100%; 
               /* Center and scale the image nicely */
               background-position: center;
@@ -29,7 +29,7 @@
         <div class="form-wrapper m-auto">
             <div class="form-container my-4">
                 <div class="register-logo text-center mb-4">
-                    <img src="assets/dist/img/logo2.html" alt="">
+                    <img src="{{asset('assets/images/logo.png')}}" alt="">
                 </div>
                 <div class="panel">
                     <div class="panel-header text-center mb-3">
