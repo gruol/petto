@@ -313,10 +313,33 @@ public function addShipmentRemarks(Request $request)
 
     $shipment               = Shipment::find($request->shipment_id);
     $shipment->quotation    = $request->quotation;
+  
+
+
+    if($request['quotation_file'] != null)
+    {
+
+        $image = $request['quotation_file'];  
+
+        $filePath = "public/uploads/pet/".$request->shipment_id.'/'.$request->quotation_file;
+        if (Storage::exists($filePath)) {
+            Storage::delete("public/uploads/pet/".$request->shipment_id.'/'.$request->quotation_file);
+        }
+        $image = str_replace(' ', '+', $image);
+        $quotation_file = 'quotation_file_'.$request->shipment_id.'_time_'.time().'.'.$request->quotation_file->extension();
+        Storage::put("public/uploads/pet/".$request->shipment_id.'/'.$quotation_file,file_get_contents($image));
+        $shipment->quotation_file        = $quotation_file;
+    }
+
+    $shipment->quotation_file        = $quotation_file;
+    $shipment->flight_service_name   = $request->flight_service_name;
+    $shipment->ticket_no             = $request->ticket_no;
+    $shipment->date_time             = $request->date_time;
 
     $remarks = $shipment->remarks ;
     $remarks .= "<br><b>Posted by (Admin)</b>:".$user->name.", <b> Posted At </b>:".date('Y-m-d h:i ').", <b> Quotation </b>:". $request->quotation ." <br><b> Remarks:</b>".$request->remarks ;
     $shipment->remarks = $remarks;
+
     $shipment->update();
     return redirect()->route('admin.shipment.index');
 }

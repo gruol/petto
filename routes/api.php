@@ -52,7 +52,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 // Clinics Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
 // Route::middleware(['auth:sanctum', 'clinic'])->group(function () {
-
+	Route::post('/clinic-send-otp', [ClinicApiController::class, 'sendOtp']);
+	
 	Route::post('/clinic-verify-otp', [ClinicApiController::class, 'verifyOtp']);
 	Route::post('/clinic-change-password', [ClinicApiController::class, 'changePassword']);
 	Route::post('/clinic-add-doctor', [ClinicApiController::class, 'addDoctor']);

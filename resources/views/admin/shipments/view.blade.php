@@ -70,7 +70,7 @@
     <div class="row  mb-4">
         {{-- @if(isset($shipment->pet_photo1)) --}}
         <img  src="{{asset('storage/uploads/pet/'.$shipment->id.'/'.$shipment->pet_photo1)}}" title="Pet’s 1st Photo  inside the cage & outside the cage is missing" style="object-fit: cover;" width="200" height="150" class="img-thumbnail images"/>  
-      
+
         {{-- @endif --}}
 
         {{-- @if(isset($shipment->pet_photo2)) --}}
@@ -325,14 +325,53 @@
                         </div>
                     </div>
                     <hr class="mt-2 mb-3"/>
-                    <form method="POST" action="{{ route('admin.add-shipment-remarks') }}" >
+                    <form method="POST" action="{{ route('admin.add-shipment-remarks') }}" enctype="multipart/form-data"  >
                         @csrf
                         <div class="row">
+                            <div class="col-md-6 pr-md-1">
+                                <div class="form-group">
+                                    <label class="font-weight-600">Flight service name</label>
+                                    <input type="text" class="form-control" name="flight_service_name"  value="{{$shipment->flight_service_name}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 pr-md-1">
+                                <div class="form-group">
+                                    <label class="font-weight-600">Ticket no</label>
+                                    <input type="text" class="form-control" name="ticket_no"  value="{{$shipment->ticket_no}}">
+                                </div>
+                            </div>
+                             <div class="col-md-6 pr-md-1">
+                                <div class="form-group">
+                                    <label class="font-weight-600">Date & Time</label>
+                                    <input type="datetime-local" class="form-control" name="date_time"  value="{{$shipment->date_time}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 pr-md-1">
+                                <div class="form-group">
+                                    <label class="font-weight-600">Origin</label>
+                                    <input type="text" class="form-control"  disabled value="{{$shipment->origin}}">
+                                </div>
+                            </div>
+                             <div class="col-md-6 pr-md-1">
+                                <div class="form-group">
+                                    <label class="font-weight-600">Destination</label>
+                                    <input type="text" class="form-control" disabled  value="{{$shipment->destination}}">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
                             <input type="hidden" name="shipment_id" value="{{$shipment->id}}">
-                            <div class="col-md-8 pr-md-1">
+                            <div class="col-md-6 pr-md-1">
                                 <div class="form-group">
                                     <label class="font-weight-600">Quotation</label>
-                                    <input type="text" class="form-control" name="quotation"  value="">
+                                    <input type="text" class="form-control" name="quotation"  value="{{$shipment->quotation}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 pr-md-1">
+                                <div class="form-group">
+                                    <label class="font-weight-600">Quotation File</label>
+                                    <input type="file" class="form-control" name="quotation_file"  value="">
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
