@@ -45,7 +45,13 @@
 				<li class="@if( Request::segment(2) == "shipment") {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('admin.shipment.index') }}">
 						<i class="typcn typcn-plane  mr-2"></i>
-						Shipment
+						Shipments
+					</a>
+				</li>
+				<li class="@if( Request::segment(2) == "clinic") {{ "mm-active" }}  @endif">
+					<a class="" href="{{ route('admin.clinic.index') }}">
+						<i class='fas fa-hospital'></i> 
+						Clinics
 					</a>
 				</li>
 				{{-- @endcan --}}

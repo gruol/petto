@@ -142,21 +142,21 @@ class ClinicApiController extends BaseController
 
             }
                 // Check password
-                if(!$clinic ||  !Hash::check($fields['password'], $clinic->password))  {
-                    return $this->sendError('Invalid Login Credentials');
-                }
+            if(!$clinic ||  !Hash::check($fields['password'], $clinic->password))  {
+                return $this->sendError('Invalid Login Credentials');
+            }
 
-                $clinic->otp             = random_int(100000, 999999);
-                $clinic->otp_created_at  = Carbon::now();
-                $clinic->save();
+            $clinic->otp             = random_int(100000, 999999);
+            $clinic->otp_created_at  = Carbon::now();
+            $clinic->save();
 
-                return $this->sendResponse(new ClinicResource($clinic), 'Clinic retrieved successfully.');
+            return $this->sendResponse(new ClinicResource($clinic), 'Clinic retrieved successfully.');
         }else{
-                    return $this->sendError("User Not Found, try again", null);
+            return $this->sendError("User Not Found, try again", null);
 
         }
     }
-       public function sendOtp(Request $request)
+    public function sendOtp(Request $request)
     {
         // try{
             // $otpVia  = $request->input('otpVia');
@@ -175,15 +175,15 @@ class ClinicApiController extends BaseController
             $clinic   = Auth::guard('sanctum')->user();
             Clinic::where('id',$clinic->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
         }
-if (empty($clinic)) {
-        $message = "User Not Found" ;
+        if (empty($clinic)) {
+            $message = "User Not Found" ;
             return $this->sendError($data,$message );
 
-        
-}else{
 
-        $message = "Your OTP is : " . $otpCode . "." ;
-}
+        }else{
+
+            $message = "Your OTP is : " . $otpCode . "." ;
+        }
             // if($otpVia == 1)
             // {
                 // $message = "Your OTP is : " . $otpCode . "." ;
@@ -341,8 +341,7 @@ if (empty($clinic)) {
     public function addDoctor(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
-        // dd($user->id);
-         $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'contact' => 'required',
         ]);
@@ -354,14 +353,18 @@ if (empty($clinic)) {
         }
 
 
-          if($request['picture'] != null)
-          {
-
-            $image = $request['picture'];  
+        if($request['picture'] != null)
+        {
+            $image = $request['picture']; 
+            $pos  = strpos($image, ';');
+            $type = explode(':', substr($image, 0, $pos))[1];
+            $type = explode('/',$type);
+            $extension = $type[1]; 
             $image = str_replace('data:image/jpeg;base64,', '', $image);
             $image = str_replace(' ', '+', $image);
-            $picture = 'picture_'.$request->applicarion_id.'_time_'.time().'.'.'jpeg';
-            Storage::put("public/uploads/pet/".$user->id.'/'.$picture, base64_decode($image));
+            $picture = 'picture_'.$user->id.'_time_'.time().'.'.$extension;
+            Storage::put("public/uploads/clinic/doctor/".$user->id.'/'.$picture, base64_decode($image));
+            $picture = env('APP_URL')."public/storage/uploads/clinic/doctor/".$user->id.'/'.$picture;
         }
 
         else{
@@ -381,7 +384,7 @@ if (empty($clinic)) {
             "charges" => $request->charges,
 
         ];
-        $doctor     = Doctor::create($data );
+        $doctor     = Doctor::create($data);
         return $this->sendResponse([], 'Doctor creation request has been forwarded to Petto team for review and approval');
 
     }

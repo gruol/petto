@@ -43,6 +43,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/customer-unaccompanied-booking', [CustomerApiController::class, 'unaccompaniedBooking']);
 
     Route::get('/customer/sync', [CustomerApiController::class, 'sync'])->name('sync');
+    Route::get('/customer/data', [CustomerApiController::class, 'customerData'])->name('customerData');
+    Route::get('/customer/shipments', [CustomerApiController::class, 'customerShipments'])->name('customerShipments');
+    Route::get('/customer/pets', [CustomerApiController::class, 'customerPets'])->name('customerPets');
+    Route::get('/customer/pet/{id}', [CustomerApiController::class, 'customerPet'])->name('customerPet');
+    Route::get('/countries', [CustomerApiController::class, 'countries'])->name('countries');
     Route::post('/customer/post/remarks', [CustomerApiController::class, 'postRemarks']);
 
 

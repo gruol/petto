@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Doctor;
 
 class Clinic extends Model
 {
@@ -26,4 +27,8 @@ class Clinic extends Model
         "approved_at",
 
     ];
+    public function doctors()
+    {
+         return $this->hasMany(Doctor::class);
+    }
 }

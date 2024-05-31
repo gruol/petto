@@ -97,8 +97,7 @@ class ClinicController extends Controller
     public function clinicView($id)
     {
         $pageTitle              = "Clinic View";
-        $clinic               = Clinic::find($id);
-        
+        $clinic               = Clinic::with('doctors')->find($id);
         return view('admin.clinics.view',compact('pageTitle','clinic'));
 
     }

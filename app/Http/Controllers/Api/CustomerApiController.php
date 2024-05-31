@@ -75,7 +75,7 @@ class CustomerApiController extends BaseController
     		"country" => $request->country,
 
     	];
-        
+
         $customer     = Customer::create($customerData );
 
         $obj                 =  new CustomerPets;
@@ -158,13 +158,13 @@ class CustomerApiController extends BaseController
     		$customer = Customer::where('email',$request->email)->first();
             if ($customer) {
                 $customer->otp = $otpCode;
-        		$customer->otp_created_at = Carbon::now();
-        		$customer->update();
+                $customer->otp_created_at = Carbon::now();
+                $customer->update();
             }
-    	}else{
-    		$customer   = Auth::guard('sanctum')->user();
-    		Customer::where('id',$customer->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
-    	}
+        }else{
+          $customer   = Auth::guard('sanctum')->user();
+          Customer::where('id',$customer->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
+      }
 
             // if($otpVia == 1)
             // {
@@ -173,7 +173,7 @@ class CustomerApiController extends BaseController
             // }
             // elseif($otpVia == 2)
             // {
-    	$message = "Your OTP is : " . $otpCode . "." ;
+      $message = "Your OTP is : " . $otpCode . "." ;
 
 
             //     $details = [
@@ -193,12 +193,12 @@ class CustomerApiController extends BaseController
             // }
             // else{
 
-    	$data = null;
+      $data = null;
             // }
     // return $this->sendResponse( $message,$data);
 
     // return $this->sendResponse($data "OTP has been sent", );
-    	return $this->sendResponse($data ,$message );
+      return $this->sendResponse($data ,$message );
 
         // }catch(\Exception $e){
         //     DB::rollback();
@@ -206,18 +206,18 @@ class CustomerApiController extends BaseController
 
         // }
 
-    }
-    public function verifyOtp(Request $request)
-    {
+  }
+  public function verifyOtp(Request $request)
+  {
 
-    	$user = Auth::guard('sanctum')->user();
-    	$customer = Customer::find($user->id);
+     $user = Auth::guard('sanctum')->user();
+     $customer = Customer::find($user->id);
 
-    	$tokenStartTime = Carbon::now();
-    	$tokenEndTime   = Carbon::parse($customer->otp_created_at);
+     $tokenStartTime = Carbon::now();
+     $tokenEndTime   = Carbon::parse($customer->otp_created_at);
 
         // Calculate the difference in minutes
-    	$differenceInMinutes = $tokenStartTime->diffInMinutes($tokenEndTime);
+     $differenceInMinutes = $tokenStartTime->diffInMinutes($tokenEndTime);
 
         if($differenceInMinutes > 5){ // check implement for to  check token expire time
 
@@ -329,7 +329,8 @@ public function addPet(Request $request)
   'name'      => ['required'],
   'breed'     => ['required'],
   'age'       => ['required'],
-  'category'  => ['required']
+  'category'  => ['required'],
+  'picture'  => ['required']
 
 ]);
 
@@ -345,6 +346,28 @@ $obj->name           = $request->name;
 $obj->breed          = $request->breed;
 $obj->age            = $request->age;
 $obj->category       = $request->category;
+
+if($request['picture'] != null)
+{
+
+    $image = $request['picture']; 
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1];
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+
+    $picture = 'picture_'.$user->id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/pet/".$user->id.'/'.$picture, base64_decode($image));
+    $picture = env('APP_URL')."public/storage/uploads/pet/".$user->id.'/'.$picture;
+}
+
+else{
+    $picture = 'null';
+}
+$obj->picture        = $picture;
+
 $obj->save();
 $data = null;
 
@@ -445,10 +468,17 @@ public function unaccompaniedBooking(Request $request)
   {
 
     $image = $request['pet_photo1'];  
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1];
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $pet_photo1 = 'pet_photo1_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$pet_photo1, base64_decode($image));
+    $pet_photo1 = 'pet_photo1_'.$request->shipment_id.'_time_'.time().'.'. $extension;
+
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$pet_photo1, base64_decode($image));
+    $pet_photo1 = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$pet_photo1;
+
 }
 
 else{
@@ -459,11 +489,17 @@ $obj->pet_photo1 		= $pet_photo1;
 if($request['pet_photo2'] != null)
 {
 
-    $image = $request['pet_photo2'];  
+    $image = $request['pet_photo2']; 
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1]; 
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $pet_photo2 = 'pet_photo2_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$pet_photo2, base64_decode($image));
+    $pet_photo2 = 'pet_photo2_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$pet_photo2, base64_decode($image));
+    $pet_photo2 = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$pet_photo2;
+
 }
 
 else{
@@ -476,10 +512,16 @@ if($request['pet_passport'] != null)
 {
 
     $image = $request['pet_passport'];  
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1]; 
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $pet_passport = 'pet_passport_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$pet_passport, base64_decode($image));
+    $pet_passport = 'pet_passport_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$pet_passport, base64_decode($image));
+    $pet_passport = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$pet_passport;
+
 }
 
 else{
@@ -494,10 +536,16 @@ if($request['health_certificate'] != null)
 {
 
     $image = $request['health_certificate'];  
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1]; 
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $health_certificate = 'health_certificate_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$health_certificate, base64_decode($image));
+    $health_certificate = 'health_certificate_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$health_certificate, base64_decode($image));
+    $health_certificate = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$health_certificate;
+
 }
 
 else{
@@ -509,11 +557,17 @@ $obj->health_certificate= $health_certificate;
 if($request['import_permit'] != null)
 {
 
-    $image = $request['import_permit'];  
+    $image = $request['import_permit'];
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1];  
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $import_permit = 'import_permit_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$import_permit, base64_decode($image));
+    $import_permit = 'import_permit_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$import_permit, base64_decode($image));
+    $import_permit = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$import_permit;
+
 }
 
 else{
@@ -526,10 +580,16 @@ if($request['titer_report'] != null)
 {
 
     $image = $request['titer_report'];  
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1]; 
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $titer_report = 'titer_report_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$titer_report, base64_decode($image));
+    $titer_report = 'titer_report_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$titer_report, base64_decode($image));
+    $titer_report = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$titer_report;
+
 }
 
 else{
@@ -541,11 +601,17 @@ $obj->titer_report 		= $titer_report;
 if($request['passport_copy'] != null)
 {
 
-    $image = $request['passport_copy'];  
+    $image = $request['passport_copy'];
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1];   
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $passport_copy = 'passport_copy_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$passport_copy, base64_decode($image));
+    $passport_copy = 'passport_copy_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$passport_copy, base64_decode($image));
+    $passport_copy = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$passport_copy;
+
 }
 
 else{
@@ -558,10 +624,16 @@ if($request['cnic_copy'] != null)
 {
 
     $image = $request['cnic_copy'];  
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1]; 
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $cnic_copy = 'cnic_copy_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$cnic_copy, base64_decode($image));
+    $cnic_copy = 'cnic_copy_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$cnic_copy, base64_decode($image));
+    $cnic_copy = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$cnic_copy;
+
 }
 
 else{
@@ -574,10 +646,16 @@ if($request['ticket_copy'] != null)
 {
 
     $image = $request['ticket_copy'];  
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1]; 
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $ticket_copy = 'ticket_copy_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$ticket_copy, base64_decode($image));
+    $ticket_copy = 'ticket_copy_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$ticket_copy, base64_decode($image));
+    $ticket_copy = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$ticket_copy;
+
 }
 
 else{
@@ -589,10 +667,16 @@ if($request['visa_copy'] != null)
 {
 
     $image = $request['visa_copy'];  
+    $pos  = strpos($image, ';');
+    $type = explode(':', substr($image, 0, $pos))[1];
+    $type = explode('/',$type);
+    $extension = $type[1]; 
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
-    $visa_copy = 'visa_copy_'.$request->application_id.'_time_'.time().'.'.'jpeg';
-    Storage::put("public/uploads/pet/".$request->application_id.'/'.$visa_copy, base64_decode($image));
+    $visa_copy = 'visa_copy_'.$request->application_id.'_time_'.time().'.'.$extension;
+    Storage::put("public/uploads/shipment/".$request->application_id.'/'.$visa_copy, base64_decode($image));
+    $visa_copy = env('APP_URL')."public/storage/uploads/shipment/".$request->application_id.'/'.$visa_copy;
+
 }
 
 else{
@@ -634,7 +718,40 @@ public function postRemarks(Request $request)
 
 
 }
+public function customerData()
+{
+    $data   = Customer::where('id',Auth::user()->id)->get()->toArray();  
+    return $this->sendResponse( $data,'Customer Data', 702);
 
+}
+public function customerShipments()
+{
+    $data  = Shipment::with('ShipmentPet.Pets','ShipmentBy')->where('customer_id',Auth::user()->id)->get()->toArray();
+
+    return $this->sendResponse( $data,'Customer Shipments Data', 702);
+
+}
+public function customerPets()
+{
+    $data = CustomerPets::where('customer_id',Auth::user()->id)->get()->toArray();
+
+    return $this->sendResponse( $data,'Customer Pets Data', 702);
+
+}
+public function countries()
+{
+    $data       = Country::where('is_active',1)->get()->toArray();
+
+    return $this->sendResponse( $data,'Countries Data', 702);
+
+}
+public function customerPet($id)
+{
+    $data = CustomerPets::where(['id' => $id ,'customer_id' => Auth::user()->id])->get()->toArray();
+
+    return $this->sendResponse( $data,'Customer Pet', 702);
+
+}
 public function logout()
 {
     Auth::guard('sanctum')->user()->tokens()->delete();
@@ -644,5 +761,7 @@ public function logout()
     return $this->sendResponse('Logged Out', $data, 702);
 
 }
+
+
 
 }

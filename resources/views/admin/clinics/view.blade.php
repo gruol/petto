@@ -101,173 +101,103 @@
                             <h6 class="mb-0 font-weight-600">Clinic Name</h6>
                             <a href="#!" class="fs-13 font-weight-600 px-4">{{$clinic->clinic_name}}</a>
                         </div>
-                        <div class="col-auto">
-
+                        <div class="row align-items-center">
+                          <div class="col">  
+                            <h6 class="mb-0 font-weight-600">Clinic Address</h6>
+                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$clinic->address}}</a>
                         </div>
-                    </div> 
-                </div>
+                    </div>
+                    <div class="col-auto">
+
+                    </div>
+                </div> 
             </div>
         </div>
+    </div>
 
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="fs-17 font-weight-600 mb-0">Shipment Detail</h6>
-                        </div>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fs-17 font-weight-600 mb-0">Doctor Details</h6>
                     </div>
                 </div>
-                <div class="card-body">
+            </div>
+            <div class="card-body">
+               @if(!$clinic->doctors->isEmpty())
+               @foreach($clinic->doctors as $i => $doctor)
+               <div>
 
-                    <h6 class="fs-17 font-weight-600 mb-0">Clinic Details</h6>
-                    <br>
-                    <div class="row">
-                           <div class="col-md-3 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Clinic Name</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->clinic_name}}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Manager Name</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->manager_name}}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Contact No</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->contact}}">
-                            </div>
-                        </div>
-                     
-                        <div class="col-md-3 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Email</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->email}}">
-                            </div>
-                        </div>
-                      
-                    </div>
-                    <hr class="mt-2 mb-3"/>
+                <b>{{$i+1}} )</b><br>
+            </div>
+            <br>
+            <div class="row">
+               <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Doctor Name</label>
+                    <input type="text" class="form-control" disabled="" value="{{$doctor->name}}">
+                </div>
+            </div>
+            <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Contact No</label>
+                    <input type="text" class="form-control" disabled="" value="{{$doctor->contact}}">
+                </div>
+            </div>
+            <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Email</label>
+                    <input type="text" class="form-control" disabled="" value="{{$doctor->email}}">
+                </div>
+            </div>
 
-                    <div class="row">
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Category</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->category}}">
-                            </div>
-                        </div>
+            <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Education</label>
+                    <input type="text" class="form-control" disabled="" value="{{$doctor->education}}">
+                </div>
+            </div>
 
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Gross Weight (KG)</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->gross_weight}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Pet Dimensions</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->pet_dimensions}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Do you have a cage as per IATA standard</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->have_cage}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Cage Dimensions</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->cage_dimensions}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Want Booking</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->want_booking}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Shipper Name</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->shipper_name}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Shipper Address</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->shipper_address}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Shipper CNIC</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->shipper_cnic}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Shipper Contact</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->shipper_contact}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Shipper Email</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->shipper_email}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Consignee Name</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->consignee_name}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Consignee Address</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->consignee_address}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Consignee Contact</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->consignee_contact}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Consignee Email</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->consignee_email}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Consignee Email</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->consignee_email}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Microchip</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->microchip}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6 pr-md-1">
-                            <div class="form-group">
-                                <label class="font-weight-600">Microchip No</label>
-                                <input type="text" class="form-control" disabled="" value="{{$clinic->microchip_no}}">
-                            </div>
-                        </div>
-                    </div>
-                
-             </div>
-         </div>
-     </div>
- </div>
+            <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Experience</label>
+                    <input type="text" class="form-control" disabled="" value="{{$doctor->experience}}">
+                </div>
+            </div>
+
+            <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Expertise</label>
+                    <input type="text" class="form-control" disabled="" value="{{$doctor->expertise}}">
+                </div>
+            </div>
+            <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Availability</label>
+                    <input type="text" class="form-control" disabled="" value="{{$doctor->availability}}">
+                </div>
+            </div>
+            <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Charges</label>
+                    <input type="text" class="form-control" disabled="" value="{{$doctor->charges}}">
+                </div>
+            </div>
+            <div class="col-md-3 pr-md-1">
+                <div class="form-group">
+                    <p style="cursor: pointer;" class=" images" title="{{asset('storage/uploads/clinic/doctor/'.Auth::user()->id.'/'.$doctor->picture)}}">Click to View Profile Picture</p>
+                  </div>
+            </div>
+
+        </div>
+        <hr>
+        @endforeach
+        @endif
+    </div>
+</div>
+</div>
+</div>
 </div>
 <div id="image-viewer">
     <span class="close">&times;</span>
@@ -277,19 +207,21 @@
 @section('footer-script')
 <script>
     $(document).ready(function(){
-        var title = $('img').attr('title');
+        var title = $('p').attr('title');
         $('img').before(title);
     });
     $(".images").click(function(){
-        var fileType = $(this).attr("src");
+        console.log('aaaaaa');
+        var fileType = $(this).attr("title");
         console.log(fileType);
+        // return false;
         var result = fileType.split(/[.;+_]/).pop();
         if (result == 'pdf') {
             $("#full-close").empty()
-            $('#full-close').append('<iframe class="modal-content"  width="100%" height="500px" src="'+$(this).attr("src")+'"  id="full-image"> </iframe>')
+            $('#full-close').append('<iframe class="modal-content"  width="100%" height="500px" src="'+$(this).attr("title")+'"  id="full-image"> </iframe>')
         }else {
             $('#full-close').empty();
-            $('#full-close').append('<img class="modal-content" width="100%" height="500px" src="'+$(this).attr("src")+'"  id="full-image">')
+            $('#full-close').append('<img class="modal-content" width="100%" height="500px" src="'+$(this).attr("title")+'"  id="full-image">')
 
         }
         $('#image-viewer').show();
