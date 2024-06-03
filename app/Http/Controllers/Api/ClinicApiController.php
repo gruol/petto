@@ -8,7 +8,7 @@ use App\Models\{CustomerPets,
     Shipment,
     Customer,
     Clinic,
-    Doctor,AppointmentDate,AppointmentDay,AppointmentTime
+    Doctor,AppointmentDate,AppointmentDay,AppointmentTime,Appointment,Review
 };
 use App\Http\Resources\CustomerResource;
 use App\Http\Resources\ClinicResource;
@@ -34,7 +34,6 @@ class ClinicApiController extends BaseController
     public function __construct()
     {
 
-        date_default_timezone_set("Asia/Karachi");
 
     }
 
@@ -427,12 +426,54 @@ public function doctors($id=null){
     return $this->sendResponse( $data,'Data Found', 702);
 
 }
+public function bookAppointment(Request $request)
+{
+    $data = null;
+
+    $obj = new Appointment();
+    $obj->doctor_id = $request->doctor_id;
+    $obj->pet_id = $request->pet_id;
+    $obj->appointment_date = $request->appointment_date;
+    $obj->appointment_timeslot = $request->appointment_timeslot;
+    $obj->appointment_day = $request->appointment_day;
+    $obj->customer_id = Auth::user()->id;
+    $obj->save();
+    return $this->sendResponse( $data,'Appointment sent for confirmation', 702);
+
+}
+public function addReview(Request $request)
+{
+    $data = null;
+
+    $obj = new Review();
+    $obj->customer_id = Auth::user()->id;
+    $obj->appointment_id = $request->appointment_id;
+    $obj->rating = $request->rating;
+    $obj->review = $request->review;
+    $obj->save();
+    return $this->sendResponse( $data,'Review Saved', 702);
+
+}
+
+public function cancelAppointment(Request $request)
+{
+    $obj = Appointment::find($request->appointment_id);
+    $obj->is_canceled               = 1;
+    $obj->reason_for_cancellation   = $request->reason_for_cancellation;
+    $obj->canceled_by               = "Customer : ".Auth::user()->name;
+    $obj->save();
+    $data = null;
+
+    return $this->sendResponse( $data,'Appointment Canceled', 702);
+
+}
 public function logout()
 {
     $data =     Auth::guard('sanctum')->user()->tokens()->delete();
     $data = null;
 
-    return $this->sendResponse('Logged Out', $data, 702);
+    return $this->sendResponse( $data,'Logged Out', 702);
 
 }
+
 }
