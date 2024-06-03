@@ -692,12 +692,13 @@ return $this->sendResponse( $data,'shipment Info saved', 703);
 
 public function sync($value='')
 {   
+    $data = [];
     $data['customer']   = Customer::where('id',Auth::user()->id)->get()->toArray();   
     $data['countries']  = Country::where('is_active',1)->get()->toArray();   
     $data['shipments']  = Shipment::with('ShipmentPet.Pets','ShipmentBy')->where('customer_id',Auth::user()->id)->get()->toArray();
     $data['pets']       = CustomerPets::where('customer_id',Auth::user()->id)->get()->toArray();
 
-    return $this->sendResponse('Data Found', $data, 702);
+    return $this->sendResponse( $data,'Data Found', 702);
 
 }
 public function postRemarks(Request $request)

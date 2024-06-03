@@ -4,22 +4,42 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\AppointmentTime;
+use App\Models\AppointmentDay;
+use App\Models\AppointmentDate;
+use App\Models\Clinic;
 
 class Doctor extends Model
 {
     use HasFactory;
-     protected $fillable = [
-                            'name',
-                            'picture',
-                            'clinic_id',
-                            'contact',
-                            'email',
-                            'education',
-                            'experience',
-                            'expertise',
-                            'availability',
-                            'charges',
-                            'is_approved',
-                            'approved_at'
-                            ];
+    protected $fillable = [
+        'name',
+        'picture',
+        'clinic_id',
+        'contact',
+        'email',
+        'education',
+        'experience',
+        'expertise',
+        'about',
+        'charges',
+        'is_approved',
+        'approved_at'
+    ];
+    public function AppointmentTime()
+    {
+       return $this->hasMany(AppointmentTime::class);
+   }
+   public function AppointmentDay()
+    {
+       return $this->hasMany(AppointmentDay::class);
+   }
+   public function AppointmentDate()
+    {
+       return $this->hasMany(AppointmentDate::class);
+   }
+   public function clinic()
+    {
+       return $this->belongsTo(Clinic::class);
+   }
 }
