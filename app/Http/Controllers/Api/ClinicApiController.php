@@ -412,18 +412,106 @@ public function addDoctor(Request $request)
     return $this->sendResponse([], 'Doctor creation request has been forwarded to Petto team for review and approval');
 
 }
+public function updateDoctor(Request $request)
+{
+    $user = Auth::guard('sanctum')->user();
+    $validator = Validator::make($request->all(), [
+        'name' => 'required',
+        'contact' => 'required',
+    ]);
+
+    if($validator->fails())
+    {
+        return $this->sendError( $validator->errors()->first());
+
+    }
 
 
-public function doctors($id=null){
+    if($request['picture'] != null)
+    {
+        $image = $request['picture']; 
+        $pos  = strpos($image, ';');
+        $type = explode(':', substr($image, 0, $pos))[1];
+        $type = explode('/',$type);
+        $extension = $type[1]; 
+        $image = str_replace('data:image/jpeg;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $picture = 'picture_'.$user->id.'_time_'.time().'.'.$extension;
+        Storage::put("public/uploads/clinic/doctor/".$user->id.'/'.$picture, base64_decode($image));
+        $picture = env('APP_URL')."public/storage/uploads/clinic/doctor/".$user->id.'/'.$picture;
+    }
+
+    else{
+        $picture = 'null';
+    }
+
+    $data = [ 
+        "name" => $request->name,
+        "clinic_id" => $user->id,
+        "picture" => $picture,
+        "contact" => $request->contact,
+        "email" => $request->email,
+        "education" => $request->education,
+        "experience" => $request->experience,
+        "expertise" => $request->expertise,
+        "about" => $request->about,
+        "charges" => $request->charges,
+
+    ];
+    $doctor     = Doctor::find($request->doctor_id)->update($data);
+
+    $data =   AppointmentTime::where('doctor_id',$request->doctor_id)->delete();
+
+    if (count($request->available_appointment_times) > 0) {
+        for ($i=0; $i < count($request->available_appointment_times) ; $i++) { 
+            $obj            = new AppointmentTime();
+            $obj->doctor_id =  $request->doctor_id;  
+            $obj->time      =  $request->available_appointment_times[$i]; 
+            $obj->save(); 
+        }
+    }
+    AppointmentDay::where('doctor_id',$request->doctor_id)->delete();
+
+    if (count($request->available_appointment_days) > 0) {
+        for ($i=0; $i < count($request->available_appointment_days) ; $i++) { 
+            $obj            = new AppointmentDay();
+            $obj->doctor_id =  $request->doctor_id;  
+            $obj->day       =  $request->available_appointment_days[$i]; 
+            $obj->save(); 
+        }
+    }
+    AppointmentDate::where('doctor_id',$request->doctor_id)->delete();
+
+    if (count($request->available_appointment_dates) > 0) {
+        for ($i=0; $i < count($request->available_appointment_dates) ; $i++) { 
+            $obj            = new AppointmentDate();
+            $obj->doctor_id =  $request->doctor_id;  
+            $obj->dates     =  $request->available_appointment_dates[$i]; 
+            $obj->save(); 
+        }
+    }
+    
+    return $this->sendResponse([], 'Doctor Information Updated');
+
+}
+
+
+public function doctors(Request $request, $id=null){
     $data = [];
+    $doctors = Doctor::with('AppointmentTime','AppointmentDay','AppointmentDate','clinic')
+    ->withAvg( 'rating','rating')
+    ->withCount( 'review','review');
+    if (isset($request->clinic_id)  && $request->clinic_id !='') {
+        $doctors->where('clinic_id',$request->clinic_id);
+    }else{
 
-    $doctors = Doctor::with('AppointmentTime','AppointmentDay','AppointmentDate')->where('is_approved',1);
-
+        $doctors->where('is_approved',1);
+    }
     if ($id != null) {
-         $doctors->where('id',$id);
-     } 
-    $data['doctors'] =  $doctors->get()->toArray();
-    return $this->sendResponse( $data,'Data Found', 702);
+       $doctors->where('id',$id);
+   } 
+   $data['doctors'] =  $doctors->get()->toArray();
+   return $this->sendResponse( $data,'Data Found', 702);
 
 }
 public function bookAppointment(Request $request)
@@ -437,6 +525,7 @@ public function bookAppointment(Request $request)
     $obj->appointment_timeslot = $request->appointment_timeslot;
     $obj->appointment_day = $request->appointment_day;
     $obj->customer_id = Auth::user()->id;
+    $obj->status =  "PENDING";
     $obj->save();
     return $this->sendResponse( $data,'Appointment sent for confirmation', 702);
 
@@ -448,23 +537,47 @@ public function addReview(Request $request)
     $obj = new Review();
     $obj->customer_id = Auth::user()->id;
     $obj->appointment_id = $request->appointment_id;
+    $obj->doctor_id = $request->doctor_id;
     $obj->rating = $request->rating;
     $obj->review = $request->review;
     $obj->save();
     return $this->sendResponse( $data,'Review Saved', 702);
 
 }
-
-public function cancelAppointment(Request $request)
+public function appointmentList(Request $request)
 {
-    $obj = Appointment::find($request->appointment_id);
-    $obj->is_canceled               = 1;
-    $obj->reason_for_cancellation   = $request->reason_for_cancellation;
-    $obj->canceled_by               = "Customer : ".Auth::user()->name;
-    $obj->save();
     $data = null;
+    $user = Auth::user();
+    $data = Appointment::withCount('review','review')->where('customer_id',$user->id )->get()->toArray();
+    return $this->sendResponse( $data,'Appointments', 702);
 
-    return $this->sendResponse( $data,'Appointment Canceled', 702);
+}
+public function updateAppointment(Request $request)
+{
+    $data = null;
+    $obj = Appointment::find($request->appointment_id);
+
+    $obj->status = isset($request->status) && $request->status != '' ? $request->status :  $obj->status  ;
+
+
+
+    $obj->appointment_date = isset($request->appointment_date) && $request->appointment_date != '' ? $request->appointment_date :  $obj->appointment_date ;
+    $obj->appointment_timeslot = isset($request->appointment_timeslot) && $request->appointment_timeslot != '' ? $request->appointment_timeslot :  $obj->appointment_timeslot ;
+    $obj->appointment_day = isset($request->appointment_day) && $request->appointment_day != '' ? $request->appointment_day :  $obj->appointment_day;
+    
+    if ($request->status == "CANCELLED") {
+
+        $obj->is_canceled               = 1;
+        $obj->reason_for_cancellation   = $request->reason_for_cancellation;
+        $obj->canceled_by               = Auth::User()->getTable().": ".Auth::user()->name;
+    }
+    if ($request->is_confirmed == 1) {
+
+        $obj->confirmed_by               = Auth::User()->id;
+
+    }
+    $obj->save();
+    return $this->sendResponse( $data,'Appointment updated', 702);
 
 }
 public function logout()

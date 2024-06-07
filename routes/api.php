@@ -62,10 +62,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/clinic-verify-otp', [ClinicApiController::class, 'verifyOtp']);
 	Route::post('/clinic-change-password', [ClinicApiController::class, 'changePassword']);
 	Route::post('/clinic-add-doctor', [ClinicApiController::class, 'addDoctor']);
+	Route::post('/clinic-update-doctor', [ClinicApiController::class, 'updateDoctor']);
     Route::get('/clinic-doctors/{id?}', [ClinicApiController::class, 'doctors'])->name('doctors');
-
 	Route::post('/book/appointment', [ClinicApiController::class, 'bookAppointment']);
-	Route::post('/cancel/appointment', [ClinicApiController::class, 'cancelAppointment']);
+	Route::post('/update/appointment', [ClinicApiController::class, 'updateAppointment']);
+	Route::get('/appointments', [ClinicApiController::class, 'appointmentList']);
 	Route::post('/add/review', [ClinicApiController::class, 'addReview']);
 
     Route::post('/clinic-logout', [ClinicApiController::class, 'logout']);

@@ -8,6 +8,7 @@ use App\Models\AppointmentTime;
 use App\Models\AppointmentDay;
 use App\Models\AppointmentDate;
 use App\Models\Clinic;
+use App\Models\Review;
 
 class Doctor extends Model
 {
@@ -42,4 +43,12 @@ class Doctor extends Model
     {
        return $this->belongsTo(Clinic::class);
    }
+   public function rating()
+    {  
+        return $this->hasMany(Review::class);
+    }
+    public function review()
+    {  
+        return $this->hasMany(Review::class);
+    }
 }
