@@ -70,7 +70,6 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function() {
     Route::get('/clinic/ajaxData', [ClinicController::class, 'ajaxtData'])->name('clinic.ajax_data');
     Route::get('/clinic/query/status_update', [ClinicController::class, 'clinicQueryStatusUpdate'])->name('clinic.query.status.update');
     Route::get('/clinic/status_update', [ClinicController::class, 'clinicStatusUpdate'])->name('clinic.status.update');
-    Route::get('/clinic/payment/status_update', [ClinicController::class, 'clinicPaymentStatusUpdate'])->name('clinic.payment.status.update');
     Route::get('/clinic/view/{id}', [ClinicController::class, 'clinicView'])->name('clinic.view');
    
     

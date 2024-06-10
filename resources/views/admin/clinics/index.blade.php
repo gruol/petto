@@ -104,9 +104,9 @@
       <div>
        <h6 class="fs-17 font-weight-600 mb-0">Clinics</h6>
      </div>
-     @can('shipment-create')
+     @can('clinic-create')
      <div class="text-right">
-      {{-- <a class="" href="{{ route('admin.shipment.create') }}"><i class="far fa fa-plus"></i> Add shipment</a> --}}
+      {{-- <a class="" href="{{ route('admin.clinic.create') }}"><i class="far fa fa-plus"></i> Add clinic</a> --}}
     </div>
     @endcan
   </div>
@@ -140,8 +140,8 @@
 </div>
 </div>
 </div>
-{{-- <template id="shipmentQueryStatus">{{ json_encode($shipmentQueryStatus) }} </template>
-<template id="shipmentStatus">{{json_encode($shipmentStatus)}}</template>
+<template id="clinicStatus">{{ json_encode($clinicStatus) }} </template>
+{{-- <template id="clinicStatus">{{json_encode($clinicStatus)}}</template>
 <template id="paymentStatus">{{json_encode($paymentStatus)}}</template> --}}
 </div>
 </div>
@@ -296,16 +296,16 @@ $("#search-button").click(function (e) {
 });
 
 
-  $(document).on("click", ".btn-change-shipmentQueryStatus", function(event){
+  $(document).on("click", ".btn-change-clinicStatus", function(event){
     event.preventDefault();
-    var statuses      = $('#shipmentQueryStatus').html();
+    var statuses      = $('#clinicStatus').html();
     var statuses_arr    = JSON.parse(statuses);
         // console.log(statuses_arr);
     var status        = $(this).attr("data-status");
     var id          = $(this).attr("data-id");
     
     $.confirm({
-      title : "Change Shipment Query Status",
+      title : "Change  Status",
       content:function(){
         var html = "";
         $.each(statuses_arr, function(index, value){
@@ -325,52 +325,7 @@ $("#search-button").click(function (e) {
           btnClass:"btn btn-success confirmed",
           action:function(){
             var v = this.$content.find("input[type='radio']:checked").val();
-             let url = "{{ route('admin.shipment.query.status.update') }}";
-            save_status(v, id,url);
-            alert('Query Status has been updated successfully!');
-            // window.location.reload();
-            table.ajax.reload();
-          }
-        },
-        no:{
-          text:"Cancel"
-        }
-      }
-    });
-    return false;
-  }); 
-
-
-  $(document).on("click", ".btn-change-shipmentStatus", function(event){
-    event.preventDefault();
-    var statuses      = $('#shipmentStatus').html();
-    var statuses_arr    = JSON.parse(statuses);
-        // console.log(statuses_arr);
-    var status        = $(this).attr("data-status");
-    var id          = $(this).attr("data-id");
-    
-    $.confirm({
-      title : "Change Shipment Status",
-      content:function(){
-        var html = "";
-        $.each(statuses_arr, function(index, value){
-          console.log(value);
-          if(value.id==status){
-            html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
-          }else{
-            html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
-          }
-        });
-        
-        return html;
-      },
-      buttons:{
-        ok:{
-          text:"Save",
-          btnClass:"btn btn-success confirmed",
-          action:function(){
-            var v = this.$content.find("input[type='radio']:checked").val();
-             let url = "{{ route('admin.shipment.status.update') }}";
+             let url = "{{ route('admin.clinic.status.update') }}";
             save_status(v, id,url);
             alert('Status has been updated successfully!');
             // window.location.reload();
@@ -385,16 +340,17 @@ $("#search-button").click(function (e) {
     return false;
   }); 
 
-  $(document).on("click", ".btn-change-paymentStatus", function(event){
+
+  $(document).on("click", ".btn-change-clinicStatus", function(event){
     event.preventDefault();
-    var statuses      = $('#paymentStatus').html();
+    var statuses      = $('#clinicStatus').html();
     var statuses_arr    = JSON.parse(statuses);
         // console.log(statuses_arr);
     var status        = $(this).attr("data-status");
     var id          = $(this).attr("data-id");
     
     $.confirm({
-      title : "Change Payment Status",
+      title : "Change clinic Status",
       content:function(){
         var html = "";
         $.each(statuses_arr, function(index, value){
@@ -414,9 +370,9 @@ $("#search-button").click(function (e) {
           btnClass:"btn btn-success confirmed",
           action:function(){
             var v = this.$content.find("input[type='radio']:checked").val();
-             let url = "{{ route('admin.shipment.payment.status.update') }}";
+             let url = "{{ route('admin.clinic.status.update') }}";
             save_status(v, id,url);
-            alert('Payment Status has been updated successfully!');
+            alert('Status has been updated successfully!');
             // window.location.reload();
             table.ajax.reload();
           }
@@ -428,14 +384,15 @@ $("#search-button").click(function (e) {
     });
     return false;
   }); 
-  function save_status(status, shipment_id,url){
+
+  function save_status(status, clinic_id,url){
 
     $.ajax({
       url: url, 
       type: "GET",
       data: {
         status: status,
-        shipment_id: shipment_id
+        clinic_id: clinic_id
       },
       success: function(data) {
 

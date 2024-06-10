@@ -500,18 +500,24 @@ public function doctors(Request $request, $id=null){
     $data = [];
     $doctors = Doctor::with('AppointmentTime','AppointmentDay','AppointmentDate','clinic')
     ->withAvg( 'rating','rating')
-    ->withCount( 'review','review');
+    ->withCount( 'review','review')
+    ->withCount( 'appointment','appointment');
+
     if (isset($request->clinic_id)  && $request->clinic_id !='') {
         $doctors->where('clinic_id',$request->clinic_id);
     }else{
 
         $doctors->where('is_approved',1);
     }
+    if (isset($request->city)  && $request->city !='') {
+        $doctors->whereRelation('clinic','city',$request->city);
+       
+    }
     if ($id != null) {
        $doctors->where('id',$id);
    } 
    $data['doctors'] =  $doctors->get()->toArray();
-   return $this->sendResponse( $data,'Data Found', 702);
+   return $this->sendResponse( $data,"Doctor's List for Customer", 702);
 
 }
 public function bookAppointment(Request $request)
@@ -527,7 +533,7 @@ public function bookAppointment(Request $request)
     $obj->customer_id = Auth::user()->id;
     $obj->status =  "PENDING";
     $obj->save();
-    return $this->sendResponse( $data,'Appointment sent for confirmation', 702);
+    return $this->sendResponse( $data,"Customer's Appointment request sent for confirmation", 702);
 
 }
 public function addReview(Request $request)
@@ -541,7 +547,7 @@ public function addReview(Request $request)
     $obj->rating = $request->rating;
     $obj->review = $request->review;
     $obj->save();
-    return $this->sendResponse( $data,'Review Saved', 702);
+    return $this->sendResponse( $data,"Customer's Review Saved", 702);
 
 }
 public function appointmentList(Request $request)
@@ -549,7 +555,7 @@ public function appointmentList(Request $request)
     $data = null;
     $user = Auth::user();
     $data = Appointment::withCount('review','review')->where('customer_id',$user->id )->get()->toArray();
-    return $this->sendResponse( $data,'Appointments', 702);
+    return $this->sendResponse( $data,"Customer's Appointments List" , 702);
 
 }
 public function updateAppointment(Request $request)

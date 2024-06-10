@@ -33,10 +33,8 @@ class ClinicController extends Controller
     public function index(Request $request)
     {
         $pageTitle           = "Clinics";
-        $clinicQueryStatus = ["Pending", "Responded", "Confirmed"];
-        $clinicStatus = ["Pending", "On Hold", "In Transit","Delivered"];
-        $paymentStatus = ["Pending", "Paid"];
-        return view('admin.clinics.index',compact('pageTitle','clinicQueryStatus','clinicStatus','paymentStatus'));
+        $clinicStatus = ["Approved"];
+        return view('admin.clinics.index',compact('pageTitle','clinicStatus'));
     }
     public function ajaxtData(Request $request){
 
@@ -75,7 +73,7 @@ class ClinicController extends Controller
 
 
             // if(auth()->user()->can('clinics-change-status')){
-            // $action_list    .= '<a class="dropdown-item btn-change-clinicQueryStatus" href="#" data-status="'.$data->query_status.'" data-id="'.$data->id.'"><i class="fas fa-pencil-ruler"></i> Change Query Status</a>';
+            $action_list    .= '<a class="dropdown-item btn-change-clinicStatus" href="#" data-status="'.$data->status.'" data-id="'.$data->id.'"><i class="fas fa-pencil-ruler"></i> Change Status</a>';
 
             // $action_list    .= '<a class="dropdown-item btn-change-clinicStatus" href="#" data-status="'.$data->clinic_status.'" data-id="'.$data->id.'"><i class="far fa fa-life-ring"></i> Change Clinic Status</a>';
             // $action_list    .= '<a class="dropdown-item btn-change-paymentStatus" href="#" data-status="'.$data->payment_status.'" data-id="'.$data->id.'"><i class="fas fa-dollar-sign"></i> Change Payment Status</a>';
@@ -97,7 +95,16 @@ class ClinicController extends Controller
     public function clinicView($id)
     {
         $pageTitle              = "Clinic View";
-        $clinic               = Clinic::with('doctors')->find($id);
+        $clinic                = Clinic::with(['doctors','doctors.AppointmentTime','doctors.AppointmentDay','doctors.AppointmentDate'])
+            // ->withCount( 'review','review')
+
+        ->find($id);
+        // dd( $clinic   );
+            //        $doctors = Doctor::with('AppointmentTime','AppointmentDay','AppointmentDate','clinic')
+            // ->withCount( 'appointment','appointment');
+
+
+
         return view('admin.clinics.view',compact('pageTitle','clinic'));
 
     }
@@ -109,22 +116,14 @@ class ClinicController extends Controller
         return view('admin.clinics.edit',compact('pageTitle','clinic'));
 
     }
-    public function clinicQueryStatusUpdate(Request $request)
-    {
-        $id                     = $request->get('clinic_id');
-        $status                 = $request->get('status');
-        $clinic               = Clinic::find($id);
-        $clinic->query_status = $status;
-        $clinic->save();
-
-        return json_encode(array("status"=>true, "message"=>"Clinic Query Status has been updated successfully!"));
-    }
+  
     public function clinicStatusUpdate(Request $request)
     {
         $id                     = $request->get('clinic_id');
         $status                 = $request->get('status');
-        $clinic               = Clinic::find($id);
-        $clinic->clinic_status = $status;
+        $clinic                 = Clinic::find($id);
+        $clinic->is_approved    = ($status=="Approved" ? 1 : 0);
+        $clinic->approved_at    = time();
         $clinic->save();
 
         return json_encode(array("status"=>true, "message"=>"Clinic  Status has been updated successfully!"));
@@ -133,7 +132,7 @@ class ClinicController extends Controller
     {
         $id                     = $request->get('clinic_id');
         $status                 = $request->get('status');
-        $clinic               = Clinic::find($id);
+        $clinic                = Clinic::find($id);
         $clinic->payment_status = $status;
         $clinic->save();
 

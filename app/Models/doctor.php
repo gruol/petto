@@ -9,6 +9,7 @@ use App\Models\AppointmentDay;
 use App\Models\AppointmentDate;
 use App\Models\Clinic;
 use App\Models\Review;
+use App\Models\Appointment;
 
 class Doctor extends Model
 {
@@ -50,5 +51,11 @@ class Doctor extends Model
     public function review()
     {  
         return $this->hasMany(Review::class);
+    }
+    public function appointment()
+    {  
+        return $this->belongsTo(Appointment::class,'id','doctor_id')
+        ->where('status','COMPLETED')
+        ;
     }
 }

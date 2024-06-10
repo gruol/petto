@@ -184,10 +184,26 @@
                     <input type="text" class="form-control" disabled="" value="{{$doctor->charges}}">
                 </div>
             </div>
+            <div class="col-md-12 pr-md-1">
+                <div class="form-group">
+                    <label class="font-weight-600">Appointment Dates & Timings</label>
+                    @if(!empty($doctor->AppointmentTime))
+                    @foreach($doctor->AppointmentTime as $key => $appointmentTime)
+                    <div>
+                        
+                        <b> {{($appointmentTime->time ?? $appointmentTime->time)}} - 
+                            {{isset($doctor->AppointmentDay[$key]->day) ? $doctor->AppointmentDay[$key]->day : '-'}} - 
+                            {{isset($doctor->AppointmentDate[$key]->dates) ? $doctor->AppointmentDate[$key]->dates : '-'}} 
+                        </b>  
+                    </div>
+                    @endforeach
+                </div>
+                @endif
+            </div>
             <div class="col-md-3 pr-md-1">
                 <div class="form-group">
-                    <p style="cursor: pointer;" class=" images" title="{{asset('storage/uploads/clinic/doctor/'.Auth::user()->id.'/'.$doctor->picture)}}">Click to View Profile Picture</p>
-                  </div>
+                    <p style="cursor: pointer;font-weight: bold;" class=" images" title="{{asset('storage/uploads/clinic/doctor/'.Auth::user()->id.'/'.$doctor->picture)}}">Click to View Profile Picture</p>
+                </div>
             </div>
 
         </div>
