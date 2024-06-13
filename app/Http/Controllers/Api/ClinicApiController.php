@@ -550,11 +550,23 @@ public function addReview(Request $request)
     return $this->sendResponse( $data,"Customer's Review Saved", 702);
 
 }
-public function appointmentList(Request $request)
+public function customerAppointments(Request $request)
 {
     $data = null;
     $user = Auth::user();
-    $data = Appointment::withCount('review','review')->where('customer_id',$user->id )->get()->toArray();
+    $data = Appointment::with(['customer','doctor','pet'])->withCount('review','review');
+    $data->where('customer_id',$user->id );
+    $data = $data->get()->toArray();
+    return $this->sendResponse( $data,"Customer's Appointments List" , 702);
+
+}
+public function clinicAppointment(Request $request)
+{
+    $data = null;
+    $user = Auth::user();
+    $data = Appointment::with(['customer','doctor' ,'doctor.clinic','pet'])->withCount('review','review');
+    $data->where('customer_id',$user->id );
+    $data = $data->get()->toArray();
     return $this->sendResponse( $data,"Customer's Appointments List" , 702);
 
 }
