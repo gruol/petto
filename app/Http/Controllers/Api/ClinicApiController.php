@@ -564,10 +564,11 @@ public function clinicAppointment(Request $request)
 {
     $data = null;
     $user = Auth::user();
-    $data = Appointment::with(['customer','doctor' ,'doctor.clinic','pet'])->withCount('review','review');
-    $data->where('customer_id',$user->id );
+    $data = Appointment::with(['customer','doctor' ,'doctor.clinic','pet'])->withCount('review','review')
+    // $data->where('customer_id',$user->id );
+    ->whereRelation('doctor.clinic', 'id', $user->id);
     $data = $data->get()->toArray();
-    return $this->sendResponse( $data,"Customer's Appointments List" , 702);
+    return $this->sendResponse( $data,"Clinic's Appointments List" , 702);
 
 }
 public function updateAppointment(Request $request)
