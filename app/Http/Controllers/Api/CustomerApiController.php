@@ -173,14 +173,14 @@ class CustomerApiController extends BaseController
             // }
             // elseif($otpVia == 2)
             // {
-      $message = "Your OTP is : " . $otpCode . "." ;
+            $message = "Your OTP is : " . $otpCode . "." ;
 
 
-            //     $details = [
-            //         'title' => Config::get('constants._PROJECT_NAME'),
-            //         'body' => $otpCode
-            //     ];
-            //     \Mail::to($customer->email)->send(new \App\Mail\SupervisorSendOtpMail($details));
+                $details = [
+                    'title' => Config::get('constants._PROJECT_NAME'),
+                    'body' => $otpCode
+                ];
+                \Mail::to($customer->email)->send(new \App\Mail\SupervisorSendOtpMail($details));
 
             // }
 
