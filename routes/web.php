@@ -73,6 +73,10 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function() {
     Route::get('/clinic/view/{id}', [ClinicController::class, 'clinicView'])->name('clinic.view');
    
     
+    Route::get('/appointments', [ClinicController::class, 'appointments'])->name('clinic.index');
+    Route::get('/appointments/ajaxData', [ClinicController::class, 'appointmentsData'])->name('clinic.appointments_data');
+    Route::get('/appointment/view/{id}', [ClinicController::class, 'appointmentView'])->name('clinic.view');
+
 
 
 }); 

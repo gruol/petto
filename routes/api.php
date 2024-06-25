@@ -51,8 +51,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/countries', [CustomerApiController::class, 'countries'])->name('countries');
     Route::post('/customer/post/remarks', [CustomerApiController::class, 'postRemarks']);
 
+	Route::post('/book/appointment', [ClinicApiController::class, 'bookAppointment']);
 
     Route::post('/customer-logout', [CustomerApiController::class, 'logout']);
+	Route::get('/customer-appointments', [CustomerApiController::class, 'customerAppointments']);
 });
 
 // Clinics Routes
@@ -65,9 +67,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/clinic-add-doctor', [ClinicApiController::class, 'addDoctor']);
 	Route::post('/clinic-update-doctor', [ClinicApiController::class, 'updateDoctor']);
     Route::get('/clinic-doctors/{id?}', [ClinicApiController::class, 'doctors'])->name('doctors');
-	Route::post('/book/appointment', [ClinicApiController::class, 'bookAppointment']);
 	Route::post('/update/appointment', [ClinicApiController::class, 'updateAppointment']);
-	Route::get('/customer-appointments', [ClinicApiController::class, 'customerAppointments']);
 	Route::get('/clinic-appointments', [ClinicApiController::class, 'clinicAppointment']);
 	Route::post('/add/review', [ClinicApiController::class, 'addReview']);
 

@@ -303,62 +303,16 @@ $("#search-button").click(function (e) {
         // console.log(statuses_arr);
     var status        = $(this).attr("data-status");
     var id          = $(this).attr("data-id");
-    
+    console.log(status);
     $.confirm({
-      title : "Change  Status",
+      title : "Change Clinic Status",
       content:function(){
         var html = "";
         $.each(statuses_arr, function(index, value){
-          console.log(value);
-          if(value.id==status){
-            html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
-          }else{
-            html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
-          }
-        });
-        
-        return html;
-      },
-      buttons:{
-        ok:{
-          text:"Save",
-          btnClass:"btn btn-success confirmed",
-          action:function(){
-            var v = this.$content.find("input[type='radio']:checked").val();
-             let url = "{{ route('admin.clinic.status.update') }}";
-            save_status(v, id,url);
-            alert('Status has been updated successfully!');
-            // window.location.reload();
-            table.ajax.reload();
-          }
-        },
-        no:{
-          text:"Cancel"
-        }
-      }
-    });
-    return false;
-  }); 
-
-
-  $(document).on("click", ".btn-change-clinicStatus", function(event){
-    event.preventDefault();
-    var statuses      = $('#clinicStatus').html();
-    var statuses_arr    = JSON.parse(statuses);
-        // console.log(statuses_arr);
-    var status        = $(this).attr("data-status");
-    var id          = $(this).attr("data-id");
-    
-    $.confirm({
-      title : "Change clinic Status",
-      content:function(){
-        var html = "";
-        $.each(statuses_arr, function(index, value){
-          console.log(value);
-          if(value.id==status){
-            html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
-          }else{
-            html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
+          if(value == "Approved"){
+            html+="<label><input type='radio' name='status' value='1' "+(status==1 ? 'checked' : '' ) +"  > "+value+"</label><br>";
+          }else if(value == "Rejected")  {
+            html+="<label><input type='radio' name='status' value='2' "+(status==2 ? 'checked' : '' ) +"> "+value+"</label><br>";
           }
         });
         

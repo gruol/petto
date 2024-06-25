@@ -16,9 +16,9 @@ class sendOTPEmail extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($details)
     {
-        //
+        $this->details = $details;
     }
 
     /**
@@ -28,7 +28,6 @@ class sendOTPEmail extends Mailable
      */
     public function build()
     {
-          return $this->subject('Your PDMIS-OTP for profile verification')->view('distributor.emails.otpMail');
-        // return $this->view('view.name');
+          return $this->subject('Your Petto-OTP for profile verification')->view('emails.sendOtp');
     }
 }

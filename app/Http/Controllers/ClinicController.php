@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\{
   Clinic ,
-  CustomerPets
+  CustomerPets,Appointment
 };
 use Yajra\DataTables\DataTables;
 use Validator;
@@ -33,7 +33,7 @@ class ClinicController extends Controller
     public function index(Request $request)
     {
         $pageTitle           = "Clinics";
-        $clinicStatus = ["Approved"];
+        $clinicStatus = [ 1 =>"Approved", 2 => "Rejected"];
         return view('admin.clinics.index',compact('pageTitle','clinicStatus'));
     }
     public function ajaxtData(Request $request){
@@ -73,7 +73,7 @@ class ClinicController extends Controller
 
 
             // if(auth()->user()->can('clinics-change-status')){
-            $action_list    .= '<a class="dropdown-item btn-change-clinicStatus" href="#" data-status="'.$data->status.'" data-id="'.$data->id.'"><i class="fas fa-pencil-ruler"></i> Change Status</a>';
+            $action_list    .= '<a class="dropdown-item btn-change-clinicStatus" href="#" data-status="'.$data->is_approved.'" data-id="'.$data->id.'"><i class="fas fa-pencil-ruler"></i> Change Status</a>';
 
             // $action_list    .= '<a class="dropdown-item btn-change-clinicStatus" href="#" data-status="'.$data->clinic_status.'" data-id="'.$data->id.'"><i class="far fa fa-life-ring"></i> Change Clinic Status</a>';
             // $action_list    .= '<a class="dropdown-item btn-change-paymentStatus" href="#" data-status="'.$data->payment_status.'" data-id="'.$data->id.'"><i class="fas fa-dollar-sign"></i> Change Payment Status</a>';
@@ -88,6 +88,15 @@ class ClinicController extends Controller
             </div>';
             return  $action_list;
         })
+        ->addColumn('is_approved', function ($data) {
+            if ($data->is_approved == 1 ) {
+                return "Approved";
+            }elseif ($data->is_approved == 2) {
+                return "Rejected";
+            }else{
+                return "Pending";
+            }
+        })
         ->rawColumns(['actions'])
         ->make(TRUE);
 
@@ -97,14 +106,10 @@ class ClinicController extends Controller
         $pageTitle              = "Clinic View";
         $clinic                = Clinic::with(['doctors','doctors.AppointmentTime','doctors.AppointmentDay','doctors.AppointmentDate'])
             // ->withCount( 'review','review')
-
         ->find($id);
         // dd( $clinic   );
             //        $doctors = Doctor::with('AppointmentTime','AppointmentDay','AppointmentDate','clinic')
             // ->withCount( 'appointment','appointment');
-
-
-
         return view('admin.clinics.view',compact('pageTitle','clinic'));
 
     }
@@ -122,7 +127,7 @@ class ClinicController extends Controller
         $id                     = $request->get('clinic_id');
         $status                 = $request->get('status');
         $clinic                 = Clinic::find($id);
-        $clinic->is_approved    = ($status=="Approved" ? 1 : 0);
+        $clinic->is_approved    = $request->get('status');
         $clinic->approved_at    = time();
         $clinic->save();
 
@@ -151,5 +156,77 @@ class ClinicController extends Controller
         $clinic->remarks = $remarks;
         $clinic->update();
         return redirect()->route('admin.clinic.index');
+    }
+    public function appointments(Request $request)
+    {
+        $pageTitle           = "Appointments";
+        $clinicStatus = [ 1 =>"Approved", 2 => "Rejected"];
+        return view('admin.appointments.index',compact('pageTitle','clinicStatus'));
+    }
+    public function appointmentsData(Request $request){
+
+        $rData = Appointment::with(['customer','doctor' ,'doctor.clinic','pet']);
+
+        // $rData = $rData->orderBy('id', 'DESC');
+
+        // if($request->date_from != ""){
+        //     $rData              = $rData->where('time_id', '>=', strtotime($request->date_from));
+        // }
+        // if($request->date_to != ""){
+        //     $rData              = $rData->where('time_id', '<=', strtotime($request->date_to));
+        // }
+        return DataTables::of($rData)
+        ->addIndexColumn()
+
+        ->editColumn('date', function ($data) {
+            if ($data->time_id != "")
+                return date('m-d-Y h:i:s', $data->time_id);
+            else
+                return '-';
+        })
+        // ->editColumn('customer_name', function ($data) {
+        //     if ( isset($data->ClinicBy) && $data->ClinicBy->name != "")
+        //         return $data->ClinicBy->name;
+        //     else
+        //         return '-';
+        // })
+        ->addColumn('actions', function ($data) {
+
+            $action_list    = '<div class="dropdown">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="ti-more-alt"></i>
+            </a>
+            
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">';
+
+
+            $action_list    .= '<a class="dropdown-item" href="'.route('admin.clinic.view',$data->id).'"><i class="fas fa fa-eye"></i> View</a>';
+            // $action_list    .= '<a class="dropdown-item" href="'.route('admin.clinic.edit',$data->id).'"><i class="fas fa fa-pencil-ruler"></i> Clinic Edit</a>';
+            // }
+
+            $action_list    .= '</div>
+            </div>';
+            return  $action_list;
+        })
+        ->addColumn('is_approved', function ($data) {
+            if ($data->is_approved == 1 ) {
+                return "Approved";
+            }elseif ($data->is_approved == 2) {
+                return "Rejected";
+            }else{
+                return "Pending";
+            }
+        })
+        ->rawColumns(['actions'])
+        ->make(TRUE);
+
+    }
+    public function appointmentView($id)
+    {
+        $pageTitle              = "Appointment View";
+        $appointment            = Appointment::with(['customer','doctor','doctor.clinic','pet'])->find($id);
+        // dd( $appointment);
+        return view('admin.appointments.view',compact('pageTitle','appointment'));
+
     }
 }

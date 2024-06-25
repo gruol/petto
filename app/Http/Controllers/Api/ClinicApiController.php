@@ -56,7 +56,7 @@ public function index()
 public function clinicStore(Request $request)
 {
     $validator = Validator::make($request->all(), [
-        'email' => 'required|email|max:255|unique:clinics',
+        'email' => 'required|unique:clinics|unique:customers|max:128',
         'password' => 'required|string',
         'clinic_name' => 'required|string',
         'manager_name' => 'required|string',
@@ -550,16 +550,7 @@ public function addReview(Request $request)
     return $this->sendResponse( $data,"Customer's Review Saved", 702);
 
 }
-public function customerAppointments(Request $request)
-{
-    $data = null;
-    $user = Auth::user();
-    $data = Appointment::with(['customer','doctor','pet'])->withCount('review','review');
-    $data->where('customer_id',$user->id );
-    $data = $data->get()->toArray();
-    return $this->sendResponse( $data,"Customer's Appointments List" , 702);
 
-}
 public function clinicAppointment(Request $request)
 {
     $data = null;
@@ -592,6 +583,7 @@ public function updateAppointment(Request $request)
     }
     if ($request->is_confirmed == 1) {
 
+        $obj->is_confirmed               = $request->is_confirmed;
         $obj->confirmed_by               = Auth::User()->id;
 
     }

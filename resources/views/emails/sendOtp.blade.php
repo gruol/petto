@@ -15,8 +15,8 @@
     Pesticides Distributor Management Information System<br> <span style="font-size: 50px;"></span>
   </div>  
   <div style="font-size: 15px; padding: 15px;">
-    <h4 style="color: #285c37;">Dear Test ,</h4>
-    <p><b>Test </b> is your verfication PIN code for Test .</p>
+    <h4 style="color: #285c37;">Dear {{ $details['name'] }},</h4>
+    <p><b>{{ $details['body'] }}</b> is your verfication PIN code for {{ $details['title'] }} .</p>
     <p style="margin: 0;">The PIN would expire in 20 Minutes.</p>
 
   </div>
@@ -33,11 +33,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <script>document.write(new Date().getFullYear())</script> © Pesticides Distributor Management Information System.
+                    <script>document.write(new Date().getFullYear())</script> © Petto.
                 </div>
                 <div class="col-sm-6">
                     <div class="text-sm-end d-none d-sm-block">
-                        Powered by <strong>Punjab Information Technology Board.</strong>
+                        Powered by <strong>Petto.</strong>
                     </div>
                 </div>
             </div>

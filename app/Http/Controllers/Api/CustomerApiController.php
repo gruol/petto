@@ -8,7 +8,8 @@ use App\Models\{CustomerPets,
 	Shipment,
 	Customer,
     Country,
-    ShipmentPet
+    ShipmentPet,
+    Appointment
 };
 use App\Http\Resources\CustomerResource;
 use App\Http\Controllers\Api\BaseController as BaseController;
@@ -57,7 +58,7 @@ class CustomerApiController extends BaseController
     {
 
     	$validator = Validator::make($request->all(), [
-    		'email' => 'required|email|max:255|unique:customers',
+            'email' => 'required|unique:customers|unique:clinics|max:128',
     		'password' => 'required|string',
     	]);
 
@@ -178,9 +179,10 @@ class CustomerApiController extends BaseController
 
                 $details = [
                     'title' => Config::get('constants._PROJECT_NAME'),
-                    'body' => $otpCode
+                    'body' => $otpCode,
+                    'name' => $customer->name
                 ];
-                \Mail::to($customer->email)->send(new \App\Mail\SupervisorSendOtpMail($details));
+                \Mail::to($customer->email)->send(new \App\Mail\sendOTPEmail($details));
 
             // }
 
@@ -820,6 +822,16 @@ public function customerPet($id)
     $data = CustomerPets::where(['id' => $id ,'customer_id' => Auth::user()->id])->get()->toArray();
 
     return $this->sendResponse( $data,'Customer Pet', 702);
+
+}
+public function customerAppointments(Request $request)
+{
+    $data = null;
+    $user = Auth::user();
+    $data = Appointment::with(['customer','doctor','doctor.clinic','pet'])->withCount('review','review');
+    $data->where('customer_id',$user->id );
+    $data = $data->get()->toArray();
+    return $this->sendResponse( $data,"Customer's Appointments List" , 702);
 
 }
 public function logout()
