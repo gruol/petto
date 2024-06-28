@@ -1,42 +1,12 @@
 @extends("admin.template", ["pageTitle"=>$pageTitle])
 @section('content')
-{{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/css/bootstrap.min.css" rel="stylesheet"> --}}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <style>
-  .dropdown-toggle::after {
-    border: none !important;
-  }
-  .counter {
-    background-color:#f5f5f5;
-    padding: 20px 0;
-    border-radius: 5px;
-  }
-
-  .count-title {
-    font-size: 40px;
-    font-weight: normal;
-    margin-top: 10px;
-    margin-bottom: 0;
-    text-align: center;
-  }
-
-  .count-text {
-    font-size: 13px;
-    font-weight: normal;
-    margin-top: 10px;
-    margin-bottom: 0;
-    text-align: center;
-  }
-
-  .fa-2x {
-    margin: 0 auto;
-    float: none;
-    display: table;
-    color: #825049;
-  }
+.dropdown-toggle::after {
+  border: none !important;
+}
 </style>
 <div class="body-content">
- {{--  <form action="" id="reportForm">
+{{--   <form action="" id="reportForm">
     <div class="row mb-4">
      <div class="col-md-3 mb-3">
        <div class="form-group">
@@ -51,8 +21,8 @@
        </div>
      </div>
    </div>
-   <!-- The Modal -->
-   <div class="modal" id="send-email-modal">
+  <!-- The Modal -->
+  <div class="modal" id="send-email-modal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->
@@ -99,20 +69,20 @@
       </div>
     </div>
   </div>
-  <div class="col-md-3 mb-3">
-   <div class="form-group">
-    <label>Date To: </label>&nbsp;&nbsp;&nbsp;
-    <div class="input-group date">
-     <input type="text" name="date_to" class="form-control bg-light flatpickr" value="" required="" id="date_to">
-     <div class="input-group-addon input-group-append">
-       <div class="input-group-text">
-         <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+   <div class="col-md-3 mb-3">
+     <div class="form-group">
+      <label>Date To: </label>&nbsp;&nbsp;&nbsp;
+      <div class="input-group date">
+       <input type="text" name="date_to" class="form-control bg-light flatpickr" value="" required="" id="date_to">
+       <div class="input-group-addon input-group-append">
+         <div class="input-group-text">
+           <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+         </div>
        </div>
      </div>
    </div>
  </div>
-</div>
-{{--  <div class="col-md-3">
+ <div class="col-md-3">
   <label>Brand</label>
   <select type="text" name="brand_id" id="brand_id" class="form-control select-one" value="" >
    <option value="">--select--</option>
@@ -120,172 +90,66 @@
    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
    @endforeach
  </select>
-</div> --}}
-{{-- <div class="col-md-3 mb-3">
+</div>
+<div class="col-md-3 mb-3">
  <button class="btn btn-success" style="margin-top: 31px;width:150px;float:right" id="search-button">Search</button>
 </div>
 </div>
-</form>  --}}
+</form> --}}
 <div class="row">
   <div class="col-lg-12">
    <div class="card mb-4">
     <div class="card-header">
      <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h6 class="fs-17 font-weight-600 mb-0">Dashboard</h6>
-      </div>
+       <h6 class="fs-17 font-weight-600 mb-0">Appointments</h6>
+     </div>
+     @can('clinic-create')
+     <div class="text-right">
+      {{-- <a class="" href="{{ route('admin.clinic.create') }}"><i class="far fa fa-plus"></i> Add clinic</a> --}}
     </div>
-  </div>
-  <div class="card-body">
-    <div class="col-md-12">
-      @if (Session::has('success'))
-      <div class="alert alert-success">
-        {{ Session::get('success') }}
-      </div>
-      @endif
-    </div>
-    <div class="container">
-      <div class="row">
-        <br/>
-        <div class="col text-center">
-          <h2> Registered Pets</h2><br>
-          {{-- <p>counter to count up to a target number</p> --}}
-        </div>
-      </div>
-      <div class="row text-center">
-        <div class="col">
-          <div class="counter">
-            <i class="fa fa-paw fa-2x"></i>
-            <h2 class="timer count-title count-number" data-to="100" data-speed="1500"></h2>
-            <p class="count-text ">Total Pets Registered</p>
-            <h1>{{$registeredPets['totaRegisteredPets']}}</h1>
-
-          </div>
-        </div>
-        <div class="col">
-         <div class="counter">
-          <i class="fas fa-dog fa-2x"></i>
-          <h2 class="timer count-title count-number" data-to="1700" data-speed="1500"></h2>
-          <p class="count-text ">Dogs</p>
-          <h1>{{$registeredPets['DogCount']}}</h1>
-        </div>
-      </div>
-      <div class="col">
-        <div class="counter">
-          <i class="fas fa-cat fa-2x"></i>
-          <h2 class="timer count-title count-number" data-to="11900" data-speed="1500"></h2>
-          <p class="count-text ">Cats</p>
-          <h1>{{$registeredPets['CatCount']}}</h1>
-        </div></div>
-        <div class="col">
-          <div class="counter">
-            <i class="fas fa-feather-alt fa-2x"></i>
-            <h2 class="timer count-title count-number" data-to="157" data-speed="1500"></h2>
-            <p class="count-text ">Birds</p>
-            <h1>{{$registeredPets['BirdCount']}}</h1>
-          </div>
-        </div>
-      </div>
-      <br>
-       <div class="row">
-        <br/>
-        <div class="col text-center">
-          <h2> Pet Shipment</h2><br>
-          {{-- <p>counter to count up to a target number</p> --}}
-        </div>
-      </div>
-      <div class="row text-center">
-        <div class="col">
-          <div class="counter">
-            {{-- <i class="fa fa-paw fa-2x"></i> --}}
-            <img width="10%" height="10%" src="{{asset('assets/images/question_1_-removebg-preview.png')}}">
-            <h2 class="timer count-title count-number" data-to="100" data-speed="1500"></h2>
-            <p class="count-text ">Inquiry Pending</p>
-            <h1>{{$registeredPets['totaRegisteredPets']}}</h1>
-
-          </div>
-        </div>
-        <div class="col">
-         <div class="counter">
-          {{-- <i class="fas fa-dog fa-2x"></i> --}}
-            <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}">
-
-          <h2 class="timer count-title count-number" data-to="1700" data-speed="1500"></h2>
-          <p class="count-text ">Inquiry Responded</p>
-          <h1>{{$registeredPets['DogCount']}}</h1>
-        </div>
-      </div>
-      <div class="col">
-        <div class="counter">
-          {{-- <i class="fas fa-cat fa-2x"></i> --}}
-
-            <img width="10%" height="10%" src="{{asset('assets/images/plane-removebg-preview.png')}}">
-          <h2 class="timer count-title count-number" data-to="11900" data-speed="1500"></h2>
-          <p class="count-text ">Shipment Confirmed</p>
-          <h1>{{$registeredPets['CatCount']}}</h1>
-        </div></div>
-        <div class="col">
-          <div class="counter">
-            {{-- <i class="fas fa-feather-alt fa-2x"></i> --}}
-            <img width="10%" height="10%" src="{{asset('assets/images/delivered-removebg-preview.png')}}">
-            <h2 class="timer count-title count-number" data-to="157" data-speed="1500"></h2>
-            <p class="count-text ">Shipment Delivered</p>
-            <h1>{{$registeredPets['BirdCount']}}</h1>
-          </div>
-        </div>
-      </div>
-
-      {{--  --}}
-      <br>
-       <div class="row">
-        <br/>
-        <div class="col text-center">
-          <h2> Appointments</h2><br>
-          {{-- <p>counter to count up to a target number</p> --}}
-        </div>
-      </div>
-      <div class="row text-center">
-        <div class="col">
-          <div class="counter">
-            {{-- <i class="fa fa-paw fa-2x"></i> --}}
-            <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}">
-            
-            <h2 class="timer count-title count-number" data-to="100" data-speed="1500"></h2>
-            <p class="count-text "> Pending Appointments</p>
-            <h1>{{$appointments['pendingAppointments']}}</h1>
-
-          </div>
-        </div>
-        <div class="col">
-         <div class="counter">
-          {{-- <i class="fas fa-dog fa-2x"></i> --}}
-            <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}">
-
-          <h2 class="timer count-title count-number" data-to="1700" data-speed="1500"></h2>
-          <p class="count-text ">Pending Consultation</p>
-          <h1>{{$appointments['pendingConsultation']}}</h1>
-        </div>
-      </div>
-      <div class="col">
-        <div class="counter">
-          {{-- <i class="fas fa-cat fa-2x"></i> --}}
-            <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}">
-
-          <h2 class="timer count-title count-number" data-to="11900" data-speed="1500"></h2>
-          <p class="count-text ">Completed Consultation</p>
-          <h1>{{$appointments['completedConsultation']}}</h1>
-        </div></div>
-       
-      </div>
-    </div>
+    @endcan
   </div>
 </div>
+<div class="card-body">
+  <div class="col-md-12">
+    @if (Session::has('success'))
+    <div class="alert alert-success">
+      {{ Session::get('success') }}
+    </div>
+    @endif
+  </div>
+  <div class="table-responsive">
+    <table class="table table-borderless">
+     <thead>
+      <tr>
+        <th>Sr.</th>
+        <th>Appointment Date</th>
+        <th>Appointment Time Slot</th>
+        <th>Customer Name</th>
+        <th>Clinic</th>
+        <th>Doctor</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>
 </div>
 </div>
 </div>
+</div>
+<template id="clinicStatus">{{ json_encode($clinicStatus) }} </template>
+{{-- <template id="clinicStatus">{{json_encode($clinicStatus)}}</template>
+<template id="paymentStatus">{{json_encode($paymentStatus)}}</template> --}}
+</div>
+</div>
+
 @endsection
 @section('footer-script')
-{{-- <script src="{{ asset('js/chosen.jquery.min.js') }}"></script> --}}
+<script src="{{ asset('js/chosen.jquery.min.js') }}"></script>
 <script type="text/javascript">
 
   function confirmDeleteOperation() {
@@ -353,7 +217,7 @@
       }
       ],
       ajax: {
-        'url': '{!! route('admin.shipment.ajax_data') !!}',
+        'url': '{!! route('admin.appointments.ajax_data') !!}',
         'data': function (d) {
           d.date_from = $("input[name='date_from']").val();
           d.date_to = $("input[name='date_to']").val();
@@ -362,18 +226,14 @@
         }
       },
       columns: [
-      {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center'},
-
-      {data: 'date', name: 'date'},
-      {data: 'customer_name', name: 'customer_name'},
-      {data: 'category', name: 'category'},
-      {data: 'book_shipment', name: 'book_shipment'},
-      {data: 'query_status', name: 'query_status'},
-      {data: 'payment_status', name: 'payment_status'},
-      {data: 'origin', name: 'origin'},
-      {data: 'destination', name: 'destination'},
-
-      {data: 'actions', name: 'actions'}
+            {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center'},
+            {data: 'appointment_date', name: 'appointment_date'},
+            {data: 'appointment_timeslot', name: 'appointment_timeslot'},
+            {data: 'customer.name', name: 'customer.name'},
+            {data: 'doctor.clinic.clinic_name', name: 'doctor.clinic.clinic_name'},
+            {data: 'doctor.name', name: 'doctor.name'},
+            {data: 'status', name: 'status'},
+            {data: 'actions', name: 'actions'}
       ],
       columnDefs: [ {
         'orderable': false, /* true or false */
@@ -421,16 +281,91 @@
     return false;
   });
 }
+
+
 );
   // Requery the server with the new one-time export settings
   dt.ajax.reload();
 };
+
 table.ajax.reload();
+
+
 $("#search-button").click(function (e) {
   e.preventDefault();
   table.ajax.reload();
 
 });
+
+
+  $(document).on("click", ".btn-change-clinicStatus", function(event){
+    event.preventDefault();
+    var statuses      = $('#clinicStatus').html();
+    var statuses_arr    = JSON.parse(statuses);
+        // console.log(statuses_arr);
+    var status        = $(this).attr("data-status");
+    var id          = $(this).attr("data-id");
+    console.log(status);
+    $.confirm({
+      title : "Change Clinic Status",
+      content:function(){
+        var html = "";
+        $.each(statuses_arr, function(index, value){
+          if(value == "Approved"){
+            html+="<label><input type='radio' name='status' value='1' "+(status==1 ? 'checked' : '' ) +"  > "+value+"</label><br>";
+          }else if(value == "Rejected")  {
+            html+="<label><input type='radio' name='status' value='2' "+(status==2 ? 'checked' : '' ) +"> "+value+"</label><br>";
+          }
+        });
+        
+        return html;
+      },
+      buttons:{
+        ok:{
+          text:"Save",
+          btnClass:"btn btn-success confirmed",
+          action:function(){
+            var v = this.$content.find("input[type='radio']:checked").val();
+             let url = "{{ route('admin.clinic.status.update') }}";
+            save_status(v, id,url);
+            alert('Status has been updated successfully!');
+            // window.location.reload();
+            table.ajax.reload();
+          }
+        },
+        no:{
+          text:"Cancel"
+        }
+      }
+    });
+    return false;
+  }); 
+
+  function save_status(status, clinic_id,url){
+
+    $.ajax({
+      url: url, 
+      type: "GET",
+      data: {
+        status: status,
+        clinic_id: clinic_id
+      },
+      success: function(data) {
+
+        data = JSON.parse(data);
+
+        console.log(data.status);
+        if(data.status == true){
+          console.log(data.message);
+          return data.message;
+        }
+      }
+    });
+  }
+
+  $(document).on('click', '.close-modal', function(e){
+    $('#job-modal').hide();
+  });
 </script>
 @endsection
 

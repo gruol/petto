@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\{
   Clinic ,
-  CustomerPets,Appointment
+  CustomerPets,Appointment,Doctor
 };
 use Yajra\DataTables\DataTables;
 use Validator;
@@ -200,7 +200,7 @@ class ClinicController extends Controller
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">';
 
 
-            $action_list    .= '<a class="dropdown-item" href="'.route('admin.clinic.view',$data->id).'"><i class="fas fa fa-eye"></i> View</a>';
+            $action_list    .= '<a class="dropdown-item" href="'.route('admin.appointment.view',$data->id).'"><i class="fas fa fa-eye"></i> View</a>';
             // $action_list    .= '<a class="dropdown-item" href="'.route('admin.clinic.edit',$data->id).'"><i class="fas fa fa-pencil-ruler"></i> Clinic Edit</a>';
             // }
 
@@ -228,5 +228,17 @@ class ClinicController extends Controller
         // dd( $appointment);
         return view('admin.appointments.view',compact('pageTitle','appointment'));
 
+    }
+
+    public function appointmentStatusUpdate(Request $request)
+    {
+        $id                     = $request->get('doctor_id');
+        $status                 = $request->get('status');
+        $clinic                 = Doctor::find($id);
+        $clinic->is_approved    = $request->get('status');
+        $clinic->approved_at    = time();
+        $clinic->save();
+
+        return json_encode(array("status"=>true, "message"=>"Doctor  Status has been updated successfully!"));
     }
 }

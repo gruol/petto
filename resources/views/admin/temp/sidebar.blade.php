@@ -51,6 +51,11 @@
 						<i class='fas fa-hospital mr-2'> </i> Clinics
 					</a>
 				</li>
+				<li class="@if( Request::segment(2) == "appointments") {{ "mm-active" }}  @endif">
+					<a class="" href="{{ route('admin.appointments.index') }}">
+						<i class='fas fa-book mr-2'> </i> Appointments
+					</a>
+				</li>
 				{{-- @endcan --}}
 
 				<li  class="@if( Request::segment(2) == "change-password") {{ "mm-active" }}  @endif">

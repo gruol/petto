@@ -66,16 +66,19 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function() {
     Route::get('/shipment/edit/{id}', [ShipmentController::class, 'shipmentEdit'])->name('shipment.edit');
     Route::post('/shipment/update', [ShipmentController::class, 'shipmentUpdate'])->name('shipment.update');
 
-    Route::get('/clinic', [ClinicController::class, 'index'])->name('clinic.index');
-    Route::get('/clinic/ajaxData', [ClinicController::class, 'ajaxtData'])->name('clinic.ajax_data');
+    Route::get('/clinics', [ClinicController::class, 'index'])->name('clinic.index');
+    Route::get('/clinics/ajaxData', [ClinicController::class, 'ajaxtData'])->name('clinic.ajax_data');
     Route::get('/clinic/query/status_update', [ClinicController::class, 'clinicQueryStatusUpdate'])->name('clinic.query.status.update');
+
     Route::get('/clinic/status_update', [ClinicController::class, 'clinicStatusUpdate'])->name('clinic.status.update');
     Route::get('/clinic/view/{id}', [ClinicController::class, 'clinicView'])->name('clinic.view');
    
     
-    Route::get('/appointments', [ClinicController::class, 'appointments'])->name('clinic.index');
-    Route::get('/appointments/ajaxData', [ClinicController::class, 'appointmentsData'])->name('clinic.appointments_data');
-    Route::get('/appointment/view/{id}', [ClinicController::class, 'appointmentView'])->name('clinic.view');
+    Route::get('/appointments', [ClinicController::class, 'appointments'])->name('appointments.index');
+    Route::get('/appointments/ajaxData', [ClinicController::class, 'appointmentsData'])->name('appointments.ajax_data');
+    Route::get('/appointment/view/{id}', [ClinicController::class, 'appointmentView'])->name('appointment.view');
+    Route::get('/appointment/status_update', [ClinicController::class, 'appointmentStatusUpdate'])->name('appointment.status.update');
+    
 
 
 

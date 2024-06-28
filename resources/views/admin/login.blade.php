@@ -26,7 +26,7 @@
 </head>
 <body class="bg-white">
     <div class="d-flex align-items-center justify-content-center text-center h-100vh">
-        <div class="form-wrapper m-auto">
+        <div class="form-wrapper m-auto" style="position: absolute;left: 15%;">
             <div class="form-container my-4">
                 <div class="register-logo text-center mb-4">
                     <img src="{{asset('assets/images/logo.png')}}" alt="">

@@ -129,7 +129,11 @@
                @foreach($clinic->doctors as $i => $doctor)
                <div>
 
-                <b>{{$i+1}} )</b><br>
+                <b>{{$i+1}} ) </b> 
+
+
+
+                <br>
             </div>
             <br>
             <div class="row">
@@ -172,45 +176,65 @@
                     <input type="text" class="form-control" disabled="" value="{{$doctor->expertise}}">
                 </div>
             </div>
-            <div class="col-md-3 pr-md-1">
+           {{--  <div class="col-md-3 pr-md-1">
                 <div class="form-group">
-                    <label class="font-weight-600">Availability</label>
-                    <input type="text" class="form-control" disabled="" value="{{$doctor->availability}}">
+                    <label class="font-weight-600">Doctor Status</label>
+                    <input type="text" class="form-control" disabled="" value="@if($doctor->is_approved == 0  )
+                    Pending
+                    @elseif($doctor->is_approved == 1)
+                    Approved
+                    @else
+                    Rejected
+                    @endif">
                 </div>
-            </div>
+            </div> --}}
             <div class="col-md-3 pr-md-1">
                 <div class="form-group">
                     <label class="font-weight-600">Charges</label>
                     <input type="text" class="form-control" disabled="" value="{{$doctor->charges}}">
                 </div>
             </div>
-            <div class="col-md-12 pr-md-1">
-                <div class="form-group">
-                    <label class="font-weight-600">Appointment Dates & Timings</label>
-                    @if(!empty($doctor->AppointmentTime))
-                    @foreach($doctor->AppointmentTime as $key => $appointmentTime)
-                    <div>
-                        
-                        <b> {{($appointmentTime->time ?? $appointmentTime->time)}} - 
-                            {{isset($doctor->AppointmentDay[$key]->day) ? $doctor->AppointmentDay[$key]->day : '-'}} - 
-                            {{isset($doctor->AppointmentDate[$key]->dates) ? $doctor->AppointmentDate[$key]->dates : '-'}} 
-                        </b>  
-                    </div>
-                    @endforeach
-                </div>
-                @endif
-            </div>
             <div class="col-md-3 pr-md-1">
                 <div class="form-group">
-                    <p style="cursor: pointer;font-weight: bold;" class=" images" title="{{asset('storage/uploads/clinic/doctor/'.Auth::user()->id.'/'.$doctor->picture)}}">Click to View Profile Picture</p>
-                </div>
-            </div>
+                    <label class="font-weight-600">Update Status</label>
 
+                    <div class="form-check">
+                        <input  type="checkbox" {{($doctor->is_approved == 1 ? "checked" : '')}} value="1" data-doc_id="{{$doctor->id}}" name="is_approved" id="UpdateStatus" class="UpdateStatus" >
+                      <label class="form-check-label" for="UpdateStatus">Mark Approved</label>
+                  </div>
+                  <div class="form-check">
+                      <input {{($doctor->is_approved == 2 ? "checked" : '')}}  type="checkbox" value="2" name="is_approved" data-doc_id="{{$doctor->id}}" class="UpdateStatus" id="UpdateStatus" >
+                      <label class="form-check-label" for="UpdateStatus">Mark Rejected</label>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-12 pr-md-1">
+            <div class="form-group">
+                <label class="font-weight-600">Appointment Dates & Timings</label>
+                @if(!empty($doctor->AppointmentTime))
+                @foreach($doctor->AppointmentTime as $key => $appointmentTime)
+                <div>
+
+                    <b> {{($appointmentTime->time ?? $appointmentTime->time)}} - 
+                        {{isset($doctor->AppointmentDay[$key]->day) ? $doctor->AppointmentDay[$key]->day : '-'}} - 
+                        {{isset($doctor->AppointmentDate[$key]->dates) ? $doctor->AppointmentDate[$key]->dates : '-'}} 
+                    </b>  
+                </div>
+                @endforeach
+            </div>
+            @endif
         </div>
-        <hr>
-        @endforeach
-        @endif
+        <div class="col-md-3 pr-md-1">
+            <div class="form-group">
+                <p style="cursor: pointer;font-weight: bold;" class=" images" title="{{asset('storage/uploads/clinic/doctor/'.Auth::user()->id.'/'.$doctor->picture)}}">Click to View Profile Picture</p>
+            </div>
+        </div>
+
     </div>
+    <hr>
+    @endforeach
+    @endif
+</div>
 </div>
 </div>
 </div>
@@ -225,6 +249,30 @@
     $(document).ready(function(){
         var title = $('p').attr('title');
         $('img').before(title);
+
+        $("input[name='is_approved']").on("change", function (e) {
+          
+            var r = confirm("Do you want to Update Doctor Status?");
+
+            if (r == true) {
+                let url = "{{ route('admin.appointment.status.update') }}";
+                  $.ajax({
+                  url: url, 
+                  type: "GET",
+                  data: {
+                    status: this.value,
+                    doctor_id: $(this).data("doc_id")
+                  },
+                  success: function(data) {
+                    location.reload();
+
+                  }
+                });
+            } else {
+                // He refused the confirmation
+            }
+        });
+
     });
     $(".images").click(function(){
         console.log('aaaaaa');
