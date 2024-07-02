@@ -359,6 +359,12 @@
                                     <input type="text" class="form-control" disabled  value="{{$shipment->destination}}">
                                 </div>
                             </div>
+                            <div class="col-md-6 pr-md-1">
+                                <div class="form-group">
+                                    <label class="font-weight-600">Tracking No</label>
+                                    <input type="text" class="form-control" name="tracking_no"  value="">
+                                </div>
+                            </div>
                         </div>
                         <hr>
                         <div class="row">
@@ -375,6 +381,7 @@
                                     <input type="file" class="form-control" name="quotation_file"  value="">
                                 </div>
                             </div>
+                            
                             <div class="col-md-12 mb-3">
                                 <label class="form-label text-dark-gray" for="">Remarks</label>
                                 <div>

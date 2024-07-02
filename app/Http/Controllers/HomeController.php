@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\{
   Shipment ,
-  CustomerPets,Appointment
+  CustomerPets,Appointment,Doctor,Customer,Clinic
 
 };
 class HomeController extends Controller
@@ -36,7 +36,11 @@ class HomeController extends Controller
             count( CASE WHEN is_confirmed = 1 && status = 'PENDING'   THEN 1 ELSE NULL END ) AS pendingConsultation,
             count( CASE WHEN status = 'COMPLETED' THEN 1 ELSE NULL END ) AS completedConsultation,
             count( * ) AS totalAppointments")->first();
-        // dd($appointments);
+            $user = [];
+            $user['doctorCount'] = Doctor::count();
+            $user['clinicCount'] = Clinic::count();
+            $user['customerCount'] = Customer::count();
+      
 
 //         SELECT
 //     count( CASE WHEN query_status = 'Pending' THEN 1 ELSE NULL END ) AS queryPendingCount,
@@ -44,6 +48,6 @@ class HomeController extends Controller
 
 // FROM
 //     `shipments` 
-        return view('admin.dashboard.dashboard',compact('registeredPets','appointments'))->with('pageTitle');
+        return view('admin.dashboard.dashboard',compact('registeredPets','appointments','user'))->with('pageTitle');
     }
 }

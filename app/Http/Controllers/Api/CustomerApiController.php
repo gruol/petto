@@ -765,7 +765,7 @@ public function sync($value='')
 {   
     $data = [];
     $data['customer']   = Customer::where('id',Auth::user()->id)->get()->toArray();   
-    $data['countries']  = Country::where('is_active',1)->get()->toArray();   
+    // $data['countries']  = Country::where('is_active',1)->get()->toArray();   
     $data['shipments']  = Shipment::with('ShipmentPet.Pets','ShipmentBy')->where('customer_id',Auth::user()->id)->get()->toArray();
     $data['pets']       = CustomerPets::where('customer_id',Auth::user()->id)->get()->toArray();
 

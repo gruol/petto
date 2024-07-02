@@ -102,7 +102,7 @@
     <div class="card-header">
      <div class="d-flex justify-content-between align-items-center">
       <div>
-       <h6 class="fs-17 font-weight-600 mb-0">Appointments</h6>
+       <h6 class="fs-17 font-weight-600 mb-0">Clinics</h6>
      </div>
      @can('clinic-create')
      <div class="text-right">
@@ -124,12 +124,13 @@
      <thead>
       <tr>
         <th>Sr.</th>
-        <th>Appointment Date</th>
-        <th>Appointment Time Slot</th>
-        <th>Customer Name</th>
-        <th>Clinic</th>
-        <th>Doctor</th>
+        <th>Clinic Name</th>
+        <th>Manager Name</th>
+        <th>Name</th>
+        <th>Email</th>
         <th>Status</th>
+        <th>Contact</th>
+        <th>Expertise</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -141,8 +142,8 @@
 </div>
 </div>
 </div>
-<template id="clinicStatus">{{ json_encode($clinicStatus) }} </template>
-{{-- <template id="clinicStatus">{{json_encode($clinicStatus)}}</template>
+<template id="doctorStatus">{{ json_encode($doctorStatus) }} </template>
+{{-- <template id="doctorStatus">{{json_encode($doctorStatus)}}</template>
 <template id="paymentStatus">{{json_encode($paymentStatus)}}</template> --}}
 </div>
 </div>
@@ -217,7 +218,7 @@
       // }
       ],
       ajax: {
-        'url': '{!! route('admin.appointments.ajax_data') !!}',
+        'url': '{!! route('admin.doctors.doctors_data') !!}',
         'data': function (d) {
           d.date_from = $("input[name='date_from']").val();
           d.date_to = $("input[name='date_to']").val();
@@ -225,14 +226,17 @@
           return d;
         }
       },
+
       columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center'},
-            {data: 'appointment_date', name: 'appointment_date'},
-            {data: 'appointment_timeslot', name: 'appointment_timeslot'},
-            {data: 'customer.name', name: 'customer.name'},
-            {data: 'doctor.clinic.clinic_name', name: 'doctor.clinic.clinic_name'},
-            {data: 'doctor.name', name: 'doctor.name'},
-            {data: 'status', name: 'status'},
+            {data: 'clinic.clinic_name', name: 'clinic.clinic_name'},
+            {data: 'clinic.manager_name', name: 'clinic.manager_name'},
+            {data: 'name', name: 'name'},
+            {data: 'email', name: 'email'},
+            {data: 'is_approved', name: 'is_approved'},
+            {data: 'contact', name: 'contact'},
+            {data: 'expertise', name: 'expertise'},
+
             {data: 'actions', name: 'actions'}
       ],
       columnDefs: [ {
@@ -298,16 +302,16 @@ $("#search-button").click(function (e) {
 });
 
 
-  $(document).on("click", ".btn-change-clinicStatus", function(event){
+  $(document).on("click", ".btn-change-doctorStatus", function(event){
     event.preventDefault();
-    var statuses      = $('#clinicStatus').html();
+    var statuses      = $('#doctorStatus').html();
     var statuses_arr    = JSON.parse(statuses);
         // console.log(statuses_arr);
     var status        = $(this).attr("data-status");
     var id          = $(this).attr("data-id");
     console.log(status);
     $.confirm({
-      title : "Change Clinic Status",
+      title : "Change doctor Status",
       content:function(){
         var html = "";
         $.each(statuses_arr, function(index, value){
@@ -326,7 +330,7 @@ $("#search-button").click(function (e) {
           btnClass:"btn btn-success confirmed",
           action:function(){
             var v = this.$content.find("input[type='radio']:checked").val();
-             let url = "{{ route('admin.clinic.status.update') }}";
+             let url = "{{ route('admin.doctor.status.update') }}";
             save_status(v, id,url);
             alert('Status has been updated successfully!');
             // window.location.reload();
@@ -341,14 +345,14 @@ $("#search-button").click(function (e) {
     return false;
   }); 
 
-  function save_status(status, clinic_id,url){
+  function save_status(status, doctor_id,url){
 
     $.ajax({
       url: url, 
       type: "GET",
       data: {
         status: status,
-        clinic_id: clinic_id
+        doctor_id: doctor_id
       },
       success: function(data) {
 

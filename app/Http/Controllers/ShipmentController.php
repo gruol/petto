@@ -341,6 +341,7 @@ public function addShipmentRemarks(Request $request)
     $shipment->flight_service_name   = $request->flight_service_name;
     $shipment->ticket_no             = $request->ticket_no;
     $shipment->date_time             = $request->date_time;
+    $shipment->tracking_no           = $request->tracking_no;
 
     $remarks = $shipment->remarks ;
     $remarks .= "<br><b>Posted by (Admin)</b>:".$user->name.", <b> Posted At </b>:".date('Y-m-d h:i ').", <b> Quotation </b>:". $request->quotation ." <br><b> Remarks:</b>".$request->remarks ;

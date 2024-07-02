@@ -230,15 +230,99 @@ class ClinicController extends Controller
 
     }
 
-    public function appointmentStatusUpdate(Request $request)
+    public function doctorStatusUpdate(Request $request)
     {
         $id                     = $request->get('doctor_id');
         $status                 = $request->get('status');
-        $clinic                 = Doctor::find($id);
-        $clinic->is_approved    = $request->get('status');
-        $clinic->approved_at    = time();
-        $clinic->save();
+        $doctor                 = Doctor::find($id);
+        $doctor->is_approved    = $request->get('status');
+        $doctor->approved_at    = time();
+        $doctor->save();
 
         return json_encode(array("status"=>true, "message"=>"Doctor  Status has been updated successfully!"));
+    }
+    // Doctor
+      public function doctors(Request $request)
+    {
+        $pageTitle           = "Doctors";
+        $doctorStatus = [ 1 =>"Approved", 2 => "Rejected"];
+        return view('admin.doctors.index',compact('pageTitle','doctorStatus'));
+    }
+    public function doctorsData(Request $request){
+        $rData                 = Doctor::with(['clinic']);
+
+        // $rData = $rData->orderBy('id', 'DESC');
+
+        // if($request->date_from != ""){
+        //     $rData              = $rData->where('time_id', '>=', strtotime($request->date_from));
+        // }
+        // if($request->date_to != ""){
+        //     $rData              = $rData->where('time_id', '<=', strtotime($request->date_to));
+        // }
+        return DataTables::of($rData)
+        ->addIndexColumn()
+
+        ->editColumn('date', function ($data) {
+            if ($data->time_id != "")
+                return date('m-d-Y h:i:s', $data->time_id);
+            else
+                return '-';
+        })
+        // ->editColumn('customer_name', function ($data) {
+        //     if ( isset($data->ClinicBy) && $data->ClinicBy->name != "")
+        //         return $data->ClinicBy->name;
+        //     else
+        //         return '-';
+        // })
+        ->addColumn('actions', function ($data) {
+
+            $action_list    = '<div class="dropdown">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="ti-more-alt"></i>
+            </a>
+            
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">';
+
+
+            // if(auth()->user()->can('clinics-change-status')){
+            $action_list    .= '<a class="dropdown-item btn-change-doctorStatus" href="#" data-status="'.$data->is_approved.'" data-id="'.$data->id.'"><i class="fas fa-pencil-ruler"></i> Change Status</a>';
+
+            // $action_list    .= '<a class="dropdown-item btn-change-doctorStatus" href="#" data-status="'.$data->clinic_status.'" data-id="'.$data->id.'"><i class="far fa fa-life-ring"></i> Change Clinic Status</a>';
+            // $action_list    .= '<a class="dropdown-item btn-change-paymentStatus" href="#" data-status="'.$data->payment_status.'" data-id="'.$data->id.'"><i class="fas fa-dollar-sign"></i> Change Payment Status</a>';
+            // }
+            // if(auth()->user()->can('product-view')){
+
+            $action_list    .= '<a class="dropdown-item" href="'.route('admin.doctor.view',$data->id).'"><i class="fas fa fa-eye"></i>  View</a>';
+            // $action_list    .= '<a class="dropdown-item" href="'.route('admin.clinic.edit',$data->id).'"><i class="fas fa fa-pencil-ruler"></i> Clinic Edit</a>';
+            // }
+
+            $action_list    .= '</div>
+            </div>';
+            return  $action_list;
+        })
+        ->addColumn('is_approved', function ($data) {
+            if ($data->is_approved == 1 ) {
+                return "Approved";
+            }elseif ($data->is_approved == 2) {
+                return "Rejected";
+            }else{
+                return "Pending";
+            }
+        })
+        ->rawColumns(['actions'])
+        ->make(TRUE);
+
+    }
+    public function doctorView($id)
+    {
+        $pageTitle              = "Doctor View";
+        $doctor                 = Doctor::with(['clinic','AppointmentTime','AppointmentDay','AppointmentDate'])
+            // ->withCount( 'review','review')
+        ->find($id);
+        // dd( $clinic   );
+            //        $doctors = Doctor::with('AppointmentTime','AppointmentDay','AppointmentDate','clinic')
+            // ->withCount( 'appointment','appointment');
+        return view('admin.doctors.view',compact('pageTitle','doctor'));
+
     }
 }

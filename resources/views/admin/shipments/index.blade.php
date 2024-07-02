@@ -1,9 +1,9 @@
 @extends("admin.template", ["pageTitle"=>$pageTitle])
 @section('content')
 <style>
-.dropdown-toggle::after {
-  border: none !important;
-}
+  .dropdown-toggle::after {
+    border: none !important;
+  }
 </style>
 <div class="body-content">
   <form action="" id="reportForm">
@@ -21,8 +21,8 @@
        </div>
      </div>
    </div>
-  <!-- The Modal -->
-  <div class="modal" id="send-email-modal">
+   <!-- The Modal -->
+   <div class="modal" id="send-email-modal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->
@@ -69,19 +69,19 @@
       </div>
     </div>
   </div>
-   <div class="col-md-3 mb-3">
-     <div class="form-group">
-      <label>Date To: </label>&nbsp;&nbsp;&nbsp;
-      <div class="input-group date">
-       <input type="text" name="date_to" class="form-control bg-light flatpickr" value="" required="" id="date_to">
-       <div class="input-group-addon input-group-append">
-         <div class="input-group-text">
-           <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
-         </div>
+  <div class="col-md-3 mb-3">
+   <div class="form-group">
+    <label>Date To: </label>&nbsp;&nbsp;&nbsp;
+    <div class="input-group date">
+     <input type="text" name="date_to" class="form-control bg-light flatpickr" value="" required="" id="date_to">
+     <div class="input-group-addon input-group-append">
+       <div class="input-group-text">
+         <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
        </div>
      </div>
    </div>
  </div>
+</div>
 {{--  <div class="col-md-3">
   <label>Brand</label>
   <select type="text" name="brand_id" id="brand_id" class="form-control select-one" value="" >
@@ -123,11 +123,11 @@
     <table class="table table-borderless">
      <thead>
       <tr>
-        <th>Sr.</th>
+        <th>Ref No.</th>
         <th>Date</th>
         <th>Customer Name</th>
         <th>Category</th>
-        <th>Book Shipment</th>
+        {{-- <th>Book Shipment</th> --}}
         <th>Query Status</th>
         <th>Payment Status</th>
         <th>Origin</th>
@@ -196,27 +196,31 @@
     pageLength: 10,
       //order: [[ "2" , "DESC" ]],
       dom: 'Bfrtip',
+     
       buttons: [
       {
         extend: 'csvHtml5',
         text: '<i class="fa fa-file-text-o"></i>&nbsp; CSV',
-        title: 'ClientsReport-' + getDateTime(),
-        action: newexportaction
-      },
-      {
-        extend: 'excelHtml5',
-        text: '<i class="fa fa-file-excel-o"></i>&nbsp; Excel',
-        title: 'ClientsReport-' + getDateTime(),
+        title: 'Report-' + getDateTime(),
         action: newexportaction,
         exportOptions: {
-          modifier: {
-            // DataTables core
-            order: 'index',  // 'current', 'applied', 'index',  'original'
-            page: 'all',      // 'all',    'current'
-            search: 'applied'     // 'none',    'applied', 'removed'
-          }
-        }
-      }
+            columns: 'th:not(:last-child)'
+         }
+      },
+      // {
+      //   extend: 'excelHtml5',
+      //   text: '<i class="fa fa-file-excel-o"></i>&nbsp; Excel',
+      //   title: 'ClientsReport-' + getDateTime(),
+      //   action: newexportaction,
+      //   exportOptions: {
+      //     modifier: {
+      //       // DataTables core
+      //       order: 'index',  // 'current', 'applied', 'index',  'original'
+      //       page: 'all',      // 'all',    'current'
+      //       search: 'applied'     // 'none',    'applied', 'removed'
+      //     }
+      //   }
+      // }
       ],
       ajax: {
         'url': '{!! route('admin.shipment.ajax_data') !!}',
@@ -229,11 +233,11 @@
       },
       columns: [
       {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center'},
-     
+
       {data: 'date', name: 'date'},
       {data: 'customer_name', name: 'customer_name'},
       {data: 'category', name: 'category'},
-      {data: 'book_shipment', name: 'book_shipment'},
+      // {data: 'book_shipment', name: 'book_shipment'},
       {data: 'query_status', name: 'query_status'},
       {data: 'payment_status', name: 'payment_status'},
       {data: 'origin', name: 'origin'},
@@ -304,38 +308,38 @@ $("#search-button").click(function (e) {
 });
 
 
-  $(document).on("click", ".btn-change-shipmentQueryStatus", function(event){
-    event.preventDefault();
-    var statuses      = $('#shipmentQueryStatus').html();
-    var statuses_arr    = JSON.parse(statuses);
+$(document).on("click", ".btn-change-shipmentQueryStatus", function(event){
+  event.preventDefault();
+  var statuses      = $('#shipmentQueryStatus').html();
+  var statuses_arr    = JSON.parse(statuses);
         // console.log(statuses_arr);
-    var status        = $(this).attr("data-status");
-    var id          = $(this).attr("data-id");
-    
-    $.confirm({
-      title : "Change Shipment Query Status",
-      content:function(){
-        var html = "";
-        $.each(statuses_arr, function(index, value){
-          console.log(value);
-          if(value.id==status){
-            html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
-          }else{
-            html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
-          }
-        });
-        
-        return html;
-      },
-      buttons:{
-        ok:{
-          text:"Save",
-          btnClass:"btn btn-success confirmed",
-          action:function(){
-            var v = this.$content.find("input[type='radio']:checked").val();
-             let url = "{{ route('admin.shipment.query.status.update') }}";
-            save_status(v, id,url);
-            alert('Query Status has been updated successfully!');
+        var status        = $(this).attr("data-status");
+        var id          = $(this).attr("data-id");
+
+        $.confirm({
+          title : "Change Shipment Query Status",
+          content:function(){
+            var html = "";
+            $.each(statuses_arr, function(index, value){
+              console.log(value);
+              if(value.id==status){
+                html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
+              }else{
+                html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
+              }
+            });
+
+            return html;
+          },
+          buttons:{
+            ok:{
+              text:"Save",
+              btnClass:"btn btn-success confirmed",
+              action:function(){
+                var v = this.$content.find("input[type='radio']:checked").val();
+                let url = "{{ route('admin.shipment.query.status.update') }}";
+                save_status(v, id,url);
+                alert('Query Status has been updated successfully!');
             // window.location.reload();
             table.ajax.reload();
           }
@@ -345,42 +349,42 @@ $("#search-button").click(function (e) {
         }
       }
     });
-    return false;
-  }); 
+        return false;
+      }); 
 
 
-  $(document).on("click", ".btn-change-shipmentStatus", function(event){
-    event.preventDefault();
-    var statuses      = $('#shipmentStatus').html();
-    var statuses_arr    = JSON.parse(statuses);
+$(document).on("click", ".btn-change-shipmentStatus", function(event){
+  event.preventDefault();
+  var statuses      = $('#shipmentStatus').html();
+  var statuses_arr    = JSON.parse(statuses);
         // console.log(statuses_arr);
-    var status        = $(this).attr("data-status");
-    var id          = $(this).attr("data-id");
-    
-    $.confirm({
-      title : "Change Shipment Status",
-      content:function(){
-        var html = "";
-        $.each(statuses_arr, function(index, value){
-          console.log(value);
-          if(value.id==status){
-            html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
-          }else{
-            html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
-          }
-        });
-        
-        return html;
-      },
-      buttons:{
-        ok:{
-          text:"Save",
-          btnClass:"btn btn-success confirmed",
-          action:function(){
-            var v = this.$content.find("input[type='radio']:checked").val();
-             let url = "{{ route('admin.shipment.status.update') }}";
-            save_status(v, id,url);
-            alert('Status has been updated successfully!');
+        var status        = $(this).attr("data-status");
+        var id          = $(this).attr("data-id");
+
+        $.confirm({
+          title : "Change Shipment Status",
+          content:function(){
+            var html = "";
+            $.each(statuses_arr, function(index, value){
+              console.log(value);
+              if(value.id==status){
+                html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
+              }else{
+                html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
+              }
+            });
+
+            return html;
+          },
+          buttons:{
+            ok:{
+              text:"Save",
+              btnClass:"btn btn-success confirmed",
+              action:function(){
+                var v = this.$content.find("input[type='radio']:checked").val();
+                let url = "{{ route('admin.shipment.status.update') }}";
+                save_status(v, id,url);
+                alert('Status has been updated successfully!');
             // window.location.reload();
             table.ajax.reload();
           }
@@ -390,41 +394,41 @@ $("#search-button").click(function (e) {
         }
       }
     });
-    return false;
-  }); 
+        return false;
+      }); 
 
-  $(document).on("click", ".btn-change-paymentStatus", function(event){
-    event.preventDefault();
-    var statuses      = $('#paymentStatus').html();
-    var statuses_arr    = JSON.parse(statuses);
+$(document).on("click", ".btn-change-paymentStatus", function(event){
+  event.preventDefault();
+  var statuses      = $('#paymentStatus').html();
+  var statuses_arr    = JSON.parse(statuses);
         // console.log(statuses_arr);
-    var status        = $(this).attr("data-status");
-    var id          = $(this).attr("data-id");
-    
-    $.confirm({
-      title : "Change Payment Status",
-      content:function(){
-        var html = "";
-        $.each(statuses_arr, function(index, value){
-          console.log(value);
-          if(value.id==status){
-            html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
-          }else{
-            html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
-          }
-        });
-        
-        return html;
-      },
-      buttons:{
-        ok:{
-          text:"Save",
-          btnClass:"btn btn-success confirmed",
-          action:function(){
-            var v = this.$content.find("input[type='radio']:checked").val();
-             let url = "{{ route('admin.shipment.payment.status.update') }}";
-            save_status(v, id,url);
-            alert('Payment Status has been updated successfully!');
+        var status        = $(this).attr("data-status");
+        var id          = $(this).attr("data-id");
+
+        $.confirm({
+          title : "Change Payment Status",
+          content:function(){
+            var html = "";
+            $.each(statuses_arr, function(index, value){
+              console.log(value);
+              if(value.id==status){
+                html+="<label><input type='radio' name='status' value='"+value+"' checked> "+value+"</label><br>";
+              }else{
+                html+="<label><input type='radio' name='status' value='"+value+"'> "+value+"</label><br>";
+              }
+            });
+
+            return html;
+          },
+          buttons:{
+            ok:{
+              text:"Save",
+              btnClass:"btn btn-success confirmed",
+              action:function(){
+                var v = this.$content.find("input[type='radio']:checked").val();
+                let url = "{{ route('admin.shipment.payment.status.update') }}";
+                save_status(v, id,url);
+                alert('Payment Status has been updated successfully!');
             // window.location.reload();
             table.ajax.reload();
           }
@@ -434,33 +438,33 @@ $("#search-button").click(function (e) {
         }
       }
     });
-    return false;
-  }); 
-  function save_status(status, shipment_id,url){
+        return false;
+      }); 
+function save_status(status, shipment_id,url){
 
-    $.ajax({
-      url: url, 
-      type: "GET",
-      data: {
-        status: status,
-        shipment_id: shipment_id
-      },
-      success: function(data) {
+  $.ajax({
+    url: url, 
+    type: "GET",
+    data: {
+      status: status,
+      shipment_id: shipment_id
+    },
+    success: function(data) {
 
-        data = JSON.parse(data);
+      data = JSON.parse(data);
 
-        console.log(data.status);
-        if(data.status == true){
-          console.log(data.message);
-          return data.message;
-        }
+      console.log(data.status);
+      if(data.status == true){
+        console.log(data.message);
+        return data.message;
       }
-    });
-  }
-
-  $(document).on('click', '.close-modal', function(e){
-    $('#job-modal').hide();
+    }
   });
+}
+
+$(document).on('click', '.close-modal', function(e){
+  $('#job-modal').hide();
+});
 </script>
 @endsection
 

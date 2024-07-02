@@ -270,13 +270,52 @@
         <div class="counter">
           {{-- <i class="fas fa-cat fa-2x"></i> --}}
             <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}">
-
           <h2 class="timer count-title count-number" data-to="11900" data-speed="1500"></h2>
           <p class="count-text ">Completed Consultation</p>
           <h1>{{$appointments['completedConsultation']}}</h1>
         </div></div>
-       
       </div>
+    {{-- User --}}
+          <br>
+       <div class="row">
+        <br/>
+        <div class="col text-center">
+          <h2> User</h2><br>
+          {{-- <p>counter to count up to a target number</p> --}}
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col">
+          <div class="counter">
+            <i class="fa fa-user fa-2x"></i>
+            {{-- <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}"> --}}
+            
+            <h2 class="timer count-title count-number" data-to="100" data-speed="1500"></h2>
+            <p class="count-text "> Customers</p>
+            <h1>{{$user['customerCount']}}</h1>
+
+          </div>
+        </div>
+        <div class="col">
+         <div class="counter">
+          <i class="fas fa-hospital fa-2x"></i>
+            {{-- <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}"> --}}
+
+          <h2 class="timer count-title count-number" data-to="1700" data-speed="1500"></h2>
+          <p class="count-text ">Clinic</p>
+          <h1>{{$user['clinicCount']}}</h1>
+        </div>
+      </div>
+      <div class="col">
+        <div class="counter">
+          <i class="fas fa-user-md fa-2x"></i>
+            {{-- <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}"> --}}
+          <h2 class="timer count-title count-number" data-to="11900" data-speed="1500"></h2>
+          <p class="count-text ">Doctors</p>
+                   <h1>{{$user['doctorCount']}}</h1>
+        </div></div>
+      </div>
+    </div>
     </div>
   </div>
 </div>

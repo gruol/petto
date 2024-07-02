@@ -194,26 +194,26 @@
       //order: [[ "2" , "DESC" ]],
       dom: 'Bfrtip',
       buttons: [
-      {
-        extend: 'csvHtml5',
-        text: '<i class="fa fa-file-text-o"></i>&nbsp; CSV',
-        title: 'ClientsReport-' + getDateTime(),
-        action: newexportaction
-      },
-      {
-        extend: 'excelHtml5',
-        text: '<i class="fa fa-file-excel-o"></i>&nbsp; Excel',
-        title: 'ClientsReport-' + getDateTime(),
-        action: newexportaction,
-        exportOptions: {
-          modifier: {
-            // DataTables core
-            order: 'index',  // 'current', 'applied', 'index',  'original'
-            page: 'all',      // 'all',    'current'
-            search: 'applied'     // 'none',    'applied', 'removed'
-          }
-        }
-      }
+      // {
+      //   extend: 'csvHtml5',
+      //   text: '<i class="fa fa-file-text-o"></i>&nbsp; CSV',
+      //   title: 'ClientsReport-' + getDateTime(),
+      //   action: newexportaction
+      // },
+      // {
+      //   extend: 'excelHtml5',
+      //   text: '<i class="fa fa-file-excel-o"></i>&nbsp; Excel',
+      //   title: 'ClientsReport-' + getDateTime(),
+      //   action: newexportaction,
+      //   exportOptions: {
+      //     modifier: {
+      //       // DataTables core
+      //       order: 'index',  // 'current', 'applied', 'index',  'original'
+      //       page: 'all',      // 'all',    'current'
+      //       search: 'applied'     // 'none',    'applied', 'removed'
+      //     }
+      //   }
+      // }
       ],
       ajax: {
         'url': '{!! route('admin.clinic.ajax_data') !!}',

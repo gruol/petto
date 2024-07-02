@@ -81,11 +81,11 @@
                     <div class="row align-items-center">
                         <div class="col">  
                             <h6 class="mb-0 font-weight-600">Manager Name</h6>
-                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$clinic->manager_name}}</a>
+                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$doctor->clinic->manager_name}}</a>
                         </div>
                         <div class="col">  
                             <h6 class="mb-0 font-weight-600">Contact No</h6>
-                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$clinic->contact}}</a>
+                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$doctor->clinic->contact}}</a>
                         </div>
                         <div class="col-auto">
 
@@ -95,16 +95,16 @@
                     <div class="row align-items-center">
                         <div class="col">  
                             <h6 class="mb-0 font-weight-600">Email</h6>
-                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$clinic->email}}</a>
+                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$doctor->clinic->email}}</a>
                         </div>
                         <div class="col">  
                             <h6 class="mb-0 font-weight-600">Clinic Name</h6>
-                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$clinic->clinic_name}}</a>
+                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$doctor->clinic->clinic_name}}</a>
                         </div>
                         <div class="row align-items-center">
                           <div class="col">  
                             <h6 class="mb-0 font-weight-600">Clinic Address</h6>
-                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$clinic->address}}</a>
+                            <a href="#!" class="fs-13 font-weight-600 px-4">{{$doctor->clinic->address}}</a>
                         </div>
                     </div>
                     <div class="col-auto">
@@ -125,7 +125,7 @@
                 </div>
             </div>
             <div class="card-body">
-               @if(!$clinic->doctors->isEmpty())
+              {{--  @if(!$clinic->doctors->isEmpty())
                @foreach($clinic->doctors as $i => $doctor)
                <div>
 
@@ -134,10 +134,10 @@
 
 
                 <br>
-            </div>
+            </div> --}}
             <br>
             <div class="row">
-               <div class="col-md-3 pr-md-1">
+             <div class="col-md-3 pr-md-1">
                 <div class="form-group">
                     <label class="font-weight-600">Doctor Name</label>
                     <input type="text" class="form-control" disabled="" value="{{$doctor->name}}">
@@ -176,25 +176,29 @@
                     <input type="text" class="form-control" disabled="" value="{{$doctor->expertise}}">
                 </div>
             </div>
-           {{--  <div class="col-md-3 pr-md-1">
+            <div class="col-md-3 pr-md-1">
                 <div class="form-group">
                     <label class="font-weight-600">Doctor Status</label>
-                    <input type="text" class="form-control" disabled="" value="@if($doctor->is_approved == 0  )
-                    Pending
-                    @elseif($doctor->is_approved == 1)
-                    Approved
-                    @else
-                    Rejected
-                    @endif">
+                    @php
+                    if($doctor->is_approved == 0  )
+                        $status = "Pending";
+                        elseif ($doctor->is_approved == 1)
+                            $status = "Approved";
+                        else
+                            $status = "Rejected";
+                    
+                    @endphp
+
+                    <input type="text" class="form-control" disabled="" value="{{ $status}}">
                 </div>
-            </div> --}}
+            </div> 
             <div class="col-md-3 pr-md-1">
                 <div class="form-group">
                     <label class="font-weight-600">Charges</label>
                     <input type="text" class="form-control" disabled="" value="{{$doctor->charges}}">
                 </div>
             </div>
-            <div class="col-md-3 pr-md-1">
+         {{--    <div class="col-md-3 pr-md-1">
                 <div class="form-group">
                     <label class="font-weight-600">Update Status</label>
 
@@ -207,7 +211,7 @@
                       <label class="form-check-label" for="UpdateStatus">Mark Rejected</label>
                   </div>
               </div>
-          </div>
+          </div> --}}
           <div class="col-md-12 pr-md-1">
             <div class="form-group">
                 <label class="font-weight-600">Appointment Dates & Timings</label>
@@ -224,7 +228,7 @@
             </div>
             @endif
         </div>
-        <div class="col-md-3 pr-md-1">
+        <div class="col-md-4 pr-md-1">
             <div class="form-group">
                 <p style="cursor: pointer;font-weight: bold;" class=" images" title="{{asset('storage/uploads/clinic/doctor/'.Auth::user()->id.'/'.$doctor->picture)}}">Click to View Profile Picture</p>
             </div>
@@ -232,8 +236,8 @@
 
     </div>
     <hr>
-    @endforeach
-    @endif
+  {{--   @endforeach
+  @endif --}}
 </div>
 </div>
 </div>
@@ -250,28 +254,28 @@
         var title = $('p').attr('title');
         $('img').before(title);
 
-        $("input[name='is_approved']").on("change", function (e) {
-          
-            var r = confirm("Do you want to Update Doctor Status?");
+        // $("input[name='is_approved']").on("change", function (e) {
 
-            if (r == true) {
-                let url = "{{ route('admin.doctor.status.update') }}";
-                  $.ajax({
-                  url: url, 
-                  type: "GET",
-                  data: {
-                    status: this.value,
-                    doctor_id: $(this).data("doc_id")
-                  },
-                  success: function(data) {
-                    location.reload();
+        //     var r = confirm("Do you want to Update Doctor Status?");
 
-                  }
-                });
-            } else {
-                // He refused the confirmation
-            }
-        });
+        //     if (r == true) {
+            {{-- //         let url = "{{ route('admin.appointment.status.update') }}"; --}}
+        //           $.ajax({
+        //           url: url, 
+        //           type: "GET",
+        //           data: {
+        //             status: this.value,
+        //             doctor_id: $(this).data("doc_id")
+        //           },
+        //           success: function(data) {
+        //             location.reload();
+
+        //           }
+        //         });
+        //     } else {
+        //         // He refused the confirmation
+        //     }
+        // });
 
     });
     $(".images").click(function(){
