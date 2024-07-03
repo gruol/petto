@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="robots" content="nofollow, noindex">
 	<title>Admin Panel</title>
-	<link rel="shortcut icon" href="assets/dist/img/favicon.png">
+	<link rel="shortcut icon" href="{{asset('assets/images/favicon.png')}}">
 	<link href="{{asset('b/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
 	<meta name="csrf-token" content="{{ csrf_token() }}" />
 	<link href="{{asset('b/plugins/metisMenu/metisMenu.min.css')}}" rel="stylesheet">

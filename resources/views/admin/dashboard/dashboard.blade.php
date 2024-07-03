@@ -280,7 +280,7 @@
        <div class="row">
         <br/>
         <div class="col text-center">
-          <h2> User</h2><br>
+          <h2> Users</h2><br>
           {{-- <p>counter to count up to a target number</p> --}}
         </div>
       </div>
@@ -302,7 +302,7 @@
             {{-- <img width="10%" height="10%" src="{{asset('assets/images/paper-removebg-preview.png')}}"> --}}
 
           <h2 class="timer count-title count-number" data-to="1700" data-speed="1500"></h2>
-          <p class="count-text ">Clinic</p>
+          <p class="count-text ">Clinics</p>
           <h1>{{$user['clinicCount']}}</h1>
         </div>
       </div>

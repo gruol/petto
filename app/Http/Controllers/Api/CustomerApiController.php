@@ -461,18 +461,20 @@ public function shipmentBooking(Request $request)
       return $this->sendError($validator->errors()->first());
 
   }
-  $user               = Auth::guard('sanctum')->user();
-  $obj                =  new Shipment;
+  $user                 = Auth::guard('sanctum')->user();
+  $obj                  = new Shipment;
   $obj->time_id 		= time(); 
   $obj->customer_id 	= $user->id; 
-  $obj->query_status  = "Pending"; 
+  $obj->query_status    = "Pending"; 
+  $obj->shipment_status = "Pending"; 
+  $obj->payment_status  = "Pending"; 
   $obj->category 		= $request->category; 
-  $obj->origin 		= $request->origin; 
+  $obj->origin 		    = $request->origin; 
   $obj->destination 	= $request->destination; 
 // $obj->pet_ids 		= $request->pet; 
   $obj->gross_weight 	= $request->gross_weight; 
-  $obj->pet_dimensions= $request->pet_dimensions; 
-  $obj->have_cage 	= $request->have_cage; 
+  $obj->pet_dimensions  = $request->pet_dimensions; 
+  $obj->have_cage 	    = $request->have_cage; 
   $obj->cage_dimensions = $request->cage_dimensions; 
   $obj->want_booking 	= $request->want_booking; 
   $obj->save();
