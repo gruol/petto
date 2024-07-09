@@ -59,8 +59,8 @@ class CustomerApiController extends BaseController
 
     	$validator = Validator::make($request->all(), [
             'email' => 'required|unique:customers|unique:clinics|max:128',
-    		'password' => 'required|string',
-    	]);
+            'password' => 'required|string',
+        ]);
 
     	if($validator->fails())
     	{
@@ -174,15 +174,15 @@ class CustomerApiController extends BaseController
             // }
             // elseif($otpVia == 2)
             // {
-            $message = "Your OTP is : " . $otpCode . "." ;
+      $message = "Your OTP is : " . $otpCode . "." ;
 
 
-                $details = [
-                    'title' => Config::get('constants._PROJECT_NAME'),
-                    'body' => $otpCode,
-                    'name' => $customer->name
-                ];
-                \Mail::to($customer->email)->send(new \App\Mail\sendOTPEmail($details));
+      $details = [
+        'title' => Config::get('constants._PROJECT_NAME'),
+        'body' => $otpCode,
+        'name' => $customer->name
+    ];
+    \Mail::to($customer->email)->send(new \App\Mail\sendOTPEmail($details));
 
             // }
 
@@ -195,12 +195,12 @@ class CustomerApiController extends BaseController
             // }
             // else{
 
-      $data = null;
+    $data = null;
             // }
     // return $this->sendResponse( $message,$data);
 
     // return $this->sendResponse($data "OTP has been sent", );
-      return $this->sendResponse($data ,$message );
+    return $this->sendResponse($data ,$message );
 
         // }catch(\Exception $e){
         //     DB::rollback();
@@ -208,18 +208,18 @@ class CustomerApiController extends BaseController
 
         // }
 
-  }
-  public function verifyOtp(Request $request)
-  {
+}
+public function verifyOtp(Request $request)
+{
 
-   $user = Auth::guard('sanctum')->user();
-   $customer = Customer::find($user->id);
+ $user = Auth::guard('sanctum')->user();
+ $customer = Customer::find($user->id);
 
-   $tokenStartTime = Carbon::now();
-   $tokenEndTime   = Carbon::parse($customer->otp_created_at);
+ $tokenStartTime = Carbon::now();
+ $tokenEndTime   = Carbon::parse($customer->otp_created_at);
 
         // Calculate the difference in minutes
-   $differenceInMinutes = $tokenStartTime->diffInMinutes($tokenEndTime);
+ $differenceInMinutes = $tokenStartTime->diffInMinutes($tokenEndTime);
 
         if($differenceInMinutes > 5){ // check implement for to  check token expire time
 
@@ -287,13 +287,13 @@ class CustomerApiController extends BaseController
 
     	if($validator->fails())
     	{
-           return $this->sendError($validator->errors()->first());
+         return $this->sendError($validator->errors()->first());
 
 
-       }
+     }
 
-       $newPassword = $request->input('newPassword');
-       $newPasswordConfirm = $request->input('newPasswordConfirm');
+     $newPassword = $request->input('newPassword');
+     $newPasswordConfirm = $request->input('newPasswordConfirm');
 
 
         // if($newPassword !== $newPasswordConfirm)
@@ -303,54 +303,54 @@ class CustomerApiController extends BaseController
 
         // }
 
-       $user = Auth::guard('sanctum')->user();
-       $customer = Customer::where(['email' => $user->email, 'is_deleted' => 0], )->first();
+     $user = Auth::guard('sanctum')->user();
+     $customer = Customer::where(['email' => $user->email, 'is_deleted' => 0], )->first();
 
-       if($customer == null)
-       {
-          return $this->sendError('No Data found with this email');
+     if($customer == null)
+     {
+      return $this->sendError('No Data found with this email');
 
-      }
-      $customer->tokens()->delete();
+  }
+  $customer->tokens()->delete();
         // else{
 
-      Customer::find(auth()->user()->id)->update(['password'=> Hash::make($request->input('newPassword'))]);
+  Customer::find(auth()->user()->id)->update(['password'=> Hash::make($request->input('newPassword'))]);
 
-      $data = null;
+  $data = null;
 
 
-      return $this->sendResponse($data ,'Password Changed' , 703);
+  return $this->sendResponse($data ,'Password Changed' , 703);
 
         // }
 
-  }
+}
 
-  public function addPet(Request $request)
-  {
-   $validator =  Validator::make($request->all(),[
-      'name'      => ['required'],
-      'breed'     => ['required'],
-      'age'       => ['required'],
-      'category'  => ['required'],
-      'picture'  => ['required']
+public function addPet(Request $request)
+{
+ $validator =  Validator::make($request->all(),[
+  'name'      => ['required'],
+  'breed'     => ['required'],
+  'age'       => ['required'],
+  'category'  => ['required'],
+      // 'picture'  => ['required']
 
-  ]);
+]);
 
-   if($validator->fails())
-   {
-      return $this->sendError($validator->errors()->first());
+ if($validator->fails())
+ {
+  return $this->sendError($validator->errors()->first());
 
-  }
-  $user                = Auth::guard('sanctum')->user();
-  $obj                 =  new CustomerPets;
-  $obj->customer_id    = $user->id;
-  $obj->name           = $request->name;
-  $obj->breed          = $request->breed;
-  $obj->age            = $request->age;
-  $obj->category       = $request->category;
+}
+$user                = Auth::guard('sanctum')->user();
+$obj                 =  new CustomerPets;
+$obj->customer_id    = $user->id;
+$obj->name           = $request->name;
+$obj->breed          = $request->breed;
+$obj->age            = $request->age;
+$obj->category       = $request->category;
 
-  if($request['picture'] != null)
-  {
+if($request['picture'] != null)
+{
 
     $image = $request['picture']; 
     $pos  = strpos($image, ';');
@@ -380,30 +380,34 @@ return $this->sendResponse($data,'Pet Info saved' , 703);
 public function updatePet(Request $request)
 {
 
-   $validator =  Validator::make($request->all(),[
-      'name'      => ['required'],
-      'breed'     => ['required'],
-      'age'       => ['required'],
-      'category'  => ['required'],
-      'picture'  => ['required']
+ $validator =  Validator::make($request->all(),[
+  'name'      => ['required'],
+  'breed'     => ['required'],
+  'age'       => ['required'],
+  'category'  => ['required'],
+  'picture'   => ['required']
 
-  ]);
+]);
 
-   if($validator->fails())
-   {
-      return $this->sendError($validator->errors()->first());
+ if($validator->fails())
+ {
+  return $this->sendError($validator->errors()->first());
 
-  }
-  $user                = Auth::guard('sanctum')->user();
-  $obj                 = CustomerPets::find( $request->pet_id);
-  $obj->customer_id    = $user->id;
-  $obj->name           = $request->name;
-  $obj->breed          = $request->breed;
-  $obj->age            = $request->age;
-  $obj->category       = $request->category;
+}
+$user                = Auth::guard('sanctum')->user();
+$obj                 = CustomerPets::find( $request->pet_id);
 
-  if($request['picture'] != null)
-  {
+if (empty($obj)  ) {
+  return $this->sendResponse(null,"No Pet Found" );  
+}
+$obj->customer_id    = $user->id;
+$obj->name           = $request->name;
+$obj->breed          = $request->breed;
+$obj->age            = $request->age;
+$obj->category       = $request->category;
+
+if($request['picture'] != null)
+{
 
     $image = $request['picture']; 
     $pos  = strpos($image, ';');
@@ -423,7 +427,7 @@ else{
 }
 $obj->picture        = $picture;
 $attechments = [];
-if (count($request->additional_documents) > 1) {
+if (count($request->additional_documents) > 0) {
     foreach($request->additional_documents as $key => $documents){
         $image = $documents; 
         $pos  = strpos($image, ';');
@@ -437,49 +441,69 @@ if (count($request->additional_documents) > 1) {
         $picture = env('APP_URL')."public/storage/uploads/pet/".$user->id.'/'.$picture;
         $attechments[$request->additional_documents_name[$key]] = $picture ;
     }
+    $obj->attachments = json_encode($attechments);
 }
-$obj->attachments = json_encode($attechments);
 $obj->save();
 $data = null;
 
 
 return $this->sendResponse($data,'Pet Info Update' , 703);
 }
+public function deletePet(Request $request)
+{
+ $validator =  Validator::make($request->all(),[
+  'id'      => ['required'],
+]);
 
+ if($validator->fails())
+ {
+  return $this->sendError($validator->errors()->first());
+
+}
+$user                = Auth::guard('sanctum')->user();
+$obj                 = CustomerPets::where('id', $request->id)->first();
+if(empty($obj)){
+    return $this->sendResponse(null,'Pet Not Found' , 703);
+}else{
+    $obj->delete();
+}
+
+return $this->sendResponse(null,'Pet Info Deleted' , 703);
+}
 public function shipmentBooking(Request $request)
 {
-   $validator =  Validator::make($request->all(),[
-      'origin'      => ['required'],
-      'destination' => ['required'],
-      'pet'         => ['required'],
-      'have_cage'   => ['required']
+ $validator =  Validator::make($request->all(),[
+  'origin'      => ['required'],
+  'destination' => ['required'],
+  'pet'         => ['required'],
+  'have_cage'   => ['required']
 
-  ]);
+]);
 
-   if($validator->fails())
-   {
-      return $this->sendError($validator->errors()->first());
+ if($validator->fails())
+ {
+  return $this->sendError($validator->errors()->first());
 
-  }
-  $user                 = Auth::guard('sanctum')->user();
-  $obj                  = new Shipment;
-  $obj->time_id 		= time(); 
-  $obj->customer_id 	= $user->id; 
-  $obj->query_status    = "Pending"; 
-  $obj->shipment_status = "Pending"; 
-  $obj->payment_status  = "Pending"; 
-  $obj->category 		= $request->category; 
-  $obj->origin 		    = $request->origin; 
-  $obj->destination 	= $request->destination; 
+}
+$user                 = Auth::guard('sanctum')->user();
+$obj                  = new Shipment;
+$obj->time_id 		= time(); 
+$obj->customer_id 	= $user->id; 
+$obj->query_status    = "Pending"; 
+$obj->shipment_status = "Pending"; 
+$obj->payment_status  = "Pending"; 
+$obj->category 		= $request->category; 
+$obj->origin 		    = $request->origin; 
+$obj->destination 	= $request->destination; 
 // $obj->pet_ids 		= $request->pet; 
-  $obj->gross_weight 	= $request->gross_weight; 
-  $obj->pet_dimensions  = $request->pet_dimensions; 
-  $obj->have_cage 	    = $request->have_cage; 
-  $obj->cage_dimensions = $request->cage_dimensions; 
-  $obj->want_booking 	= $request->want_booking; 
-  $obj->save();
+$obj->gross_weight 	= $request->gross_weight; 
+$obj->pet_dimensions  = $request->pet_dimensions; 
+$obj->have_cage 	    = $request->have_cage; 
+$obj->cage_dimensions = $request->cage_dimensions; 
+$obj->want_booking 	= $request->want_booking; 
+$obj->save();
 
-  foreach ($request->pet as $key => $pet_id) {
+foreach ($request->pet as $key => $pet_id) {
     if (isset($pet_id ) && $pet_id > 0 ) {
         $obj2 =   New ShipmentPet;
         $obj2->pet_id = $pet_id;

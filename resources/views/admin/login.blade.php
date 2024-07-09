@@ -6,7 +6,7 @@
     <meta name="description" content="Responsive Bootstrap 4 Admin &amp; Dashboard Template">
     <meta name="author" content="Bdtask">
     <title>Login</title>
-    <link rel="shortcut icon" href="assets/dist/img/favicon.png">
+    <link rel="shortcut icon" href="{{asset('assets/images/favicon.png')}}">
     <link href="{{asset('b/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('b/plugins/bootstrap/css/metisMenu.min.css')}}" rel="stylesheet">
     <link href="{{asset('b/plugins/bootstrap/css/all.min.css')}}" rel="stylesheet">

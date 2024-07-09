@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/customer-verify-otp', [CustomerApiController::class, 'verifyOtp']);
 	Route::post('/customer-add-pet', [CustomerApiController::class, 'addPet']);
 	Route::post('/customer-update-pet', [CustomerApiController::class, 'updatePet']);
+	Route::post('/customer-delete-pet', [CustomerApiController::class, 'deletePet']);
+
 	Route::post('/customer-shipment-booking', [CustomerApiController::class, 'shipmentBooking']);
 	Route::post('/customer-unaccompanied-booking', [CustomerApiController::class, 'unaccompaniedBooking']);
 
