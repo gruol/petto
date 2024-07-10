@@ -8,6 +8,8 @@ use App\Models\{
   Clinic ,
   CustomerPets,Appointment,Doctor
 };
+use Config;
+
 use Yajra\DataTables\DataTables;
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -128,6 +130,13 @@ class ClinicController extends Controller
         $status                 = $request->get('status');
         $clinic                 = Clinic::find($id);
         $clinic->is_approved    = $request->get('status');
+        if ($request->get('status') == 1) {
+            $details = [
+                'title' => Config::get('constants._PROJECT_NAME'),
+                'name' => $clinic->manager_name
+            ];
+            \Mail::to($clinic->email)->send(new \App\Mail\sendClinicApprovalEmail($details));
+        }
         $clinic->approved_at    = time();
         $clinic->save();
 

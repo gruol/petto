@@ -152,61 +152,45 @@ class CustomerApiController extends BaseController
     }
     public function sendOtp(Request $request)
     {
-        // try{
-            // $otpVia  = $request->input('otpVia');
-    	$otpCode = random_int(1000, 9999);
-    	if (isset($request->email) && $request->email != null) {
-    		$customer = Customer::where('email',$request->email)->first();
-            if ($customer) {
-                $customer->otp = $otpCode;
-                $customer->otp_created_at = Carbon::now();
-                $customer->update();
-            }
-        }else{
-          $customer   = Auth::guard('sanctum')->user();
-          Customer::where('id',$customer->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
-      }
-
-            // if($otpVia == 1)
-            // {
-                // $message = "Your OTP is : " . $otpCode . "." ;
-              // return  smsNewApi($customer->phone, $message);
-            // }
-            // elseif($otpVia == 2)
-            // {
-      $message = "Your OTP is : " . $otpCode . "." ;
+        try{
+         $otpCode = random_int(1000, 9999);
+         if (isset($request->email) && $request->email != null) {
+          $customer = Customer::where('email',$request->email)->first();
+          if ($customer) {
+            $customer->otp = $otpCode;
+            $customer->otp_created_at = Carbon::now();
+            $customer->update();
+        }
+    }else{
+      $customer   = Auth::guard('sanctum')->user();
+      Customer::where('id',$customer->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
+  }
 
 
-      $details = [
-        'title' => Config::get('constants._PROJECT_NAME'),
-        'body' => $otpCode,
-        'name' => $customer->name
-    ];
-    \Mail::to($customer->email)->send(new \App\Mail\sendOTPEmail($details));
+  $message = "OTP has been sent to your registered email address.";
 
-            // }
 
-            // $customer = Auth::guard('sanctum')->user();
-            // if($customer->otpVerified == 0)
-            // {
-            //     $data = [
-            //         'otpVerification' => true,
-            //     ];
-            // }
-            // else{
+  $details = [
+    'title' => Config::get('constants._PROJECT_NAME'),
+    'otpCode' => $otpCode,
+    'name' => $customer->name
+];
 
-    $data = null;
-            // }
-    // return $this->sendResponse( $message,$data);
+          // return view('emails.sendOtp',compact('details'));
 
-    // return $this->sendResponse($data "OTP has been sent", );
-    return $this->sendResponse($data ,$message );
+\Mail::to($customer->email)->send(new \App\Mail\sendOTPEmail($details));
 
-        // }catch(\Exception $e){
-        //     DB::rollback();
-        //     return $this->sendError("Process Failed", null);
 
-        // }
+
+$data = null;
+
+return $this->sendResponse($data ,$message );
+
+}catch(\Exception $e){
+    DB::rollback();
+    return $this->sendError("Process Failed", null);
+
+}
 
 }
 public function verifyOtp(Request $request)
@@ -221,79 +205,88 @@ public function verifyOtp(Request $request)
         // Calculate the difference in minutes
  $differenceInMinutes = $tokenStartTime->diffInMinutes($tokenEndTime);
 
-        if($differenceInMinutes > 5){ // check implement for to  check token expire time
+        if($differenceInMinutes > 20){ // check implement for to  check token expire time
 
         	return $this->sendError("OTP expired, try again", null);
         }
 
         if($request->input('otp') == $customer->otp)
         {
-        	$customer = Customer::where('id', $customer->id)->update(['is_otp_verified' => 1]);
+        	Customer::where('id', $customer->id)->update(['is_otp_verified' => 1]);
+
+         $message = "OTP has been sent to your registered email address.";
+
+         $details = [
+            'title' => Config::get('constants._PROJECT_NAME'),
+            'name' => $customer->name
+        ];
+
+          // return view('emails.sendWellCome',compact('details'));
+
+        \Mail::to($customer->email)->send(new \App\Mail\sendWellComeEmail($details));
+
+        $message = 'Dear Customer, your account has been verified VIA OTP.';
 
 
-        	$message = 'Dear Customer, your account has been verified VIA OTP.';
-
-
-        	return $this->sendResponse(null,"OTP Verified" );
-        }
-        else
-        {
-        	return $this->sendError("Process Failed/OTP Mismatch", null);
-
-        }
-
-        exit();
-
+        return $this->sendResponse(null,"OTP Verified" );
     }
-    public function forgotPassword(Request $request)
+    else
     {
+     return $this->sendError("Process Failed/OTP Mismatch", null);
 
-    	$validator = Validator::make($request->all(), [
-    		'email' => 'required',
-    		'newPassword' => ['required'],
-    		'newPasswordConfirm' => ['same:newPassword'],
-    	]);
+ }
+ exit();
 
-    	$fields = $request->all();
+}
+public function forgotPassword(Request $request)
+{
 
-    	if($validator->fails())
-    	{
-    		return $this->sendError($validator->errors()->first());
-    	}
+ $validator = Validator::make($request->all(), [
+  'email' => 'required',
+  'newPassword' => ['required'],
+  'newPasswordConfirm' => ['same:newPassword'],
+]);
 
-    	$customer = Customer::where(['email' => $fields['email'] ])->first();
-    	if(!$customer) {
-    		return $this->sendError('No Customer found');
-    	}
-    	$customer->tokens()->delete();
+ $fields = $request->all();
 
+ if($validator->fails())
+ {
+  return $this->sendError($validator->errors()->first());
+}
 
-    	$customer->password = Hash::make($request->input('newPassword'));
-    	$customer->update();
-    	$data = null;
-
-    	return $this->sendResponse($data ,'Password Reset successfully' , 704);
-
-    }
-    public function changePassword(Request $request)
-    {
-
-    	$validator =  Validator::make($request->all(),[
-    		'currentPassword' => ['required', new MatchOldPassword],
-    		'newPassword' => ['required'
-    	],
-    	'newPasswordConfirm' => ['same:newPassword'],
-    ]);
-
-    	if($validator->fails())
-    	{
-         return $this->sendError($validator->errors()->first());
+$customer = Customer::where(['email' => $fields['email'] ])->first();
+if(!$customer) {
+  return $this->sendError('No Customer found');
+}
+$customer->tokens()->delete();
 
 
-     }
+$customer->password = Hash::make($request->input('newPassword'));
+$customer->update();
+$data = null;
 
-     $newPassword = $request->input('newPassword');
-     $newPasswordConfirm = $request->input('newPasswordConfirm');
+return $this->sendResponse($data ,'Password Reset successfully' , 704);
+
+}
+public function changePassword(Request $request)
+{
+
+ $validator =  Validator::make($request->all(),[
+  'currentPassword' => ['required', new MatchOldPassword],
+  'newPassword' => ['required'
+],
+'newPasswordConfirm' => ['same:newPassword'],
+]);
+
+ if($validator->fails())
+ {
+     return $this->sendError($validator->errors()->first());
+
+
+ }
+
+ $newPassword = $request->input('newPassword');
+ $newPasswordConfirm = $request->input('newPasswordConfirm');
 
 
         // if($newPassword !== $newPasswordConfirm)
@@ -303,23 +296,23 @@ public function verifyOtp(Request $request)
 
         // }
 
-     $user = Auth::guard('sanctum')->user();
-     $customer = Customer::where(['email' => $user->email, 'is_deleted' => 0], )->first();
+ $user = Auth::guard('sanctum')->user();
+ $customer = Customer::where(['email' => $user->email, 'is_deleted' => 0], )->first();
 
-     if($customer == null)
-     {
-      return $this->sendError('No Data found with this email');
+ if($customer == null)
+ {
+  return $this->sendError('No Data found with this email');
 
-  }
-  $customer->tokens()->delete();
+}
+$customer->tokens()->delete();
         // else{
 
-  Customer::find(auth()->user()->id)->update(['password'=> Hash::make($request->input('newPassword'))]);
+Customer::find(auth()->user()->id)->update(['password'=> Hash::make($request->input('newPassword'))]);
 
-  $data = null;
+$data = null;
 
 
-  return $this->sendResponse($data ,'Password Changed' , 703);
+return $this->sendResponse($data ,'Password Changed' , 703);
 
         // }
 
@@ -511,6 +504,12 @@ foreach ($request->pet as $key => $pet_id) {
         $obj2->save();
     }
 }
+$details = [
+    'title' => Config::get('constants._PROJECT_NAME'),
+    'name' => $user->name
+];
+\Mail::to($user->email)->send(new \App\Mail\sendShipmentQueryEmail($details));
+
 $data = null;
 return $this->sendResponse($data,'shipment Info saved', 703);
 }

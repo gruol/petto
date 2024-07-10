@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class sendOTPEmail extends Mailable
+class sendClinicWellComeEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -30,6 +30,6 @@ class sendOTPEmail extends Mailable
      */
     public function build()
     {
-      return $this->subject('Your OTP for First Login to Petto App')->view('emails.sendOtp');
+      return $this->subject('Registration Application Received - Petto App')->view('emails.sendClinicWellCome');
   }
 }

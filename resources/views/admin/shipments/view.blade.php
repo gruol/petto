@@ -66,7 +66,7 @@
 
 </style>
 <div class="body-content">
-    
+
     <div class="row  mb-4">
         {{-- {{dd($shipment->pet_photo1)}} --}}
         {{-- @if(isset($shipment->pet_photo1)) --}}
@@ -173,6 +173,7 @@
                     <div class="row">
                         @if(isset($shipment->ShipmentPet) && !empty($shipment->ShipmentPet))
                         @foreach($shipment->ShipmentPet as $ShipmentPet)
+                        @if(isset($ShipmentPet->Pets) && $ShipmentPet->Pets != null)
 
                         <div class="col-md-3 pr-md-1">
                             <div class="form-group">
@@ -198,6 +199,7 @@
                                 <input type="text" class="form-control" disabled="" value="{{$ShipmentPet->Pets->age}}">
                             </div>
                         </div>
+                        @endif
                         @endforeach
                         @endif
                     </div>
@@ -341,7 +343,7 @@
                                     <input type="text" class="form-control" name="ticket_no"  value="{{$shipment->ticket_no}}">
                                 </div>
                             </div>
-                             <div class="col-md-6 pr-md-1">
+                            <div class="col-md-6 pr-md-1">
                                 <div class="form-group">
                                     <label class="font-weight-600">Date & Time</label>
                                     <input type="datetime-local" class="form-control" name="date_time"  value="{{$shipment->date_time}}">
@@ -353,7 +355,7 @@
                                     <input type="text" class="form-control"  disabled value="{{$shipment->origin}}">
                                 </div>
                             </div>
-                             <div class="col-md-6 pr-md-1">
+                            <div class="col-md-6 pr-md-1">
                                 <div class="form-group">
                                     <label class="font-weight-600">Destination</label>
                                     <input type="text" class="form-control" disabled  value="{{$shipment->destination}}">
@@ -390,16 +392,16 @@
                             </div>
                             <div class="col-md-8 pr-md-1">
                                 <div class="form-group">
-                                 <button  type="submit"  class="btn btn-success">Save</button>
-                             </div>
-                         </div>
-                     </div>
-                 </form>
+                                   <button  type="submit"  class="btn btn-success">Save</button>
+                               </div>
+                           </div>
+                       </div>
+                   </form>
 
-             </div>
-         </div>
-     </div>
- </div>
+               </div>
+           </div>
+       </div>
+   </div>
 </div>
 <div id="image-viewer">
     <span class="close">&times;</span>

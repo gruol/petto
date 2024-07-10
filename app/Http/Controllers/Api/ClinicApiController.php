@@ -56,7 +56,7 @@ public function index()
 public function clinicStore(Request $request)
 {
     $validator = Validator::make($request->all(), [
-        'email' => 'required|unique:clinics|unique:customers|max:128',
+        'email' => 'required|unique:clinics|unique:clinics|max:128',
         'password' => 'required|string',
         'clinic_name' => 'required|string',
         'manager_name' => 'required|string',
@@ -132,10 +132,10 @@ public function login(Request $request)
     $fields = $request->all();
     $clinic = Clinic::where('email',$request->email)->first(); 
     if (isset($clinic)) {
-        if( $clinic->is_otp_verified == 0){
-            return $this->sendError("Your profile is not OTP verified", null);
+        // if( $clinic->is_otp_verified == 0){
+        //     return $this->sendError("Your profile is not OTP verified", null);
 
-        }
+        // }
         if($clinic->is_approved == 0){
             return $this->sendError("Your profile is not appoved yet", null);
 
@@ -157,69 +157,51 @@ public function login(Request $request)
 }
 public function sendOtp(Request $request)
 {
-    // try{
-        // $otpVia  = $request->input('otpVia');
-    $data = null;
+    try{
+        $data = null;
 
-    $otpCode = random_int(1000, 9999);
-    if (isset($request->email) && $request->email != null) {
-        $clinic = Clinic::where('email',$request->email)->first();
-        
-        if ($clinic) {
-            $clinic->otp = $otpCode;
-            $clinic->otp_created_at = Carbon::now();
-            $clinic->update();
+        $otpCode = random_int(1000, 9999);
+        if (isset($request->email) && $request->email != null) {
+            $clinic = Clinic::where('email',$request->email)->first();
+
+            if ($clinic) {
+                $clinic->otp = $otpCode;
+                $clinic->otp_created_at = Carbon::now();
+                $clinic->update();
+            }
+        }else{
+            $clinic   = Auth::guard('sanctum')->user();
+            Clinic::where('id',$clinic->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
         }
-    }else{
-        $clinic   = Auth::guard('sanctum')->user();
-        Clinic::where('id',$clinic->id)->update(['otp' => $otpCode,'otp_created_at' => Carbon::now()]);
+        if (empty($clinic)) {
+            $message = "User Not Found" ;
+            return $this->sendError($data,$message );
+
+
+        }else{
+
+        // $message = "Your OTP is : " . $otpCode . "." ;
+        }
+
+        $details = [
+            'title' => Config::get('constants._PROJECT_NAME'),
+            'otpCode' => $otpCode,
+            'name' => $clinic->manager_name
+        ];
+    // return view('emails.sendOtp',compact('details'));
+
+        \Mail::to($clinic->email)->send(new \App\Mail\sendOTPEmail($details));
+
+
+        $message = "OTP has been sent to your registered email address.";
+
+        return $this->sendResponse($data ,$message );
+
+    }catch(\Exception $e){
+        DB::rollback();
+        return $this->sendError("Process Failed", null);
+
     }
-    if (empty($clinic)) {
-        $message = "User Not Found" ;
-        return $this->sendError($data,$message );
-
-
-    }else{
-
-        $message = "Your OTP is : " . $otpCode . "." ;
-    }
-        // if($otpVia == 1)
-        // {
-            // $message = "Your OTP is : " . $otpCode . "." ;
-          // return  smsNewApi($clinic->phone, $message);
-        // }
-        // elseif($otpVia == 2)
-        // {
-
-
-        //     $details = [
-        //         'title' => Config::get('constants._PROJECT_NAME'),
-        //         'body' => $otpCode
-        //     ];
-        //     \Mail::to($customer->email)->send(new \App\Mail\SupervisorSendOtpMail($details));
-
-        // }
-
-        // $customer = Auth::guard('sanctum')->user();
-        // if($customer->otpVerified == 0)
-        // {
-        //     $data = [
-        //         'otpVerification' => true,
-        //     ];
-        // }
-        // else{
-
-        // }
-// return $this->sendResponse( $message,$data);
-
-// return $this->sendResponse($data "OTP has been sent", );
-    return $this->sendResponse($data ,$message );
-
-    // }catch(\Exception $e){
-    //     DB::rollback();
-    //     return $this->sendError("Process Failed", null);
-
-    // }
 
 }
 public function verifyOtp(Request $request)
@@ -234,28 +216,33 @@ public function verifyOtp(Request $request)
     // Calculate the difference in minutes
     $differenceInMinutes = $tokenStartTime->diffInMinutes($tokenEndTime);
 
-    if($differenceInMinutes > 5){ // check implement for to  check token expire time
+    if($differenceInMinutes > 20){ // check implement for to  check token expire time
 
         return $this->sendError("OTP expired, try again", null);
     }
 
     if($request->input('otp') == $clinic->otp)
     {
-        $clinic = Clinic::where('id', $clinic->id)->update(['is_otp_verified' => 1]);
+     Clinic::where('id', $clinic->id)->update(['is_otp_verified' => 1]);
+     $message = 'Dear User, your account has been verified VIA OTP.';
+     $details = [
+        'title' => Config::get('constants._PROJECT_NAME'),
+        'name' => $clinic->manager_name
+    ];
+          // return view('emails.sendWellCome',compact('details'));
+
+    \Mail::to($clinic->email)->send(new \App\Mail\sendClinicWellComeEmail($details));
 
 
-        $message = 'Dear User, your account has been verified VIA OTP.';
+    return $this->sendResponse(null,"OTP Verified" );
+}
+else
+{
+    return $this->sendError("Process Failed/OTP Mismatch", null);
 
+}
 
-        return $this->sendResponse(null,"OTP Verified" );
-    }
-    else
-    {
-        return $this->sendError("Process Failed/OTP Mismatch", null);
-
-    }
-
-    exit();
+exit();
 
 }
 public function forgotPassword(Request $request)
@@ -511,13 +498,13 @@ public function doctors(Request $request, $id=null){
     }
     if (isset($request->city)  && $request->city !='') {
         $doctors->whereRelation('clinic','city',$request->city);
-       
+
     }
     if ($id != null) {
-       $doctors->where('id',$id);
-   } 
-   $data['doctors'] =  $doctors->get()->toArray();
-   return $this->sendResponse( $data,"Doctor's List for Customer", 702);
+     $doctors->where('id',$id);
+ } 
+ $data['doctors'] =  $doctors->get()->toArray();
+ return $this->sendResponse( $data,"Doctor's List for Customer", 702);
 
 }
 public function bookAppointment(Request $request)

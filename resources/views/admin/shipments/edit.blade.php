@@ -412,11 +412,11 @@ element.style {
                     <div class="row">
                         @if(isset($shipment->ShipmentPet) && !empty($shipment->ShipmentPet))
                         @foreach($shipment->ShipmentPet as $ShipmentPet)
-
+                        @if(isset($ShipmentPet->Pets) && $ShipmentPet->Pets != null)
                         <div class="col-md-3 pr-md-1">
                             <div class="form-group">
                                 <label class="font-weight-600">Category</label>
-                                <input type="text" class="form-control" disabled="" value="{{$ShipmentPet->Pets->category}}">
+                                <input type="text" class="form-control" disabled="" value="{{isset($ShipmentPet->Pets) ? $ShipmentPet->Pets->category : ''}}">
                             </div>
                         </div>
                         <div class="col-md-3 pr-md-1">
@@ -437,6 +437,8 @@ element.style {
                                 <input type="text" class="form-control" disabled="" value="{{$ShipmentPet->Pets->age}}">
                             </div>
                         </div>
+                        @endif
+                        
                         @endforeach
                         @endif
                     </div>

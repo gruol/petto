@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\{
   Shipment ,
-  CustomerPets
+  CustomerPets,
+  Customer
 };
+use Config;
+
 use Yajra\DataTables\DataTables;
 use Validator;
 use Storage;
@@ -114,10 +117,10 @@ class ShipmentController extends Controller
     public function shipmentUpdate(Request $request)
     {
         // dump($request->all());
-       $obj =  Shipment::find($request->shipment_id);
+     $obj =  Shipment::find($request->shipment_id);
 
-       if($request['pet_photo1'] != null)
-       {
+     if($request['pet_photo1'] != null)
+     {
 
         $image = $request['pet_photo1'];  
         // If the file exists, delete it
@@ -135,10 +138,10 @@ class ShipmentController extends Controller
     if($request['pet_photo2'] != null)
     {
 
-       $image = $request['pet_photo2'];  
+     $image = $request['pet_photo2'];  
         // If the file exists, delete it
-       $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->pet_photo2;
-       if (Storage::exists($filePath)) {
+     $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->pet_photo2;
+     if (Storage::exists($filePath)) {
         Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->pet_photo2);
     }
     $image = str_replace(' ', '+', $image);
@@ -160,7 +163,7 @@ if($request['pet_passport'] != null)
     $image = str_replace(' ', '+', $image);
     $pet_passport = 'pet_passport_'.$request->shipment_id.'_time_'.time().'.'.$request->pet_passport->extension();
     Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$pet_passport,file_get_contents($image));
-        $obj->pet_passport  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$pet_passport;
+    $obj->pet_passport  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$pet_passport;
 
 
 
@@ -180,7 +183,7 @@ if($request['health_certificate'] != null)
     $image = str_replace(' ', '+', $image);
     $health_certificate = 'health_certificate_'.$request->shipment_id.'_time_'.time().'.'.$request->health_certificate->extension();
     Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$health_certificate,file_get_contents($image));
-        $obj->health_certificate  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$health_certificate;
+    $obj->health_certificate  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$health_certificate;
 
 
 }
@@ -197,7 +200,7 @@ if($request['import_permit'] != null)
     $image = str_replace(' ', '+', $image);
     $import_permit = 'import_permit_'.$request->shipment_id.'_time_'.time().'.'.$request->import_permit->extension();
     Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$import_permit,file_get_contents($image));
-        $obj->import_permit  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$import_permit;
+    $obj->import_permit  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$import_permit;
 
 }
 
@@ -212,73 +215,73 @@ if($request['titer_report'] != null)
     $image = str_replace(' ', '+', $image);
     $titer_report = 'titer_report_'.$request->shipment_id.'_time_'.time().'.'.$request->titer_report->extension();
     Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$titer_report,file_get_contents($image));
-        $obj->titer_report  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$titer_report;
+    $obj->titer_report  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$titer_report;
 
 }
 
-    if($request['passport_copy'] != null)
-    {
-        $image = $request['passport_copy'];  
+if($request['passport_copy'] != null)
+{
+    $image = $request['passport_copy'];  
         // If the file exists, delete it
-        $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->passport_copy;
-        if (Storage::exists($filePath)) {
-            Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->passport_copy);
-        }
-        $image = str_replace(' ', '+', $image);
-        $passport_copy = 'passport_copy_'.$request->shipment_id.'_time_'.time().'.'.$request->passport_copy->extension();
-        Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$passport_copy,file_get_contents($image));
-           $obj->passport_copy  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$passport_copy;
-
-        
+    $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->passport_copy;
+    if (Storage::exists($filePath)) {
+        Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->passport_copy);
     }
+    $image = str_replace(' ', '+', $image);
+    $passport_copy = 'passport_copy_'.$request->shipment_id.'_time_'.time().'.'.$request->passport_copy->extension();
+    Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$passport_copy,file_get_contents($image));
+    $obj->passport_copy  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$passport_copy;
 
-    if($request['cnic_copy'] != null)
-    {
 
-        $image = $request['cnic_copy'];  
+}
+
+if($request['cnic_copy'] != null)
+{
+
+    $image = $request['cnic_copy'];  
         // If the file exists, delete it
-        $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->cnic_copy;
-        if (Storage::exists($filePath)) {
-            Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->cnic_copy);
-        }
-        $image = str_replace(' ', '+', $image);
-        $cnic_copy = 'cnic_copy_'.$request->shipment_id.'_time_'.time().'.'.$request->cnic_copy->extension();
-        Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$cnic_copy,file_get_contents($image));
-            $obj->cnic_copy  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$cnic_copy;
-
+    $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->cnic_copy;
+    if (Storage::exists($filePath)) {
+        Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->cnic_copy);
     }
+    $image = str_replace(' ', '+', $image);
+    $cnic_copy = 'cnic_copy_'.$request->shipment_id.'_time_'.time().'.'.$request->cnic_copy->extension();
+    Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$cnic_copy,file_get_contents($image));
+    $obj->cnic_copy  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$cnic_copy;
 
-    if($request['ticket_copy'] != null)
-    {
-        $image = $request['ticket_copy'];  
+}
+
+if($request['ticket_copy'] != null)
+{
+    $image = $request['ticket_copy'];  
         // If the file exists, delete it
-        $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->ticket_copy;
-        if (Storage::exists($filePath)) {
-            Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->ticket_copy);
-        }
-        $image = str_replace(' ', '+', $image);
-        $ticket_copy = 'ticket_copy_'.$request->shipment_id.'_time_'.time().'.'.$request->ticket_copy->extension();
-        Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$ticket_copy,file_get_contents($image));
-           $obj->ticket_copy  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$ticket_copy;
-
+    $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->ticket_copy;
+    if (Storage::exists($filePath)) {
+        Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->ticket_copy);
     }
+    $image = str_replace(' ', '+', $image);
+    $ticket_copy = 'ticket_copy_'.$request->shipment_id.'_time_'.time().'.'.$request->ticket_copy->extension();
+    Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$ticket_copy,file_get_contents($image));
+    $obj->ticket_copy  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$ticket_copy;
 
-    if($request['visa_copy'] != null)
-    {
-        $image = $request['visa_copy'];  
+}
+
+if($request['visa_copy'] != null)
+{
+    $image = $request['visa_copy'];  
         // If the file exists, delete it
-        $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->visa_copy;
-        if (Storage::exists($filePath)) {
-            Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->visa_copy);
-        }
-        $image = str_replace(' ', '+', $image);
-        $visa_copy = 'visa_copy_'.$request->shipment_id.'_time_'.time().'.'.$request->visa_copy->extension();
-        Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$visa_copy,file_get_contents($image));
-        $obj->visa_copy  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$visa_copy;
-
+    $filePath = "public/uploads/shipment/".$request->shipment_id.'/'.$obj->visa_copy;
+    if (Storage::exists($filePath)) {
+        Storage::delete("public/uploads/shipment/".$request->shipment_id.'/'.$obj->visa_copy);
     }
-    $obj->update();
-    return redirect()->back();
+    $image = str_replace(' ', '+', $image);
+    $visa_copy = 'visa_copy_'.$request->shipment_id.'_time_'.time().'.'.$request->visa_copy->extension();
+    Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$visa_copy,file_get_contents($image));
+    $obj->visa_copy  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$visa_copy;
+
+}
+$obj->update();
+return redirect()->back();
 
 
 }
@@ -299,7 +302,7 @@ public function shipmentStatusUpdate(Request $request)
     $shipment               = Shipment::find($id);
     $shipment->shipment_status = $status;
     $shipment->save();
-
+   
     return json_encode(array("status"=>true, "message"=>"Shipment  Status has been updated successfully!"));
 }
 public function shipmentPaymentStatusUpdate(Request $request)
@@ -317,9 +320,9 @@ public function addShipmentRemarks(Request $request)
 {
     $user = Auth::getUser();
 
+    $quotation_file = '';
     $shipment               = Shipment::find($request->shipment_id);
     $shipment->quotation    = $request->quotation;
-  
 
 
     if($request['quotation_file'] != null)
@@ -342,7 +345,21 @@ public function addShipmentRemarks(Request $request)
     $shipment->ticket_no             = $request->ticket_no;
     $shipment->date_time             = $request->date_time;
     $shipment->tracking_no           = $request->tracking_no;
+    $customer =  Customer::find($shipment->customer_id);
+   if (isset($request->ticket_no) && $request->ticket_no != '') {
 
+        $details = [
+            'title' => Config::get('constants._PROJECT_NAME'),
+            'name' => $customer->name,
+            'ticket_no' => $request->ticket_no,
+            'date_time' => $request->date_time,
+            'tracking_no' => $request->tracking_no,
+            'flight_service_name' => $request->flight_service_name,
+        ];
+          // return view('emails.sendShipmentConfirmed',compact('details'));
+
+        \Mail::to($customer->email)->send(new \App\Mail\sendShipmentConfirmedEmail($details));
+    }
     $remarks = $shipment->remarks ;
     $remarks .= "<br><b>Posted by (Admin)</b>:".$user->name.", <b> Posted At </b>:".date('Y-m-d h:i ').", <b> Quotation </b>:". $request->quotation ." <br><b> Remarks:</b>".$request->remarks ;
     $shipment->remarks = $remarks;
