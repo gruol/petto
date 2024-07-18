@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/customer-add-pet', [CustomerApiController::class, 'addPet'])->middleware('OTPVerification');;
 	Route::post('/customer-update-pet', [CustomerApiController::class, 'updatePet'])->middleware('OTPVerification');;
 	Route::post('/customer-delete-pet', [CustomerApiController::class, 'deletePet'])->middleware('OTPVerification');;
+	Route::post('/customer-update', [CustomerApiController::class, 'updateCustomer'])->middleware('OTPVerification');;
 
 	Route::post('/customer-shipment-booking', [CustomerApiController::class, 'shipmentBooking'])->middleware('OTPVerification');
 	Route::post('/customer-unaccompanied-booking', [CustomerApiController::class, 'unaccompaniedBooking'])->middleware('OTPVerification');
@@ -69,8 +70,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/clinic-verify-otp', [ClinicApiController::class, 'verifyOtp']);
 	Route::post('/clinic-change-password', [ClinicApiController::class, 'changePassword']);
 	Route::post('/clinic-add-doctor', [ClinicApiController::class, 'addDoctor'])->middleware('OTPVerification');
+	Route::post('/clinic-update', [ClinicApiController::class, 'updateClinic'])->middleware('OTPVerification');
 	Route::post('/clinic-update-doctor', [ClinicApiController::class, 'updateDoctor'])->middleware('OTPVerification');
     Route::get('/clinic-doctors/{id?}', [ClinicApiController::class, 'doctors'])->name('doctors')->middleware('OTPVerification');
+    Route::post('/clinic-doctors/{id?}', [ClinicApiController::class, 'doctors'])->name('doctors')->middleware('OTPVerification');
 	Route::post('/update/appointment', [ClinicApiController::class, 'updateAppointment'])->middleware('OTPVerification');
 	Route::get('/clinic-appointments', [ClinicApiController::class, 'clinicAppointment'])->middleware('OTPVerification');
 	Route::post('/add/review', [ClinicApiController::class, 'addReview'])->middleware('OTPVerification');

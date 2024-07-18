@@ -145,8 +145,8 @@ public function login(Request $request)
             return $this->sendError('Invalid Login Credentials');
         }
 
-        $clinic->otp             = random_int(100000, 999999);
-        $clinic->otp_created_at  = Carbon::now();
+        // $clinic->otp             = random_int(100000, 999999);
+        // $clinic->otp_created_at  = Carbon::now();
         $clinic->save();
 
         return $this->sendResponse(new ClinicResource($clinic), 'Clinic retrieved successfully.');
@@ -412,8 +412,18 @@ public function updateDoctor(Request $request)
         return $this->sendError( $validator->errors()->first());
 
     }
+    $data = [ 
+        "name" => $request->name,
+        "clinic_id" => $user->id,
+        "contact" => $request->contact,
+        "email" => $request->email,
+        "education" => $request->education,
+        "experience" => $request->experience,
+        "expertise" => $request->expertise,
+        "about" => $request->about,
+        "charges" => $request->charges,
 
-
+    ];
     if($request['picture'] != null)
     {
         $image = $request['picture']; 
@@ -426,25 +436,14 @@ public function updateDoctor(Request $request)
         $picture = 'picture_'.$user->id.'_time_'.time().'.'.$extension;
         Storage::put("public/uploads/clinic/doctor/".$user->id.'/'.$picture, base64_decode($image));
         $picture = env('APP_URL')."public/storage/uploads/clinic/doctor/".$user->id.'/'.$picture;
+        $data["picture"] =  $picture;
+
     }
 
-    else{
-        $picture = 'null';
-    }
+    // else{
+    //     // $picture = 'null';
+    // }
 
-    $data = [ 
-        "name" => $request->name,
-        "clinic_id" => $user->id,
-        "picture" => $picture,
-        "contact" => $request->contact,
-        "email" => $request->email,
-        "education" => $request->education,
-        "experience" => $request->experience,
-        "expertise" => $request->expertise,
-        "about" => $request->about,
-        "charges" => $request->charges,
-
-    ];
     $doctor     = Doctor::find($request->doctor_id)->update($data);
 
     $data =   AppointmentTime::where('doctor_id',$request->doctor_id)->delete();
@@ -482,7 +481,35 @@ public function updateDoctor(Request $request)
 
 }
 
+public function updateClinic(Request $request)
+{
+    $user = Auth::user();
 
+    $clinic =  Clinic::find($user->id);
+    if (isset($request->clinic_name)) {
+        $clinic->clinic_name = $request->clinic_name;
+    }
+    if (isset($request->manager_name)) {
+        $clinic->manager_name = $request->manager_name;
+    }
+    if (isset($request->email)) {
+        $clinic->email = $request->email;
+    }
+    if (isset($request->contact)) {
+        $clinic->contact = $request->contact;
+    }
+    if (isset($request->address)) {
+        $clinic->address = $request->address;
+    }
+    if (isset($request->city)) {
+        $clinic->city = $request->city;
+    }
+
+    $clinic->update();
+
+    return $this->sendResponse([], 'Clinic Information Updated');
+
+}
 public function doctors(Request $request, $id=null){
     $data = [];
     $doctors = Doctor::with('AppointmentTime','AppointmentDay','AppointmentDate','clinic')

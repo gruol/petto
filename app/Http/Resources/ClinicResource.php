@@ -16,6 +16,7 @@ class ClinicResource extends JsonResource
     {
         // dd($request);
         return [
+            "id"                => $this->id,
             "manager_name"      => $this->manager_name,
             "email"             => $this->email,
             "contact"           => $this->contact,
