@@ -47,6 +47,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 	Route::post('/customer-shipment-booking', [CustomerApiController::class, 'shipmentBooking'])->middleware('OTPVerification');
 	Route::post('/customer-unaccompanied-booking', [CustomerApiController::class, 'unaccompaniedBooking'])->middleware('OTPVerification');
+	Route::post('/confirm-unaccompanied-shipment', [CustomerApiController::class, 'confirmUnaccompaniedBooking'])->middleware('OTPVerification');
+
 
     Route::get('/customer/sync', [CustomerApiController::class, 'sync'])->name('sync')->middleware('OTPVerification');
     Route::get('/customer/data', [CustomerApiController::class, 'customerData'])->name('customerData')->middleware('OTPVerification');;
@@ -77,6 +79,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/update/appointment', [ClinicApiController::class, 'updateAppointment'])->middleware('OTPVerification');
 	Route::get('/clinic-appointments', [ClinicApiController::class, 'clinicAppointment'])->middleware('OTPVerification');
 	Route::post('/add/review', [ClinicApiController::class, 'addReview'])->middleware('OTPVerification');
+	Route::get('/doctor-reviews/{doc_id}', [ClinicApiController::class, 'getDoctorReview'])->middleware('OTPVerification');
 
     Route::post('/clinic-logout', [ClinicApiController::class, 'logout']);
 	

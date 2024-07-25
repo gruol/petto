@@ -16,6 +16,7 @@ class Customer extends Model
 		"contact_no",
 		"email",
 		"dob",
+		"picture",
 		"pet_category",
 		"pet_name",
 		"pet_age",

@@ -337,10 +337,9 @@ public function addShipmentRemarks(Request $request)
         $image = str_replace(' ', '+', $image);
         $quotation_file = 'quotation_file_'.$request->shipment_id.'_time_'.time().'.'.$request->quotation_file->extension();
         Storage::put("public/uploads/shipment/".$request->shipment_id.'/'.$quotation_file,file_get_contents($image));
-        $shipment->quotation_file        = $quotation_file;
-    }
-
-    $shipment->quotation_file        = $quotation_file;
+        $shipment->quotation_file  = env('APP_URL')."public/storage/uploads/shipment/".$request->shipment_id.'/'.$quotation_file;
+       // dump($shipment->quotation_file );
+       }
     $shipment->flight_service_name   = $request->flight_service_name;
     $shipment->ticket_no             = $request->ticket_no;
     $shipment->date_time             = $request->date_time;
@@ -358,7 +357,7 @@ public function addShipmentRemarks(Request $request)
         ];
           // return view('emails.sendShipmentConfirmed',compact('details'));
 
-        \Mail::to($customer->email)->send(new \App\Mail\sendShipmentConfirmedEmail($details));
+        // \Mail::to($customer->email)->send(new \App\Mail\sendShipmentConfirmedEmail($details));
     }
     $remarks = $shipment->remarks ;
     $remarks .= "<br><b>Posted by (Admin)</b>:".$user->name.", <b> Posted At </b>:".date('Y-m-d h:i ').", <b> Quotation </b>:". $request->quotation ." <br><b> Remarks:</b>".$request->remarks ;

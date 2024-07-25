@@ -68,19 +68,50 @@ public function clinicStore(Request $request)
         return $this->sendError( $validator->errors()->first());
 
     }
-    $clinicData = [ 
-        "clinic_name" => $request->clinic_name,
-        "password" =>  Hash::make($request->password) ,
-        "manager_name" => $request->manager_name,
-        "email" => $request->email,
-        "contact" => $request->contact,
-        "address" => $request->address,
-        "city" => $request->city,
-        "country" => $request->country
 
-    ];
-    $clinic     = Clinic::create($clinicData );
-    return $this->sendResponse([], 'Clinic creation request has been forwarded to Petto team for review and approval');
+    if($request['picture'] != null)
+    {
+      $image = $request['picture'];  
+      $pos  = strpos($image, ';');
+      $type = explode(':', substr($image, 0, $pos))[1];
+      $type = explode('/',$type);
+      $extension = $type[1]; 
+      $image = str_replace('data:image/jpeg;base64,', '', $image);
+      $image = str_replace(' ', '+', $image);
+      $picture = 'picture_clinic'.'_time_'.time().'.'.$extension;
+      Storage::put("public/uploads/clinic/".$picture, base64_decode($image));
+      $picture = env('APP_URL')."public/storage/uploads/clinic/".$picture;
+
+  }else{
+    $picture = null;
+}
+
+$clinicData = [ 
+    "clinic_name" => $request->clinic_name,
+    "password" =>  Hash::make($request->password) ,
+    "manager_name" => $request->manager_name,
+    "email" => $request->email,
+    "contact" => $request->contact,
+    "address" => $request->address,
+    "city" => $request->city,
+    "country" => $request->country,
+    "picture" => $picture
+
+];
+
+$clinic     = Clinic::create($clinicData );
+$details = [
+    'title' => Config::get('constants._PROJECT_NAME'),
+    'name' => $request->manager_name,
+    'email' => $request->email,
+    'contact_no' => $request->contact,
+    'clinic_name' => $request->clinic_name
+];
+// return view("emails.newClinicSignupRequestAdmin",compact('details'));
+\Mail::to(env('ADMIN_EMAIL'))->send(new \App\Mail\newClinicSignupRequestAdmin($details));
+
+
+return $this->sendResponse([], 'Clinic creation request has been forwarded to Petto team for review and approval');
 
 }
 
@@ -327,6 +358,7 @@ public function changePassword(Request $request)
 public function addDoctor(Request $request)
 {
     $user = Auth::guard('sanctum')->user();
+
     $validator = Validator::make($request->all(), [
         'name' => 'required',
         'contact' => 'required',
@@ -395,6 +427,16 @@ public function addDoctor(Request $request)
             $obj->save(); 
         }
     }
+  $details = [
+    'title' => Config::get('constants._PROJECT_NAME'),
+    'name' => $request->name,
+    'email' => $request->email,
+    'contact_no' => $request->contact,
+    'clinic_name' => $user->clinic_name,
+    'specialization' => $request->expertise
+];
+// return view('emails.newDoctorAddedbyClinicUserAdmin',compact('details'));
+\Mail::to(env('ADMIN_EMAIL'))->send(new \App\Mail\newDoctorAddedbyClinicUserAdmin($details));
     
     return $this->sendResponse([], 'Doctor creation request has been forwarded to Petto team for review and approval');
 
@@ -505,9 +547,26 @@ public function updateClinic(Request $request)
         $clinic->city = $request->city;
     }
 
-    $clinic->update();
+    if($request['picture'] != null)
+    {
+      $image = $request['picture'];  
+      $pos  = strpos($image, ';');
+      $type = explode(':', substr($image, 0, $pos))[1];
+      $type = explode('/',$type);
+      $extension = $type[1]; 
+      $image = str_replace('data:image/jpeg;base64,', '', $image);
+      $image = str_replace(' ', '+', $image);
+      $picture = 'picture_clinic'.'_time_'.time().'.'.$extension;
+      Storage::put("public/uploads/clinic/".$picture, base64_decode($image));
+      $clinic->picture = env('APP_URL')."public/storage/uploads/clinic/".$picture;
 
-    return $this->sendResponse([], 'Clinic Information Updated');
+  }else{
+    $picture = null;
+}
+
+$clinic->update();
+
+return $this->sendResponse([], 'Clinic Information Updated');
 
 }
 public function doctors(Request $request, $id=null){
@@ -604,6 +663,11 @@ public function updateAppointment(Request $request)
     $obj->save();
     return $this->sendResponse( $data,'Appointment updated', 702);
 
+}
+public function getDoctorReview($doctor_id)
+{
+   $review =  Review::with(['customer'])->where('doctor_id',$doctor_id)->get();
+   dd($review);
 }
 public function logout()
 {

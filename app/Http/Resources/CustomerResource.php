@@ -23,6 +23,7 @@ class CustomerResource extends JsonResource
             "dob"               => $this->dob,
             "pets"              => $this->Pets,
             "country"           => $this->country,
+            "picture"           => $this->picture,
             "otp"               => $this->otp,
             "is_otp_verified"   => $this->is_otp_verified,
             "otp_created_at"    => $this->otp_created_at,

@@ -67,15 +67,32 @@ class CustomerApiController extends BaseController
     		return $this->sendError( $validator->errors()->first());
 
     	}
-    	$customerData = [ 
-    		"name" => $request->name,
-    		"password" =>  Hash::make($request->password) ,
-    		"contact_no" => $request->contact_no,
-    		"email" => $request->email,
-    		"dob" => $request->dob,
-    		"country" => $request->country,
+      if($request['picture'] != null)
+      {
+        $image = $request['picture'];  
+        $pos  = strpos($image, ';');
+        $type = explode(':', substr($image, 0, $pos))[1];
+        $type = explode('/',$type);
+        $extension = $type[1]; 
+        $image = str_replace('data:image/jpeg;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $picture = 'picture_customer'.'_time_'.time().'.'.$extension;
+        Storage::put("public/uploads/customer/".$picture, base64_decode($image));
+        $picture = env('APP_URL')."public/storage/uploads/customer/".$picture;
 
-    	];
+      }else{
+        $picture = null;
+      }
+      $customerData = [ 
+        "name" => $request->name,
+        "password" =>  Hash::make($request->password) ,
+        "contact_no" => $request->contact_no,
+        "email" => $request->email,
+        "dob" => $request->dob,
+        "country" => $request->country,
+        "picture" => $picture,
+
+      ];
 
       $customer     = Customer::create($customerData );
 
@@ -337,6 +354,21 @@ if (isset($request->country)) {
 if (isset($request->dob)) {
   $customer->dob = $request->dob;
 }
+
+if($request['picture'] != null)
+{
+  $image = $request['picture'];  
+  $pos  = strpos($image, ';');
+  $type = explode(':', substr($image, 0, $pos))[1];
+  $type = explode('/',$type);
+  $extension = $type[1]; 
+  $image = str_replace('data:image/jpeg;base64,', '', $image);
+  $image = str_replace(' ', '+', $image);
+  $picture = 'picture_customer'.'_time_'.time().'.'.$extension;
+  Storage::put("public/uploads/customer/".$picture, base64_decode($image));
+  $customer->picture = env('APP_URL')."public/storage/uploads/customer/".$picture;
+
+}
 $customer->update();
 
 return $this->sendResponse([], 'Customer Information Updated');
@@ -530,9 +562,12 @@ foreach ($request->pet as $key => $pet_id) {
 }
 $details = [
   'title' => Config::get('constants._PROJECT_NAME'),
-  'name' => $user->name
+  'name' => $user->name,
+  'email' => $user->email,
+  'contact_no' => $user->contact_no
 ];
 \Mail::to($user->email)->send(new \App\Mail\sendShipmentQueryEmail($details));
+\Mail::to(env('ADMIN_EMAIL'))->send(new \App\Mail\sendShipmentQueryEmailAdmin($details));
 
 $data = null;
 return $this->sendResponse($data,'shipment Info saved', 703);
@@ -806,10 +841,36 @@ public function unaccompaniedBooking(Request $request)
   $obj->visa_copy 		= $visa_copy;
   $obj->save();
   $data = null;
+  $user                 = Auth::guard('sanctum')->user();
+  
+  $details = [
+    'title' => Config::get('constants._PROJECT_NAME'),
+    'name' => $user->name,
+    'email' => $user->email,
+    'contact_no' => $user->contact_no
+  ];
+  \Mail::to(env('ADMIN_EMAIL'))->send(new \App\Mail\sendShipmentResponseEmailAdmin($details));
+
   return $this->sendResponse( $data,'shipment Info saved', 703);
 }
 
+public function confirmUnaccompaniedBooking(Request $request)
+{
 
+  $obj = Shipment::find($request->shipment_id);
+  $data = null;
+  
+  if (!empty( $obj )) {
+    $obj->is_confirmed = $request->is_confirmed;
+    $obj->update();
+
+    return $this->sendResponse( $data,'shipment Updated', 703);
+
+  }
+  return $this->sendResponse( $data,'shipment Not Found', 703);
+
+
+}
 public function sync($value='')
 {   
   $data = [];

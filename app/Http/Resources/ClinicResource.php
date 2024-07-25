@@ -23,7 +23,7 @@ class ClinicResource extends JsonResource
             "clinic_name"       => $this->clinic_name,
             "address"           => $this->address,
             "city"              => $this->city,
-            // "password"          => $this->password,
+            "picture"           => $this->picture,
             "otp"               => $this->otp,
             "is_otp_verified"   => $this->is_otp_verified,
             "otp_created_at"    => $this->otp_created_at,

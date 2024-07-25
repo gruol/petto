@@ -17,6 +17,7 @@ class Clinic extends Model
         "clinic_name",
         "address",
         "city",
+        "picture",
         "password",
         "otp",
         "is_otp_verified",

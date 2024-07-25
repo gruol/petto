@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class sendShipmentQueryEmail extends Mailable
+class sendShipmentResponseEmailAdmin extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -30,6 +30,6 @@ class sendShipmentQueryEmail extends Mailable
      */
     public function build()
     {
-      return $this->subject('Your Shipment Query Has Been Received - Petto App')->view('emails.sendShipmentQuery');
+      return $this->subject('Shipment Booking Request by Customer')->view('emails.sendShipmentResponseAdmin');
   }
 }

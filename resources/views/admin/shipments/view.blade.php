@@ -339,7 +339,7 @@
                             </div>
                             <div class="col-md-6 pr-md-1">
                                 <div class="form-group">
-                                    <label class="font-weight-600">Ticket no</label>
+                                    <label class="font-weight-600">Airway bill</label>
                                     <input type="text" class="form-control" name="ticket_no"  value="{{$shipment->ticket_no}}">
                                 </div>
                             </div>
