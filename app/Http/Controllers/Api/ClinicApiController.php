@@ -666,8 +666,9 @@ public function updateAppointment(Request $request)
 }
 public function getDoctorReview($doctor_id)
 {
-   $review =  Review::with(['customer'])->where('doctor_id',$doctor_id)->get();
-   dd($review);
+   $review =  Review::with(['customer'])->where('doctor_id',$doctor_id)->get()->toArray();
+    return $this->sendResponse( $review,'Doctor Reviews', 702);
+
 }
 public function logout()
 {
