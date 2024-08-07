@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CustomerApiController;
+use App\Http\Controllers\Api\VendorApiController;
 use App\Http\Controllers\Api\ClinicApiController;
 
 /*
@@ -74,7 +75,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::post('/clinic-add-doctor', [ClinicApiController::class, 'addDoctor'])->middleware('OTPVerification');
 	Route::post('/clinic-update', [ClinicApiController::class, 'updateClinic'])->middleware('OTPVerification');
 	Route::post('/clinic-update-doctor', [ClinicApiController::class, 'updateDoctor'])->middleware('OTPVerification');
-    Route::get('/clinic-doctors/{id?}', [ClinicApiController::class, 'doctors'])->name('doctors')->middleware('OTPVerification');
+    Route::get('/clinic-doctors/{id?}', [ClinicApiController::class, 'doctors'])->name('getDoctors')->middleware('OTPVerification');
     Route::post('/clinic-doctors/{id?}', [ClinicApiController::class, 'doctors'])->name('doctors')->middleware('OTPVerification');
 	Route::post('/update/appointment', [ClinicApiController::class, 'updateAppointment'])->middleware('OTPVerification');
 	Route::get('/clinic-appointments', [ClinicApiController::class, 'clinicAppointment'])->middleware('OTPVerification');
@@ -83,5 +84,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/clinic-logout', [ClinicApiController::class, 'logout']);
 	
+	//e-commerce Routes 
+
+
 	
+	Route::get('/products/{start}/{end}/{name?}/{category_id?}', [VendorApiController::class, 'products']);
+	Route::get('/product/{id}', [VendorApiController::class, 'product']);
+
 });

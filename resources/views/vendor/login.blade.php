@@ -46,7 +46,7 @@
                         {{ session('error') }}
                     </div>
                     @endif
-                    <form class="login" action="{{ route('login') }}" method="POST">
+                    <form class="login" action="{{ route('vendor.login') }}" method="POST">
                        
                      @csrf
                      <div class="form-group">
@@ -59,8 +59,13 @@
                     
                     <button type="submit" class="btn btn-success btn-block">Sign in</button>
                     <p class="text-muted text-center mt-3 mb-0">
-                        Are you Vendor? <a class="external" href="{{route('vendor.login')}}"> Click Here.</a>
+                        Are you Admin? <a class="external" href="{{route('login')}}"> Click Here.</a>
+                        
                     </p>
+                    <p class="text-muted text-center mt-3 mb-0">
+
+                    New Vendor Registration? <a class="external" href="{{route('vendor.register')}}"> Click Here.</a>
+                </p>
                 </form>
             </div>
             

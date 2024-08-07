@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\CustomerPets;
+use Illuminate\Auth\Authenticatable;
 
 class Customer extends Model
 {
-	use HasFactory,HasApiTokens;
+	use HasFactory,HasApiTokens,Authenticatable;
 	protected $fillable = [
 		"name",
 		"password",
