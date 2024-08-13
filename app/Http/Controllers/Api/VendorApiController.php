@@ -56,6 +56,7 @@ public function index()
  */
 public function products($start,$end,$name ='',$category_id = '')
 {
+    $data = [];
     $products =  VendorProduct::with(['ProductCategory' ,'Vendor' => function ($query) {
                     $query->select('id','vendor_name', 'business_name'); // Select only these columns
                 }]);
@@ -66,15 +67,20 @@ public function products($start,$end,$name ='',$category_id = '')
      $products->where('category_id',  $category_id );
  }
 
- $products    = $products->where('is_active',1)->skip($start)->take($end);
- $total_count = $products->count();
- $products    = $products->get()->toArray();
+ $products          = $products->where('is_active',1)->skip($start)->take($end);
+ $total_count       = $products->count();
+ $products          = $products->get()->toArray();
+ $data['products']  = $products ;
+ $data['page']      = $start;
+ $data['limit']     = $end;
+
+
  // dd($products->count());
   //     "total_count": "integer",
   // "page": "integer",
   // "limit": "integer"
 
- return $this->sendResponse($products, 'Products retrieved successfully.');
+ return $this->sendResponse($data, 'Products retrieved successfully.');
 
 }
 public function product($id)
@@ -230,7 +236,7 @@ public function showCommentsByProduct($productId)
         $data = null;
         $customer   = Auth::guard('sanctum')->user();
         $order =  Order::with('items.orderProduct')->where('customer_id',$customer->id)->get()->toArray();
-      
+
         return $this->sendResponse($order, 'Customer Order retrieved successfully.');
 
     }
