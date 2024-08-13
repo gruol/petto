@@ -90,5 +90,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	
 	Route::get('/products/{start}/{end}/{name?}/{category_id?}', [VendorApiController::class, 'products']);
 	Route::get('/product/{id}', [VendorApiController::class, 'product']);
+    Route::post('/store-comments', [VendorApiController::class, 'ProcductComment']);
+    Route::get('/product/{productId}/comments', [VendorApiController::class, 'showCommentsByProduct']);
+    Route::post('/order-save', [VendorApiController::class, 'storeOrder']);
+    Route::post('/is-confirm-order', [VendorApiController::class, 'isConfirmed']);
+    Route::get('/get-customer-orders', [VendorApiController::class, 'getCustomerOrders']);
 
 });

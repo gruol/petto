@@ -9,7 +9,7 @@ use App\Models\{CustomerPets,
 	Customer,
   Country,
   ShipmentPet,
-  Appointment
+  Appointment,ProductCategory
 };
 use App\Http\Resources\CustomerResource;
 use App\Http\Controllers\Api\BaseController as BaseController;
@@ -878,6 +878,7 @@ public function sync($value='')
     // $data['countries']  = Country::where('is_active',1)->get()->toArray();   
   $data['shipments']  = Shipment::with('ShipmentPet.Pets','ShipmentBy')->where('customer_id',Auth::user()->id)->get()->toArray();
   $data['pets']       = CustomerPets::where('customer_id',Auth::user()->id)->get()->toArray();
+  $data['product_category']   = ProductCategory::where('is_active',1)->get()->toArray();
 
   return $this->sendResponse( $data,'Data Found', 702);
 

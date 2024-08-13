@@ -30,8 +30,11 @@ class Customer extends Model
 		"is_deleted",
 	];
 	public function Pets()
-    {
-        return $this->hasMany(CustomerPets::class);
-    }
-
+	{
+		return $this->hasMany(CustomerPets::class);
+	}
+	public function orders()
+	{
+		return $this->hasMany(Order::class);
+	}
 }

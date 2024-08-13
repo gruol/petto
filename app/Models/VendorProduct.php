@@ -42,9 +42,13 @@ class VendorProduct extends Model
   {
     return $this->belongsTo(ProductCategory::class,'category_id');
   }
-public function Vendor()
+  public function Vendor()
   {
     return $this->belongsTo(Vendor::class,'created_by_id');
   }
 
+  public function orderItems()
+  {
+    return $this->hasMany(OrderItem::class);
+  }
 }
