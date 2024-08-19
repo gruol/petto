@@ -25,9 +25,13 @@
 						Dashboard
 					</a>
 				</li>
-				<li class="@if( Request::segment(2) == "shipment") {{ "mm-active" }}  @endif">
+				<li class="@if( Request::segment(2) == "product") {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('vendor.products') }}">
-						<i class="fa fa-product-hunt  mr-2"></i>Products</a>
+						<i class="fa fa-product-hunt" aria-hidden="true"></i>Products</a>
+				</li>
+				<li class="@if( Request::segment(2) == "Orders") {{ "mm-active" }}  @endif">
+					<a class="" href="{{ route('vendor.orders') }}">
+						<i class="fa fa-shopping-cart  mr-2"></i>Orders</a>
 				</li>
 				<li>
 					<a class="dropdown-item" href="{{ route('vendor.logout') }}"

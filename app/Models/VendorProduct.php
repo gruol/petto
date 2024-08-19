@@ -9,7 +9,7 @@ use App\Models\AppointmentDay;
 use App\Models\{AppointmentDate,Vendor};
 use App\Models\Clinic;
 use App\Models\Review;
-use App\Models\Appointment;
+use App\Models\{Appointment,OrderItem,ProcductComment};
 
 class VendorProduct extends Model
 {
@@ -17,7 +17,7 @@ class VendorProduct extends Model
   protected $table = "vendor_products";
 
   protected $fillable = [
-   
+
     "product_name",
     "category_id",
     "brand",
@@ -51,4 +51,9 @@ class VendorProduct extends Model
   {
     return $this->hasMany(OrderItem::class);
   }
+  public function comments()
+  {
+    return $this->hasMany(ProcductComment::class,'product_id')->whereNull('parent_id')->with('replies');
+  }
+
 }

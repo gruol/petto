@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Review;
-use App\Models\{Customer,VendorProduct};
+use App\Models\{Customer,VendorProduct,Vendor};
 
 class ProcductComment extends Model
 {
@@ -25,18 +25,26 @@ class ProcductComment extends Model
         return $this->belongsTo(VendorProduct::class);
     }
 
-    public function Customer()
+    public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function replies()
+    public function vendor()
     {
-        return $this->hasMany(ProcductComment::class, 'parent_id');
+        return $this->belongsTo(Vendor::class,'vendor_id');
     }
-
+    public function product()
+    {
+        return $this->belongsTo(VendorProduct::class);
+    }
     public function parent()
     {
         return $this->belongsTo(ProcductComment::class, 'parent_id');
     }
+    public function replies()
+    {
+        return $this->hasMany(ProcductComment::class, 'parent_id')->with('replies');
+    }
+
 }

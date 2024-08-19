@@ -53,8 +53,3 @@
 </div> --}}
 
 
-<script>
-    $(document).ready(function(){
-    $('#errors').show('slow');
-    });
-</script>

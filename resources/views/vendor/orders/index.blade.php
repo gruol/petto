@@ -55,10 +55,10 @@
     <div class="card-header">
      <div class="d-flex justify-content-between align-items-center">
       <div>
-       <h6 class="fs-17 font-weight-600 mb-0">Products List</h6>
+       <h6 class="fs-17 font-weight-600 mb-0">Orders List</h6>
      </div>
      <div class="text-right">
-      <a class="" href="{{ route('vendor.addProduct') }}"><i class="far fa fa-plus"></i> Add Product</a>
+      {{-- <a class="" href="{{ route('vendor.addProduct') }}"><i class="far fa fa-plus"></i> Add Product</a> --}}
     </div>
     </div>
 </div>
@@ -67,17 +67,14 @@
   <div class="table-responsive">
     <table class="table table-borderless">
      <thead>
-      <tr>
-        <th>Sr.</th>
-        <th>Product Name</th>
-        <th>Category</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>SKU</th>
-        <th>Weight</th>
-        <th>Action</th>
-      </tr>
-    </thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer Name</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
     <tbody>
     </tbody>
   </table>
@@ -90,6 +87,7 @@
 </div>
 </div>
 </div>
+<template id="orderStatus">{{ json_encode($orderStatus) }} </template>
 
 @endsection
 @section('footer-script')
@@ -161,7 +159,7 @@
       // }
       ],
       ajax: {
-        'url': '{!! route('vendor.products') !!}',
+        'url': '{!! route('vendor.orders') !!}',
         'data': function (d) {
           d.date_from = $("input[name='date_from']").val();
           d.date_to = $("input[name='date_to']").val();
@@ -172,16 +170,13 @@
 
    
 
-      columns: [
-      {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center'},
-      {data: 'product_name', name: 'product_name'},
-      {data: 'product_category.name', name: 'product_category.name'},
-      {data: 'price', name: 'price'},
-      {data: 'quantity', name: 'quantity'},
-      {data: 'sku', name: 'sku'},
-      {data: 'weight', name: 'weight'},
-      {data: 'action', name: 'action'}
-      ],
+     columns: [
+                    {data: 'id', name: 'id'},
+                    {data: 'customer.name', name: 'customer.name'},
+                    {data: 'total_amount', name: 'total_amount'},
+                    {data: 'status', name: 'status'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                ],
       columnDefs: [ {
         'orderable': false, /* true or false */
       }]
@@ -271,6 +266,70 @@ $("#search-button").click(function (e) {
   }
 
 });
+  $(document).on("click", ".btn-change-orderStatus", function(event){
+  event.preventDefault();
+  var statuses      = $('#orderStatus').html();
+  var statuses_arr    = JSON.parse(statuses);
+        // console.log(statuses_arr);
+        var status        = $(this).attr("data-status");
+        var id          = $(this).attr("data-id");
+        $.confirm({
+          title : "Change Order Status",
+          content:function(){
+            var html = "";
+            $.each(statuses_arr, function(index, value){
+              console.log(value);
+              if(value==status){
+                html+="<label><input type='radio' name='status' value='"+value+"' checked> "+ value.charAt(0).toUpperCase() + value.slice(1)  +"</label><br>";
+              }else{
+                html+="<label><input type='radio' name='status' value='"+value+"'> "+value.charAt(0).toUpperCase() + value.slice(1) +"</label><br>";
+              }
+            });
+
+            return html;
+          },
+          buttons:{
+            ok:{
+              text:"Save",
+              btnClass:"btn btn-success confirmed",
+              action:function(){
+                var v = this.$content.find("input[type='radio']:checked").val();
+                let url = "{{ route('vendor.order.status.update') }}";
+                save_status(v, id,url);
+                alert('Order Status has been updated successfully!');
+            // window.location.reload();
+            table.ajax.reload();
+          }
+        },
+        no:{
+          text:"Cancel"
+        }
+      }
+    });
+        return false;
+      }); 
+
+function save_status(status, id,url){
+
+  $.ajax({
+    url: url, 
+    type: "GET",
+    data: {
+      status: status,
+      id: id
+    },
+    success: function(data) {
+
+      data = JSON.parse(data);
+
+      console.log(data.status);
+      if(data.status == true){
+        console.log(data.message);
+        return data.message;
+      }
+    }
+  });
+}
 </script>
 @endsection
 

@@ -25,4 +25,8 @@ class OrderItem extends Model
 	{
 		return $this->belongsTo(Order::class);
 	}
+	public function comments()
+    {
+        return $this->hasMany(ProcductComment::class,'product_id','product_id');
+    }
 }

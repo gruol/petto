@@ -1,96 +1,157 @@
-@extends("admin.template", ["pageTitle"=>$pageTitle])
+@extends("vendor.template", ["pageTitle"=>$pageTitle])
 @section('content')
+<style type="text/css" media="screen">
+/*/////////////////////////////////*/
+/*/////////  chat styles  /////////*/
+/*/////////////////////////////////*/
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat li
+{
+    margin-bottom: 40px;
+    padding-bottom: 5px;
+    /* border-bottom: 1px dotted #B3A9A9; */
+    margin-top: 10px;
+    width: 80%;
+}
+
+
+.chat li .chat-body p
+{
+    margin: 0;
+    /* color: #777777; */
+}
+
+
+.chat-care
+{
+    overflow-y: scroll;
+    height: 350px;
+}
+.chat-care .chat-img
+{
+    width: 50px;
+    height: 50px;
+}
+.chat-care .img-circle
+{
+    border-radius: 50%;
+}
+.chat-care .chat-img
+{
+    display: inline-block;
+}
+.chat-care .chat-body
+{
+    display: inline-block;
+    max-width: 80%;
+    background-color: #FFC195;
+    border-radius: 12.5px;
+    padding: 15px;
+}
+.chat-care .chat-body strong
+{
+  color: #0169DA;
+}
+
+.chat-care .admin
+{
+    text-align: right ;
+    float: right;
+}
+.chat-care .admin p
+{
+    text-align: left ;
+}
+.chat-care .agent
+{
+    text-align: left ;
+    float: left;
+}
+.chat-care .left
+{
+    float: left;
+}
+.chat-care .right
+{
+    float: right;
+}
+
+.clearfix {
+  clear: both;
+}
+
+
+
+
+::-webkit-scrollbar-track
+{
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+</style>
 <div class="body-content">
-    <div class="row">
-        <div class="col-sm-12 col-xl-8">
-            <div class="media d-flex m-1 ">
-                @if(count($product->ProductImg) > 0)
-                    @foreach($product->ProductImg as $key=>$ProductImg)
-                        <div class="align-left p-1">
-                            <div class="zoom-box">
-                                <img src="{{asset($ProductImg->image)}}" style="object-fit: cover;" width="200" height="150" data-zoom-image="{{asset($ProductImg->image)}}" class="img-zoom-m"/>
-                                
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
+    @include('alerts')
+    <div class="container">
+        <h1>Product Name: {{ $product->product_name }}</h1>
+        <p><strong>Description:</strong>{{ $product->description }}</p>
+        <p><strong>Price:</strong> {{ $product->price }}</p>
+
+        <hr>
+
+        <h3>Comments & Replies</h3>
+
+        @forelse ($product->comments as $comment)
+        {{-- {{dd($comment)}} --}}
+        <div style=" margin-top: 10px;background-color: #edbfac;border-radius: 12.5px;padding: 15px;">
+            <strong>{{ $comment->customer->name }}</strong>: {{ $comment->body }}
+            <br>
+            <small>{{ $comment->created_at->diffForHumans() }}</small>
+
+            {{-- Display Replies --}}
+            @if($comment->replies->count())
+            <div style="float: right;display: inline-block;max-width: 80%;background-color: #edbfac;border-radius: 12.5px;padding: 15px;">
+                @include('vendor.product.partials_comment', ['comments' => $comment->replies])
             </div>
+            @endif
+
+            {{-- Reply Form --}}
+            <form action="{{ route('vendor.comments.reply', $comment->id) }}" method="POST" style="margin-top: 10px;">
+                @csrf
+                <input type="text" name="body" class="form-control" placeholder="Write a reply..." required>
+                <button type="submit" class="btn btn-success btn-sm" style="margin-top: 5px;">Reply</button>
+            </form>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="fs-17 font-weight-600 mb-0">Product variants</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            @if(count($product->ProductVariant) > 0)
-                                @foreach($product->ProductVariant as $key=>$ProductVariant)
-                                <h6 class="mb-0 font-weight-600">{{$ProductVariant->name}}</h6>
-                                @if(count($ProductVariant->Atrributes) > 0)
-                                    @foreach($ProductVariant->Atrributes as $key=>$Atrribute)
-                                    <a href="#!" class="fs-13 font-weight-600 px-4">{{$Atrribute->name}}</a>
-                                    @endforeach
-                                @endif
-                                @endforeach
-                            @endif
-                        </div>
-                        <div class="col-auto">
-                            
-                        </div>
-                    </div> 
-                    <hr>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="fs-17 font-weight-600 mb-0">Product Detail</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-12 pr-md-1">
-                                <div class="form-group">
-                                    <label class="font-weight-600">Product Name</label>
-                                    <input type="text" class="form-control" disabled="" value="{{ $product->name }}">
-                                </div>
-                            </div>
-                            <div class="col-md-6 pr-md-1">
-                                <div class="form-group">
-                                    <label class="font-weight-600">SKU</label>
-                                    <input type="text" class="form-control" disabled="" value="{{ $product->code }}">
-                                </div>
-                            </div>
-                            <div class="col-md-6 pr-md-1">
-                                <div class="form-group">
-                                    <label class="font-weight-600">Brand</label>
-                                    <input type="text" class="form-control" disabled="" value="{{ $product->Brand->name ?? "" }}">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-dark-gray" for="">Description</label>
-                                <div>
-                                    {!! $product->description !!}
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        @empty
+        <p>No comments yet. Be the first to comment!</p>
+        @endforelse
+
+        {{-- Comment Form --}}
+      {{--   <form action="{{ route('vendor.comments.store') }}" method="POST" style="margin-top: 10px">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $product->id }}">
+            <input type="text" name="content" class="form-control" placeholder="Write a comment..." required>
+            <button type="submit" class="btn btn-success" style="margin-top: 10px;">Comment</button>
+        </form> --}}
     </div>
 </div>
 @endsection

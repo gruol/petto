@@ -42,6 +42,8 @@
 			search: true
 		});
 		$('.basic-multiple').select2();
+    	$('#errors').show('slow');
+
 </script>
 </body>
 </html>

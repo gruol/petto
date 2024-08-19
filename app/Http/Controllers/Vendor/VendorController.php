@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\{
   Clinic ,
-  CustomerPets,Appointment,Doctor,VendorProductCategory,VendorProduct
+  CustomerPets,Appointment,Doctor,VendorProductCategory,VendorProduct,ProcductComment
 };
 use Storage;
 
@@ -51,9 +51,10 @@ class VendorController extends Controller
            ->addColumn('action',function($data){
 
                $button = '<a class="btn btn-sm btn-default" href="' .route('vendor.editProduct',['id'=>$data->id]) . '" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>';
+               $button .= '<a class=" btn btn-sm btn-default" href="' .route('vendor.commentProduct',['id'=>$data->id]) . '" data-toggle="tooltip" data-placement="top" title="Product Comments"><i class="fas fa-comments"></i> </a>';
 
                // $button .= '<a class=" btn btn-sm btn-default" href="' .route('vendor.viewProduct',['id'=>$data->id]) . '" data-toggle="tooltip" data-placement="top" title="View"><i class="fa fa-eye"></i> </a>';
-               $button .= '<a class=" btn btn-sm btn-default delete-product"  data-prduct_id="'.$data->id.'" href="' .route('vendor.viewProduct',['id'=>$data->id]) . '" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i> </a>';
+               $button .= '<a class=" btn btn-sm btn-default delete-product"  data-prduct_id="'.$data->id.'" href="#" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i> </a>';
                return $button ;
            })
            ->addIndexColumn()
@@ -276,9 +277,29 @@ return redirect()->route('vendor.products')->with('success', 'Product Updated su
 }
 
 public function viewProduct($id){
-    $product = VendorProduct::find($id);
-    return view('vendor.product.viewProduct');
+    // $product = VendorProduct::find($id);
+       // Fetch the product along with comments and replies
+        $product = VendorProduct::with(['comments' => function($query) {
+            $query->whereNull('parent_id')->with('replies.customer', 'customer');
+        }])->findOrFail($id);
+        $pageTitle = 'View Product';
+    return view('vendor.product.show',compact('product','pageTitle'));
 }
+public function reply(Request $request, ProcductComment $comment)
+    {
+        $request->validate([
+            'body' => 'required|string|max:1000',
+        ]);
+
+        ProcductComment::create([
+            'product_id' => $comment->product_id,
+            'vendor_id' => auth()->id(),
+            'parent_id' => $comment->id,
+            'body' => $request->body,
+        ]);
+
+        return back()->with('success', 'Reply posted successfully.');
+    }
 public function delectProduct(Request $request)
 {
 

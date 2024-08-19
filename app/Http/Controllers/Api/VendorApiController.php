@@ -160,11 +160,12 @@ public function showCommentsByProduct($productId)
 
         // Start transaction to ensure data consistency
             \DB::beginTransaction();
-
             try {
+           $vendor =  VendorProduct::find($request->items[0]['product_id']); 
             // Create the order
                 $order = Order::create([
                     'customer_id' => $customer->id,
+                    'vendor_id' => $vendor->created_by_id,                    
                     'province' => $request['province'] ?? null,
                     'order_date' => date('Y-m-d H:i:s'),
                     'country' => $request['country'] ?? null,

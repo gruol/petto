@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProcductComment;
 
 class Order extends Model
 {
@@ -10,6 +11,7 @@ class Order extends Model
     
     protected $fillable = [
         "customer_id",
+        "vendor_id",
         "order_date",
         "status",
         "total_amount",
@@ -33,4 +35,5 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+   
 }
