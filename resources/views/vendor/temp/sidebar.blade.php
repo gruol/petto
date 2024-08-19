@@ -1,7 +1,7 @@
 <nav class="sidebar sidebar-bunker no-print no-print">
 	<div class="sidebar-header">
 		{{-- <a href="#" class="logo"><span>Tyler Firm</span></a> --}}
-		<a href="{{url("/")}}" class="logo"><img src="{{asset('assets/images/logo/logo.png')}}" alt=""></a>
+		<a href="#" class="logo"><img src="{{asset('assets/images/logo/logo.png')}}" alt=""></a>
 		{{-- <a href="{{url("/")}}" class="logo"><img src="{{asset('assets/images/logo/logo.webp')}}" alt=""></a> --}}
 	</div>
 	<div class="profile-element d-flex align-items-center flex-shrink-0">
@@ -19,12 +19,12 @@
 			<ul class="metismenu">
 				{{-- <li class="nav-label">Main Menu</li> --}}
 				{{-- @can('dashboard-view') --}}
-				<li class="@if(Request::segment(2) == "dashboard" || Request::segment(2) == "home")) {{ "mm-active" }}  @endif">
+				{{-- <li class="@if(Request::segment(2) == "dashboard" || Request::segment(2) == "home")) {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('vendor.dashboard') }}">
 						<i class="typcn typcn-home-outline mr-2"></i>
 						Dashboard
 					</a>
-				</li>
+				</li> --}}
 				<li class="@if( Request::segment(2) == "product") {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('vendor.products') }}">
 						<i class="fa fa-product-hunt" aria-hidden="true"></i>Products</a>

@@ -61,6 +61,11 @@
 						<i class='fas fa-book mr-2'> </i> Appointments
 					</a>
 				</li>
+				<li class="@if( Request::segment(2) == "vendors") {{ "mm-active" }}  @endif">
+					<a class="" href="{{ route('admin.vendors.index') }}">
+						<i class='fas fa-users mr-2'> </i> Vendors
+					</a>
+				</li>
 				{{-- @endcan --}}
 
 				<li  class="@if( Request::segment(2) == "change-password") {{ "mm-active" }}  @endif">

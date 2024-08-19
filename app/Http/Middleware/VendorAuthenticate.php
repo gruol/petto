@@ -20,6 +20,13 @@ class VendorAuthenticate
         if (!Auth::guard($guard)->check()) {
             return redirect()->route('vendor.login');
         }
+        if (Auth::guard($guard)->user()->is_approved == 0) {
+             return redirect()->route('vendor.login')->with('error',"Your Account is Pending for Admin Approvel.");
+
+        }elseif (Auth::guard($guard)->user()->is_approved == 2) {
+             return redirect()->route('vendor.login')->with('error',"Your Account is Rejected by Admin.");
+
+        }
 
         return $next($request);
     }

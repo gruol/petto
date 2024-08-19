@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\ClinicController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +84,11 @@ Route::middleware(['auth.admin'])->name('admin.')->prefix('admin')->group(functi
     Route::get('/appointments/ajaxData', [ClinicController::class, 'appointmentsData'])->name('appointments.ajax_data');
     Route::get('/appointment/view/{id}', [ClinicController::class, 'appointmentView'])->name('appointment.view');
     // Route::get('/appointment/status_update', [ClinicController::class, 'appointmentStatusUpdate'])->name('appointment.status.update');
+    // Vendors
+    Route::get('/vendors', [HomeController::class, 'vendors'])->name('vendors.index');
+    Route::get('/vendor/status_update', [HomeController::class, 'vendorStatusUpdate'])->name('vendor.status.update');
+
+
 
 }); 
 /* End Admin Routes */

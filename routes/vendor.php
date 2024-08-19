@@ -47,11 +47,11 @@ Route::middleware(['auth.vendor'])->group(function() {
 // Route::post('/comments', [OrderController::class, 'store'])->name('comments.store');
 Route::post('/comments/{comment}/reply', [VendorController::class, 'reply'])->name('comments.reply');
 
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 });
 // 
 // Route::get('/password/reset', [AuthController::class, 'forgetPassword'])->name('password.reset'); 
 // Route::post('/user/password-reset', [AuthController::class, 'passwordReset'])->name('user.passwordReset'); 
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
