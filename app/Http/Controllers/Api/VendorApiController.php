@@ -8,9 +8,8 @@ use App\Models\{CustomerPets,
     Shipment,
     Customer,
     Clinic,
-    Doctor,AppointmentDate,AppointmentDay,AppointmentTime,Appointment,Review,VendorProductCategory,VendorProduct,ProcductComment,Order,OrderItem
+    Doctor,AppointmentDate,AppointmentDay,AppointmentTime,Appointment,Review,VendorProductCategory,VendorProduct,ProcductComment,Order,OrderItem,ProductReview
 };
-
 use App\Http\Resources\CustomerResource;
 use App\Http\Resources\ClinicResource;
 use App\Http\Controllers\Api\BaseController as BaseController;
@@ -70,7 +69,8 @@ public function products($start,$end,$name ='',$category_id = '')
  $products          = $products->where('is_active',1)->skip($start)->take($end);
  $total_count       = $products->count();
  $products          = $products->get()->toArray();
- $data['products']  = $products ;
+ $data['products']  = $products;
+ $data['total_count']  = $total_count;
  $data['page']      = $start;
  $data['limit']     = $end;
 
@@ -161,46 +161,46 @@ public function showCommentsByProduct($productId)
         // Start transaction to ensure data consistency
             \DB::beginTransaction();
             try {
-           $vendor =  VendorProduct::find($request->items[0]['product_id']); 
+               $vendor =  VendorProduct::find($request->items[0]['product_id']); 
             // Create the order
-                $order = Order::create([
-                    'customer_id' => $customer->id,
-                    'vendor_id' => $vendor->created_by_id,                    
-                    'province' => $request['province'] ?? null,
-                    'order_date' => date('Y-m-d H:i:s'),
-                    'country' => $request['country'] ?? null,
-                    'city' => $request['city'] ?? null,
-                    'name' => $request['name'] ?? null,
-                    'email' => $request['email'] ?? null,
-                    'contact_number' => $request['contact_number'] ?? null,
-                    'shipping_address' => $request['shipping_address'] ?? null,
-                    'billing_address' => $request['billing_address'] ?? null,
+               $order = Order::create([
+                'customer_id' => $customer->id,
+                'vendor_id' => $vendor->created_by_id,                    
+                'province' => $request['province'] ?? null,
+                'order_date' => date('Y-m-d H:i:s'),
+                'country' => $request['country'] ?? null,
+                'city' => $request['city'] ?? null,
+                'name' => $request['name'] ?? null,
+                'email' => $request['email'] ?? null,
+                'contact_number' => $request['contact_number'] ?? null,
+                'shipping_address' => $request['shipping_address'] ?? null,
+                'billing_address' => $request['billing_address'] ?? null,
                     'total_amount' => 0,  // Placeholder, will be updated later
                 ]);
 
-                $totalAmount = 0;
+               $totalAmount = 0;
 
             // Loop through the items and save each one
-                foreach ($request['items'] as $item) {
-                    $orderItem = new OrderItem([
-                        'product_id' => $item['product_id'],
-                        'quantity' => $item['quantity'],
-                        'price' => $item['price'],
-                    ]);
+               foreach ($request['items'] as $item) {
+                $orderItem = new OrderItem([
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                ]);
 
                 // Save the order item under the order
-                    $order->items()->save($orderItem);
+                $order->items()->save($orderItem);
 
                 // Calculate the total amount
-                    $totalAmount += $item['quantity'] * $item['price'];
-                }
+                $totalAmount += $item['quantity'] * $item['price'];
+            }
 
             // Update the order with the correct total amount
-                $order->total_amount = $totalAmount;
-                $order->save();
+            $order->total_amount = $totalAmount;
+            $order->save();
 
             // Commit the transaction
-                \DB::commit();
+            \DB::commit();
 
             // Return a JSON response
                 // return response()->json([
@@ -209,36 +209,82 @@ public function showCommentsByProduct($productId)
                 // 'data' => $order->load('items'),  // Load the items relationship
             // ], 201);
 
-                return $this->sendResponse(null, 'Order placed successfully.');
+            return $this->sendResponse(null, 'Order placed successfully.');
 
 
-            } catch (\Exception $e) {
+        } catch (\Exception $e) {
             // Rollback the transaction in case of error
-                \DB::rollBack();
+            \DB::rollBack();
 
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to place order. Please try again.',
-                    'error' => $e->getMessage(),
-                ], 500);
-            }
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to place order. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-        public function isConfirmed(Request $request)
-        {
-           $order =  Order::find($request->order_id);
-           $order->is_confirmed_by_customer = $request->is_confirmed;
-           $order->save();
-           return $this->sendResponse(null, 'Order status updated successfully.');
-
-       }
-
-       public function getCustomerOrders()
-       {
-        $data = null;
-        $customer   = Auth::guard('sanctum')->user();
-        $order =  Order::with('items.orderProduct')->where('customer_id',$customer->id)->get()->toArray();
-
-        return $this->sendResponse($order, 'Customer Order retrieved successfully.');
-
     }
+    public function isConfirmed(Request $request)
+    {
+       $order =  Order::find($request->order_id);
+       $order->is_confirmed_by_customer = $request->is_confirmed;
+       $order->save();
+       return $this->sendResponse(null, 'Order status updated successfully.');
+
+   }
+
+   public function getCustomerOrders($start,$end)
+   {
+    $data = [];
+    $customer   = Auth::guard('sanctum')->user();
+
+    $orders          = Order::with('items.orderProduct')->where('customer_id',$customer->id)->skip($start)->take($end);
+    $total_count     = $orders->count();
+    $orders          = $orders->get()->toArray();
+    $data['orders']  = $orders ;
+    $data['total_count']  = $total_count ;
+    $data['page']    = $start;
+    $data['limit']   = $end;
+
+    return $this->sendResponse($data, 'Customer Orders retrieved successfully.');
+
+}
+public function saveProductReview(Request $request)
+{
+    $obj =  new ProductReview();
+    $customer   = Auth::guard('sanctum')->user();
+
+    $obj->order_id = $request->order_id;
+    $obj->product_id = $request->product_id;
+    $obj->rating = $request->rating;
+    $obj->review_text = $request->review_text;
+    $obj->title = $request->title;
+    $obj->customer_id = $customer->id;
+    $obj->save();
+    return $this->sendResponse(null, 'Review saved successfully.');
+
+}
+public function getProductReview($id,$start,$end)
+{
+    $data                   = [];
+    $reviews                = ProductReview::where('product_id',$id)->skip($start)->take($end);
+    $data['reviews']        = $reviews->get()->toArray();
+    $data['total_avg']      = $reviews->avg('rating');
+    $data['total_count']    = $reviews->count();
+    $data['page']           = $start;
+    $data['limit']          = $end;
+    return $this->sendResponse( $data, 'Reviews retrieved successfully.');
+}
+public function getCustomerProductReview($start,$end)
+{
+    $customer               = Auth::guard('sanctum')->user();
+
+    $data                   = [];
+    $reviews                = ProductReview::with('VendorProduct')->where('customer_id',$customer->id)->skip($start)->take($end);
+    $data['reviews']        = $reviews->get()->toArray();
+    // $data['total_avg']      = $reviews->avg('rating');
+    $data['total_count']    = $reviews->count();
+    $data['page']           = $start;
+    $data['limit']          = $end;
+    return $this->sendResponse( $data, 'Customer Reviews retrieved successfully.');
+}
 }
