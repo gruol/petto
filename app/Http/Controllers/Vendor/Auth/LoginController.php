@@ -50,7 +50,7 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('vendor')->attempt($credentials)) {
-            return redirect()->intended(route('vendor.products'));
+            return redirect()->intended(route('vendor.dashboard'));
         }
 
         return back()->withErrors(['email' => 'Invalid credentials.']);

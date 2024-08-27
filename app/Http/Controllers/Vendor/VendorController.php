@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\{
   Clinic ,
-  CustomerPets,Appointment,Doctor,VendorProductCategory,VendorProduct,ProcductComment
+  CustomerPets,Appointment,Doctor,VendorProductCategory,VendorProduct,ProcductComment,Order
 };
 use Storage;
 
@@ -37,16 +37,27 @@ class VendorController extends Controller
     public function dashboard(Request $request)
     {
         $pageTitle           = "Dashboard";
-
-        return view('vendor.dashboard',compact('pageTitle'));
+        $user = Auth::guard('vendor')->user();
+        $data = [];
+        $data['totalProducts'] =  VendorProduct::where('created_by_id',$user->id)->count();
+        $data['totalOrders'] =  Order::where('vendor_id',$user->id)->count();
+        $data['orders'] = DB::table('orders')
+           ->select(DB::raw('`status`,count( * ) as statusCount'))
+           ->where('vendor_id', '=', $user->id)
+           ->groupBy('status')
+           ->orderBy('status')
+           ->get();
+        return view('vendor.dashboard',compact('pageTitle','data'));
     }
 
     
     public function products(Request $request)
     {
+        $user = Auth::guard('vendor')->user();
+        
         $pageTitle = 'Products';
         if($request->ajax()){
-           $data =  VendorProduct::with('ProductCategory');
+           $data =  VendorProduct::with('ProductCategory')->where('created_by_id',$user->id);
            return DataTables::of($data)
            ->addColumn('action',function($data){
 

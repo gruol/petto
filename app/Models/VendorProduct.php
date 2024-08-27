@@ -9,7 +9,7 @@ use App\Models\AppointmentDay;
 use App\Models\{AppointmentDate,Vendor};
 use App\Models\Clinic;
 use App\Models\Review;
-use App\Models\{Appointment,OrderItem,ProcductComment};
+use App\Models\{Appointment,OrderItem,ProcductComment,ProductReview};
 
 class VendorProduct extends Model
 {
@@ -55,5 +55,9 @@ class VendorProduct extends Model
   {
     return $this->hasMany(ProcductComment::class,'product_id')->whereNull('parent_id')->with('replies');
   }
+  public function ProductReview()
+    {
+        return $this->hasMany(ProductReview::class,'product_id');
+    }
 
 }

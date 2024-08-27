@@ -19,12 +19,12 @@
 			<ul class="metismenu">
 				{{-- <li class="nav-label">Main Menu</li> --}}
 				{{-- @can('dashboard-view') --}}
-				{{-- <li class="@if(Request::segment(2) == "dashboard" || Request::segment(2) == "home")) {{ "mm-active" }}  @endif">
+				<li class="@if(Request::segment(2) == "dashboard" || Request::segment(2) == "home")) {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('vendor.dashboard') }}">
 						<i class="typcn typcn-home-outline mr-2"></i>
 						Dashboard
 					</a>
-				</li> --}}
+				</li>
 				<li class="@if( Request::segment(2) == "product") {{ "mm-active" }}  @endif">
 					<a class="" href="{{ route('vendor.products') }}">
 						<i class="fa fa-product-hunt" aria-hidden="true"></i>Products</a>

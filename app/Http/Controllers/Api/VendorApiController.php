@@ -56,7 +56,7 @@ public function index()
 public function products($start,$end,$name ='',$category_id = '')
 {
     $data = [];
-    $products =  VendorProduct::with(['ProductCategory' ,'Vendor' => function ($query) {
+    $products =  VendorProduct::withCount('ProductReview')->withAvg('ProductReview', 'rating')->withCount('comments')->with(['ProductCategory','ProductReview' ,'Vendor' => function ($query) {
                     $query->select('id','vendor_name', 'business_name'); // Select only these columns
                 }]);
     if ($name != '' && $name != '~') {
@@ -69,6 +69,8 @@ public function products($start,$end,$name ='',$category_id = '')
  $products          = $products->where('is_active',1)->skip($start)->take($end);
  $total_count       = $products->count();
  $products          = $products->get()->toArray();
+ // dump($products );
+// dd(DB::getQueryLog());
  $data['products']  = $products;
  $data['total_count']  = $total_count;
  $data['page']      = $start;
@@ -86,7 +88,7 @@ public function products($start,$end,$name ='',$category_id = '')
 public function product($id)
 {
     $data = [];
-    $data=  VendorProduct::with(['ProductCategory' ,'Vendor' => function ($query) {
+    $data=  VendorProduct::withCount('ProductReview')->withAvg('ProductReview', 'rating')->withCount('comments')->with(['ProductCategory' ,'Vendor' => function ($query) {
                     $query->select('id','vendor_name', 'business_name'); // Select only these columns
                 }])->where('id',$id)->first()->toArray();
     $data['procduct_comments'] = $this->showCommentsByProduct($id);
