@@ -125,7 +125,7 @@ public function ProcductComment(Request $request)
 public function showCommentsByProduct($productId)
 {
         // Get all comments for the specified product
-    $comments = ProcductComment::where('product_id', $productId)
+    $comments = ProcductComment::with('customer')->where('product_id', $productId)
             ->whereNull('parent_id')  // Get only top-level comments
             ->with('replies')         // Load replies relationship
             ->orderBy('created_at', 'asc')
@@ -268,7 +268,7 @@ public function saveProductReview(Request $request)
 public function getProductReview($id,$start,$end)
 {
     $data                   = [];
-    $reviews                = ProductReview::where('product_id',$id)->skip($start)->take($end);
+    $reviews                = ProductReview::with('customer')->where('product_id',$id)->skip($start)->take($end);
     $data['reviews']        = $reviews->get()->toArray();
     $data['total_avg']      = $reviews->avg('rating');
     $data['total_count']    = $reviews->count();
@@ -281,7 +281,7 @@ public function getCustomerProductReview($start,$end)
     $customer               = Auth::guard('sanctum')->user();
 
     $data                   = [];
-    $reviews                = ProductReview::with('VendorProduct')->where('customer_id',$customer->id)->skip($start)->take($end);
+    $reviews                = ProductReview::with(['VendorProduct','customer'])->where('customer_id',$customer->id)->skip($start)->take($end);
     $data['reviews']        = $reviews->get()->toArray();
     // $data['total_avg']      = $reviews->avg('rating');
     $data['total_count']    = $reviews->count();
